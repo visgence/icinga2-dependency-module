@@ -1,18 +1,140 @@
+<head>
+    <style type="text/css">
+        #dependency-network {
+            width:  inherit;
+            height: inherit;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.1/vis.min.js">
+</script>
 <script
   src="https://code.jquery.com/jquery-2.2.4.js"
   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
   crossorigin="anonymous">
- </script>
+</script>
 <script>
-$(function() {
-    console.log( "ready!" );
+$(function () {
+    console.log("ready!");
 
-    $.get("/icingaweb2/dependency_plugin/graph/getDependency", function(data, status){
-        console.log(data);
-        $("#my_output").html(data['results'][0]['attrs']['address'])
+    $.ajax({
+        url: "/icingaweb2/dependency_plugin/graph/getDependency",
+        type: 'GET',
+        // dataType: 'json',
+
+        success: function (data) {
+
+            datajson = JSON.parse(data);
+            var nodes = new vis.DataSet([]);
+
+            var edges = new vis.DataSet([]);
+
+
+
+
+            for (i = 0; i < datajson.results.length; i++) {
+
+                 var upDown = Math.random()
+                 var color_background= 'lightgreen';
+                 var color_border = 'lightgreen';
+
+                    if(upDown > 0.5){
+                        color_background = 'lightgrey'
+                        color_border = 'red'
+                    }
+
+                nodes.update({
+                    id: datajson.results[i].attrs.child_host_name,
+                    label: datajson.results[i].attrs.child_host_name,
+                    color: {
+                        border: color_border,
+                        background: color_background
+                    },
+
+                })
+                
+                edges.update({
+                    from: datajson.results[i].attrs.parent_host_name,
+                    to: datajson.results[i].attrs.child_host_name
+                })
+
+            }
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+            var container = document.getElementById('dependency-network');
+            var options = {
+                layout: {
+                    improvedLayout: true,
+                    hierarchical: {
+                        enabled: true,
+                        levelSeparation: 100,
+                        nodeSpacing: 200,
+                        treeSpacing: 100,
+                        blockShifting: false,
+                        edgeMinimization: true,
+                        parentCentralization: true,
+                        direction: 'UD', // UD, DU, LR, RL
+                        sortMethod: 'hubsize' // hubsize, directed
+                    }
+                },
+
+                edges: {
+                    arrows: {
+                        to: {
+                            enabled: false,
+                            scaleFactor: 1,
+                            type: 'arrow'
+                        },
+                        middle: {
+                            enabled: true,
+                            scaleFactor: 1,
+                            type: 'arrow'
+                        },
+                        from: {
+                            enabled: false,
+                            scaleFactor: 1,
+                            type: 'arrow'
+                        }
+                    }
+                },
+
+                nodes: {
+                    // color: '#ff0000',
+                    fixed: true,
+                    // font: '12px arial red',
+                    // scaling: {
+                    //     label: true
+                    // },
+                    // shadow: true,
+                    shape: 'box'
+                }
+
+            };
+
+            var network = new vis.Network(container, data, options);
+
+
+
+
+            console.log(datajson.length)
+            console.log(data.length)
+            //  console.log(edges)
+
+            console.log(data)
+
+            console.log(datajson)
+
+
+
+        }
+
     });
 
 });
 
-</script>
-<div id="my_output"> </div>
+</script> 
+<div id="dependency-network"> </div>

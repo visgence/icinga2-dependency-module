@@ -7,17 +7,18 @@ use Icinga\Web\Controller;
 class GraphController extends Controller{
 
         public function displayAction(){
+
         }
 
         public function getdependencyAction() {
-                    $this->_helper->layout->disableLayout();
-                    $response = $this->getResponse();
-                    $response->setHeader('Content-Type', 'application/json', true);
-                    $response->sendHeaders();
+                //     $this->_helper->layout->disableLayout();
+                //     $response = $this->getResponse();
+                //     $response->setHeader('Content-Type', 'application/json', true);
+                //     $response->sendHeaders();
                     
 
 
-                    $request_url = 'https://e35760e14397:5665/v1/objects/hosts';
+$request_url = 'https://f114798e5be6:5665/v1/objects/dependencies';
 $username = 'root';
 $password = '911b092cf0530a34';
 $headers = array(
@@ -48,5 +49,7 @@ curl_close($ch);
 
 echo $response;
         }
+
+
 }
 ?>
