@@ -13,7 +13,7 @@ class GraphController extends Controller{
     public function getdependencyAction() {
                 
 
-        $request_url = 'https://166b290abe33:5665/v1/objects/dependencies';
+        $request_url = 'https:/localhost:5665/v1/objects/dependencies';
         $username = 'root';
         $password = '911b092cf0530a34';
         $headers = array(
@@ -30,6 +30,7 @@ class GraphController extends Controller{
             CURLOPT_USERPWD => $username . ":" . $password,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
         ));
 
         $response = curl_exec($ch);
@@ -46,7 +47,7 @@ class GraphController extends Controller{
    }
 
    public function gethostsAction(){
-        $request_url = 'https://166b290abe33:5665/v1/objects/hosts';
+        $request_url = 'https://localhost:5665/v1/objects/hosts';
         $username = 'root';
         $password = '911b092cf0530a34';
         $headers = array(
@@ -63,6 +64,7 @@ class GraphController extends Controller{
             CURLOPT_USERPWD => $username . ":" . $password,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
         ));
 
         $response = curl_exec($ch);

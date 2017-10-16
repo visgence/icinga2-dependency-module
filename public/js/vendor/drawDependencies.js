@@ -1,4 +1,3 @@
-
 function drawDependencies(hosts, dependencies) {
 
     console.log('Called')
@@ -38,6 +37,7 @@ function drawDependencies(hosts, dependencies) {
         hostObj[hostName].hasDependencies = true;
         hostObj[hostName].parent = parentName;
         hostObj[parentName].children.push(hostName); //push child name to parent host entry
+        hostObj[parentName].hasDependencies = true;
 
     }
 
@@ -54,6 +54,9 @@ function drawDependencies(hosts, dependencies) {
     for (i = 0; i < Object.keys(hostObj).length; i++) {
 
         currHost = Object.keys(hostObj)[i];
+
+        if(hostObj[currHost].hasDependencies)
+        {
 
         if (hostObj[currHost].status === 'DOWN') {
 
@@ -89,6 +92,8 @@ function drawDependencies(hosts, dependencies) {
 
     }
 
+}
+
     var data = {
         nodes: nodes,
         edges: edges
@@ -104,7 +109,7 @@ function drawDependencies(hosts, dependencies) {
                 treeSpacing: 100,
                 blockShifting: true,
                 edgeMinimization: true,
-                parentCentralization: false,
+                parentCentralization: true,
                 direction: 'UD', // UD, DU, LR, RL
                 sortMethod: 'hubsize' // hubsize, directed
             }
@@ -143,7 +148,7 @@ function drawDependencies(hosts, dependencies) {
 
     };
 
+
+
     var network = new vis.Network(container, data, options);
 }
-
-

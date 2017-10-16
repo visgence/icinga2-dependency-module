@@ -5,5 +5,7 @@ $section = $this->menuSection('Dependencies', array(
 ));
 
 $this->provideJsFile('vendor/drawDependencies.js');
+$this->provideJsFile('vendor/vis.min.js');
+// $this->provideCssFile('vendor/network.css');
 
 ?>

@@ -7,44 +7,5 @@
         }
     </style>
 </head>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.1/vis.min.js">
-</script>
-<script
-  src="https://code.jquery.com/jquery-2.2.4.js"
-  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
-  crossorigin="anonymous">
-</script>
-<script>
 
-$(function () {
-    var dependencies;
-    var hosts;
-
-    //  Double ajax request to getHostsAction() and getDependencyAction() in module php controller file to retrieve JSONs for hosts, dependencies
-    $.when(
-        $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/getHosts",
-            type: 'GET',
-            success: function (hostData) {
-                hosts = (JSON.parse(hostData));
-            }
-        }),
-
-        $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/getDependency",
-            type: 'GET',
-            success: function (dependencyData) {
-                dependencies = (JSON.parse(dependencyData));
-            }
-        })
-    ).then(function () {
-        console.log(hosts);
-        console.log(dependencies);
-        drawDependencies(hosts, dependencies);
-    });
-
-});
-
-</script>
 <div id="dependency-network"> </div>
