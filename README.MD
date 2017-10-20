@@ -1,3 +1,4 @@
+Visgence Inc. 2017
 #Creating An Icinga Web 2 Custom Module
 
 How to create an example Icinga Web 2 Module
