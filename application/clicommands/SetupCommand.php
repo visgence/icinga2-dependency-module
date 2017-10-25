@@ -29,7 +29,14 @@ class SetupCommand extends Command{
         
         $apiLogin = json_encode($apiLogin);
 
+        if(!'/etc/icingaweb2/modules/dependency_plugin'){
+        
+
         mkdir('/etc/icingaweb2/modules/dependency_plugin');
+
+        }
+
+       
 
         $file = fopen('/etc/icingaweb2/modules/dependency_plugin/config.ini', 'w');
         
@@ -37,5 +44,8 @@ class SetupCommand extends Command{
 
         fclose($file);
 
+
     }
+
+    
 }

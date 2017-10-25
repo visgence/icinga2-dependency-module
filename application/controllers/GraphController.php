@@ -12,10 +12,17 @@ class GraphController extends Controller{
 
     public function getdependencyAction() {
                 
-
+        // TODO handle when file does not exist, echo error message
         $request_url = 'https:/localhost:5665/v1/objects/dependencies';
-        $username = 'root';
-        $password = '911b092cf0530a34';
+
+        $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.ini');
+
+        $apiLogin = json_decode($apiLogin);
+
+        // echo $apiLogin->user, $apiLogin->password;
+
+        $username = $apiLogin->user;
+        $password = $apiLogin->password;
         $headers = array(
             'Accept: application/json',
             'X-HTTP-Method-Override: GET'
@@ -43,13 +50,21 @@ class GraphController extends Controller{
 
         echo $response;
         exit;
-
-   }
+    }
 
    public function gethostsAction(){
-        $request_url = 'https://localhost:5665/v1/objects/hosts';
-        $username = 'root';
-        $password = '911b092cf0530a34';
+       
+        
+        $request_url = 'https:/localhost:5665/v1/objects/dependencies';
+
+        $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.ini');
+
+        $apiLogin = json_decode($apiLogin);
+
+        // echo $apiLogin->user, $apiLogin->password;
+
+        $username = $apiLogin->user;
+        $password = $apiLogin->password;
         $headers = array(
             'Accept: application/json',
             'X-HTTP-Method-Override: GET'
