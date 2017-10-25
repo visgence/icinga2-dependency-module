@@ -8,6 +8,7 @@ class SetupCommand extends Command{
 
     public function apiAction()
     {
+
         echo "Please Enter API Username:";
         $handle = fopen('php://stdin', 'r');
         $user = fgets($handle);
@@ -35,7 +36,6 @@ class SetupCommand extends Command{
         fwrite($file, $apiLogin);
 
         fclose($file);
-
 
     }
 }
