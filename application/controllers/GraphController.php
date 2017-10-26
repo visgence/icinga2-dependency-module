@@ -13,9 +13,9 @@ class GraphController extends Controller{
     public function getdependencyAction() {
                 
         // TODO handle when file does not exist, echo error message
-        $request_url = 'https:/localhost:5665/v1/objects/dependencies';
+        $request_url = 'https://localhost:5665/v1/objects/dependencies';
 
-        $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.ini');
+        $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
 
         $apiLogin = json_decode($apiLogin);
 
@@ -55,7 +55,7 @@ class GraphController extends Controller{
    public function gethostsAction(){
        
         
-        $request_url = 'https:/localhost:5665/v1/objects/dependencies';
+        $request_url = 'https://localhost:5665/v1/objects/dependencies';
 
         $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.ini');
 
