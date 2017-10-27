@@ -63,7 +63,7 @@ class GraphController extends Controller{
        
         
 
-        $request_url = 'https:/localhost:5665/v1/objects/hosts';
+        $request_url = 'https://localhost:5665/v1/objects/hosts';
 
        
        if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
