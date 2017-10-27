@@ -25,6 +25,7 @@ function drawDependencies(hosts, dependencies) {
             status: hostStatus,
             parent: 'NONE',
             hasDependencies: false,
+            group: hosts.results[i].attrs.groups[0],
             children: [],
         };
 
@@ -51,27 +52,29 @@ function drawDependencies(hosts, dependencies) {
 
     var edges = new vis.DataSet([]);
 
+    var group = 'fastwave'
+
     for (i = 0; i < Object.keys(hostObj).length; i++) {
 
         currHost = Object.keys(hostObj)[i];
 
-        if(hostObj[currHost].hasDependencies)
+        if (hostObj[currHost].hasDependencies && hostObj[currHost].group == group)
         {
 
-        if (hostObj[currHost].status === 'DOWN') {
+            if (hostObj[currHost].status === 'DOWN') {
 
-            color_border = 'red';
-        }
+                color_border = 'red';
+            }
 
-        if (hostObj[currHost].status === 'UNREACHABLE') {
+            if (hostObj[currHost].status === 'UNREACHABLE') {
 
-            color_border = 'purple';
+                color_border = 'purple';
 
-        }
+            }
 
-        if (hostObj[currHost].status === 'UP') {
+            if (hostObj[currHost].status === 'UP') {
 
-            color_border = 'green';
+                color_border = 'green';
 
         }
 
@@ -106,13 +109,13 @@ function drawDependencies(hosts, dependencies) {
             hierarchical: {
                 enabled: true,
                 levelSeparation: 100,
-                nodeSpacing: 200,
-                treeSpacing: 100,
+                nodeSpacing: 100,
+                treeSpacing: 200,
                 blockShifting: true,
                 edgeMinimization: true,
                 parentCentralization: true,
-                direction: 'UD', // UD, DU, LR, RL
-                sortMethod: 'hubsize' // hubsize, directed
+                direction: 'DU', // UD, DU, LR, RL
+                sortMethod: 'directed' // hubsize, directed
             }
         },
 
@@ -138,7 +141,7 @@ function drawDependencies(hosts, dependencies) {
 
         nodes: {
             // color: '#ff0000',
-            fixed: true,
+            fixed: false,
             // font: '12px arial red',
             // scaling: {
             //     label: true
