@@ -82,6 +82,7 @@ function drawDependencies(hosts, dependencies) {
                 border: color_border,
                 background: color_background
             },
+            // event:
 
         })
 
@@ -151,4 +152,11 @@ function drawDependencies(hosts, dependencies) {
 
 
     var network = new vis.Network(container, data, options);
+
+    network.on("doubleClick", function (params){
+        
+        href = location.href.split('/');
+        location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+        //TODO make more dynamic, too hard coded.
+    });
 }
