@@ -154,8 +154,10 @@ function drawDependencies(hosts, dependencies) {
     var network = new vis.Network(container, data, options);
 
     network.on("doubleClick", function (params){
-        
+       
+        if(params.nodes[0] != undefined){
         href = location.href.split('/');
         location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+        }
     });
 }
