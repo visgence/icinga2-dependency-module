@@ -7,7 +7,6 @@
     var pushUrl = function (href) {
         history.pushState({}, '', href);
         window.dispatchEvent(new Event('popstate'));
-        console.log('WAT');
     };
 
     timeout();
@@ -34,9 +33,13 @@
                         }
                     })
                 ).then(function () {
-                    console.log(hosts);
-                    console.log(dependencies);
-                    drawDependencies(hosts, dependencies);
+                    if(dependencies === 404){
+                           alert("API Authentication Not Found, Please run Setup API command on host machine");
+                    }
+                    else{
+                        console.log(hosts, dependencies);
+                        drawDependencies(hosts, dependencies);
+                    }
                 });
 
 

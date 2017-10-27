@@ -85,7 +85,7 @@ class SetupCommand extends Command{
 
         //directory where modules store configuration information. 
         //if dir does not exist, create it
-        if(!'/etc/icingaweb2/modules/dependency_plugin'){
+        if(!file_exists('/etc/icingaweb2/modules/dependency_plugin')){
 
         mkdir('/etc/icingaweb2/modules/dependency_plugin');
 

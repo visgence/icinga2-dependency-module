@@ -15,84 +15,102 @@ class GraphController extends Controller{
         // TODO handle when file does not exist, echo error message
         $request_url = 'https://localhost:5665/v1/objects/dependencies';
 
-        $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
+       if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
 
-        $apiLogin = json_decode($apiLogin);
+            $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
 
-        // echo $apiLogin->user, $apiLogin->password;
+            $apiLogin = json_decode($apiLogin);
 
-        $username = $apiLogin->user;
-        $password = $apiLogin->password;
-        $headers = array(
-            'Accept: application/json',
-            'X-HTTP-Method-Override: GET'
-        );
+            // echo $apiLogin->user, $apiLogin->password;
 
-        $ch = curl_init();
+            $username = $apiLogin->user;
+            $password = $apiLogin->password;
+            $headers = array(
+                'Accept: application/json',
+                'X-HTTP-Method-Override: GET'
+            );
 
-        curl_setopt_array($ch, array(
+            $ch = curl_init();
 
-            CURLOPT_URL => $request_url,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_USERPWD => $username . ":" . $password,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
-        ));
+            curl_setopt_array($ch, array(
 
-        $response = curl_exec($ch);
+                CURLOPT_URL => $request_url,
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_USERPWD => $username . ":" . $password,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+            ));
 
-        if($response === false){
-            print "Error:" . curl_error($ch) . "(" . $response . ")\n";
+            $response = curl_exec($ch);
+
+            if($response === false){
+                print "Error:" . curl_error($ch) . "(" . $response . ")\n";
+            }
+
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            echo $response;
+            exit;
+
+        }else{
+            echo 404;
+            exit;
         }
-
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        echo $response;
-        exit;
-    }
+}
 
    public function gethostsAction(){
        
         
-        $request_url = 'https://localhost:5665/v1/objects/dependencies';
 
-        $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.ini');
+        $request_url = 'https:/localhost:5665/v1/objects/hosts';
 
-        $apiLogin = json_decode($apiLogin);
+       
+       if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
 
-        // echo $apiLogin->user, $apiLogin->password;
 
-        $username = $apiLogin->user;
-        $password = $apiLogin->password;
-        $headers = array(
-            'Accept: application/json',
-            'X-HTTP-Method-Override: GET'
-        );
+            $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
 
-        $ch = curl_init();
+            $apiLogin = json_decode($apiLogin);
 
-        curl_setopt_array($ch, array(
+            // echo $apiLogin->user, $apiLogin->password;
 
-            CURLOPT_URL => $request_url,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_USERPWD => $username . ":" . $password,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
-        ));
+            $username = $apiLogin->user;
+            $password = $apiLogin->password;
+            $headers = array(
+                'Accept: application/json',
+                'X-HTTP-Method-Override: GET'
+            );
 
-        $response = curl_exec($ch);
+            $ch = curl_init();
 
-        if($response === false){
-            print "Error:" . curl_error($ch) . "(" . $response . ")\n";
-        }
+            curl_setopt_array($ch, array(
 
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                CURLOPT_URL => $request_url,
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_USERPWD => $username . ":" . $password,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+            ));
 
-        echo $response;
+            $response = curl_exec($ch);
+
+            if($response === false){
+                print "Error:" . curl_error($ch) . "(" . $response . ")\n";
+            }
+
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            echo $response;
+            exit;
+    }else{
+        echo 404;
         exit;
-   }
+    }
+}
+
+   
    
 
 
