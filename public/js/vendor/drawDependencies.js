@@ -4,6 +4,7 @@ function drawDependencies(hosts, dependencies) {
 
     var hostObj = {};
     var groups = [];
+    var selectedGroups = [];
 
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
     //  Convert to Obj[hostName].var format while combining hosts and dependency objects using loops:
@@ -54,21 +55,40 @@ function drawDependencies(hosts, dependencies) {
         }
 
     );
+    
+    $("#dependency-menu").prepend("<li class = \"selected\"> All</li>");
+    
+    selectedGroups = groups;
+    
 
     $("#dependency-menu").on('click', 'li', function (params) {
-        console.log(params);
         params.currentTarget.classList.toggle('selected')
-        drawNetwork(hostObj, params.currentTarget.outerText)
-    });
+        if(params.currentTarget.outerText === 'All'){
+            
+            if(selectedGroups === groups){
+                selectedGroups = [];
+            }else{
+                selectedGroups = groups;
+            }
 
+        }
+        else if(selectedGroups.indexOf(params.currentTarget.outerText) == -1)
+        {
+            selectedGroups.push(params.currentTarget.outerText);
+        }else{
+            selectedGroups.splice(selectedGroups.indexOf(params.currentTarget.outerText), 1);
+        }
+
+        drawNetwork(hostObj, selectedGroups)
+    });
+    
+    
+    drawNetwork(hostObj, groups);
 
 }
 
 function drawNetwork(hostObj, group) {
 
-    console.log(hostObj);
-
-    color_border = 'blue';
 
     color_background = 'white'
 
@@ -81,7 +101,7 @@ function drawNetwork(hostObj, group) {
 
         currHost = Object.keys(hostObj)[i];
 
-        if (hostObj[currHost].hasDependencies && hostObj[currHost].group == group) {
+        if (hostObj[currHost].hasDependencies && group.includes(hostObj[currHost].group)) {
 
             if (hostObj[currHost].status === 'DOWN') {
 
