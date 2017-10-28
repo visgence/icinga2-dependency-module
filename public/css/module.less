@@ -1,0 +1,49 @@
+
+
+#dependency-network {
+    width:  90%;
+    height: 100%;
+    float: left;
+    border: 1px solid lightgray;
+}
+
+#dependency-menu {
+    width: 10%;
+    float: left;
+    height: 100%;
+    /* background-color: #eee; */
+    // border: 1px solid lightgray;
+}
+
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+ul li {
+    cursor: pointer;
+    position: relative;
+    padding: 5px;
+    background:  @body-bg-color;
+    font-size: 12px;
+    transition: 0.2s;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+ul li.selected {
+
+    border-left: 5px solid transparent;
+    // line-height: 2.167em;
+    
+
+    border-color: @icinga-blue;
+
+    color: @icinga-blue;
+
+}
+

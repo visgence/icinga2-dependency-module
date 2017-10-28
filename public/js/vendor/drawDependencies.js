@@ -1,9 +1,9 @@
 function drawDependencies(hosts, dependencies) {
 
-    console.log('Called')
 
 
     var hostObj = {};
+    var groups = [];
 
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
     //  Convert to Obj[hostName].var format while combining hosts and dependency objects using loops:
@@ -40,7 +40,31 @@ function drawDependencies(hosts, dependencies) {
         hostObj[parentName].children.push(hostName); //push child name to parent host entry
         hostObj[parentName].hasDependencies = true;
 
+        if(groups.indexOf(hostObj[hostName].group) == -1){
+            groups.push(hostObj[hostName].group);
+        }
     }
+
+
+    $.each(
+        groups,
+
+        function (i, v) {
+            $("#dependency-menu").append("<li>" + v + "</li>");
+        }
+
+    );
+
+    $("#dependency-menu").on('click', 'li', function (params) {
+        console.log(params);
+        params.currentTarget.classList.toggle('selected')
+        drawNetwork(hostObj, params.currentTarget.outerText)
+    });
+
+
+}
+
+function drawNetwork(hostObj, group) {
 
     console.log(hostObj);
 
@@ -52,14 +76,12 @@ function drawDependencies(hosts, dependencies) {
 
     var edges = new vis.DataSet([]);
 
-    var group = 'fastwave'
 
     for (i = 0; i < Object.keys(hostObj).length; i++) {
 
         currHost = Object.keys(hostObj)[i];
 
-        if (hostObj[currHost].hasDependencies && hostObj[currHost].group == group)
-        {
+        if (hostObj[currHost].hasDependencies && hostObj[currHost].group == group) {
 
             if (hostObj[currHost].status === 'DOWN') {
 
@@ -76,27 +98,27 @@ function drawDependencies(hosts, dependencies) {
 
                 color_border = 'green';
 
+            }
+
+            nodes.update({
+                id: currHost,
+                label: currHost,
+                color: {
+                    border: color_border,
+                    background: color_background
+                },
+                // event:
+
+            })
+
+            edges.update({
+                from: currHost,
+                to: hostObj[currHost].parent,
+            })
+
         }
 
-        nodes.update({
-            id: currHost,
-            label: currHost,
-            color: {
-                border: color_border,
-                background: color_background
-            },
-            // event:
-
-        })
-
-        edges.update({
-            from: currHost,
-            to: hostObj[currHost].parent,
-        })
-
     }
-
-}
 
     var data = {
         nodes: nodes,
@@ -114,8 +136,8 @@ function drawDependencies(hosts, dependencies) {
                 blockShifting: true,
                 edgeMinimization: true,
                 parentCentralization: true,
-                direction: 'DU', // UD, DU, LR, RL
-                sortMethod: 'directed' // hubsize, directed
+                direction: 'UD', // UD, DU, LR, RL
+                sortMethod: 'hubsize' // hubsize, directed
             }
         },
 
@@ -146,21 +168,18 @@ function drawDependencies(hosts, dependencies) {
             // scaling: {
             //     label: true
             // },
-            // shadow: true,
+            // shadow: true,S
             shape: 'box'
         }
 
     };
-
-
-
     var network = new vis.Network(container, data, options);
 
-    network.on("doubleClick", function (params){
-       
-        if(params.nodes[0] != undefined){
-        href = location.href.split('/');
-        location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+    network.on("doubleClick", function (params) {
+
+        if (params.nodes[0] != undefined) {
+            href = location.href.split('/');
+            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
         }
     });
 }
