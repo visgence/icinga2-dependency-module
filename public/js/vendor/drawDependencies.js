@@ -161,19 +161,24 @@ function drawNetwork(hostObj, group) {
         },
 
         physics: {
-            barnesHut: {
-                springLength: 55,
-                avoidOverlap: 0.16
-            },
+            // barnesHut: {
+            //     springLength: 55,
+            //     avoidOverlap: 0.16
+            // },
+            // solver: 'hierarchicalRepulsion',
+            // stabilization: {
+            //     enabled: true,
+            //     iterations: 0
+            // }
         },
 
             nodes: {
                 // color: '#ff0000',
                 fixed: false,
                 // font: '12px arial red',
-                // scaling: {
-                //     label: true
-                // },
+                scaling: {
+                    label: true
+                },
                 // shadow: true,
                 shape: 'dot'
             },
@@ -182,6 +187,13 @@ function drawNetwork(hostObj, group) {
         };
         var network = new vis.Network(container, data, options);
 
+        network.stabilize();
+
+        network.on('afterDrawing', function(params){
+            network.setOptions({nodes : {fixed: true}});
+        });
+
+        
         console.log(network.getSeed())
 
         network.on("doubleClick", function (params) {
