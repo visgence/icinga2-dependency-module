@@ -41,7 +41,7 @@ function drawDependencies(hosts, dependencies) {
         hostObj[parentName].children.push(hostName); //push child name to parent host entry
         hostObj[parentName].hasDependencies = true;
 
-        if(groups.indexOf(hostObj[hostName].group) == -1){
+        if (groups.indexOf(hostObj[hostName].group) == -1) {
             groups.push(hostObj[hostName].group);
         }
     }
@@ -55,34 +55,32 @@ function drawDependencies(hosts, dependencies) {
         }
 
     );
-    
+
     $("#dependency-menu").prepend("<li class = \"selected\"> All</li>");
-    
+
     selectedGroups = groups;
-    
+
 
     $("#dependency-menu").on('click', 'li', function (params) {
         params.currentTarget.classList.toggle('selected')
-        if(params.currentTarget.outerText === 'All'){
-            
-            if(selectedGroups === groups){
+        if (params.currentTarget.outerText === 'All') {
+
+            if (selectedGroups === groups) {
                 selectedGroups = [];
-            }else{
+            } else {
                 selectedGroups = groups;
             }
 
-        }
-        else if(selectedGroups.indexOf(params.currentTarget.outerText) == -1)
-        {
+        } else if (selectedGroups.indexOf(params.currentTarget.outerText) == -1) {
             selectedGroups.push(params.currentTarget.outerText);
-        }else{
+        } else {
             selectedGroups.splice(selectedGroups.indexOf(params.currentTarget.outerText), 1);
         }
 
         drawNetwork(hostObj, selectedGroups)
     });
-    
-    
+
+
     drawNetwork(hostObj, groups);
 
 }
@@ -123,7 +121,7 @@ function drawNetwork(hostObj, group) {
             nodes.update({
                 id: currHost,
                 label: currHost,
-                mass: (hostObj[currHost].children.length / 4) + 1 ,
+                mass: (hostObj[currHost].children.length / 4) + 1,
                 color: {
                     border: color_border,
                     background: color_background
@@ -133,7 +131,7 @@ function drawNetwork(hostObj, group) {
             })
 
             edges.update({
-                from:hostObj[currHost].parent, 
+                from: hostObj[currHost].parent,
                 to: currHost
             })
 
@@ -161,29 +159,35 @@ function drawNetwork(hostObj, group) {
                 }
             },
         },
-        
-        nodes: {
-            // color: '#ff0000',
-            fixed: false,
-            // font: '12px arial red',
-            // scaling: {
-            //     label: true
-            // },
-            // shadow: true,
-            shape: 'dot'
-        },
+
+        physics: {
+            barnesHut: {
+                springLength: 55,
+                avoidOverlap: 0.16
+            },
+
+            nodes: {
+                // color: '#ff0000',
+                fixed: false,
+                // font: '12px arial red',
+                // scaling: {
+                //     label: true
+                // },
+                // shadow: true,
+                shape: 'dot'
+            },
 
 
-    };
-    var network = new vis.Network(container, data, options);
+        };
+        var network = new vis.Network(container, data, options);
 
-    console.log(network.getSeed())
+        console.log(network.getSeed())
 
-    network.on("doubleClick", function (params) {
+        network.on("doubleClick", function (params) {
 
-        if (params.nodes[0] != undefined) {
-            href = location.href.split('/');
-            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
-        }
-    });
-}
+            if (params.nodes[0] != undefined) {
+                href = location.href.split('/');
+                location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+            }
+        });
+    }
