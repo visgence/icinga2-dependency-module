@@ -123,6 +123,7 @@ function drawNetwork(hostObj, group) {
             nodes.update({
                 id: currHost,
                 label: currHost,
+                mass: (hostObj[currHost].children.length / 4) + 1 ,
                 color: {
                     border: color_border,
                     background: color_background
@@ -148,52 +149,35 @@ function drawNetwork(hostObj, group) {
     var options = {
         layout: {
             improvedLayout: true,
-            hierarchical: {
-                enabled: true,
-                levelSeparation: 100,
-                nodeSpacing: 125,
-                treeSpacing: 200,
-                blockShifting: true,
-                edgeMinimization: true,
-                parentCentralization: false,
-                direction: 'UD', // UD, DU, LR, RL
-                sortMethod: 'directed' // hubsize, directed
-            }
+            randomSeed: 298956,
         },
 
         edges: {
             arrows: {
-                to: {
-                    enabled: false,
-                    scaleFactor: 1,
-                    type: 'arrow'
-                },
                 middle: {
                     enabled: true,
                     scaleFactor: 1,
                     type: 'arrow'
-                },
-                from: {
-                    enabled: false,
-                    scaleFactor: 1,
-                    type: 'arrow'
                 }
-            }
+            },
         },
-
+        
         nodes: {
             // color: '#ff0000',
-            fixed: true,
+            fixed: false,
             // font: '12px arial red',
             // scaling: {
             //     label: true
             // },
-            // shadow: true,S
-            shape: 'box'
-        }
+            // shadow: true,
+            shape: 'dot'
+        },
+
 
     };
     var network = new vis.Network(container, data, options);
+
+    console.log(network.getSeed())
 
     network.on("doubleClick", function (params) {
 
