@@ -165,6 +165,7 @@ function drawNetwork(hostObj, group) {
                 springLength: 55,
                 avoidOverlap: 0.16
             },
+        },
 
             nodes: {
                 // color: '#ff0000',
