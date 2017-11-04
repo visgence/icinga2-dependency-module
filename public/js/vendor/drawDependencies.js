@@ -132,8 +132,8 @@ function drawNetwork(hostObj, group) {
             })
 
             edges.update({
-                from: currHost,
-                to: hostObj[currHost].parent,
+                from:hostObj[currHost].parent, 
+                to: currHost
             })
 
         }
@@ -151,13 +151,13 @@ function drawNetwork(hostObj, group) {
             hierarchical: {
                 enabled: true,
                 levelSeparation: 100,
-                nodeSpacing: 100,
+                nodeSpacing: 125,
                 treeSpacing: 200,
                 blockShifting: true,
                 edgeMinimization: true,
-                parentCentralization: true,
+                parentCentralization: false,
                 direction: 'UD', // UD, DU, LR, RL
-                sortMethod: 'hubsize' // hubsize, directed
+                sortMethod: 'directed' // hubsize, directed
             }
         },
 
@@ -183,7 +183,7 @@ function drawNetwork(hostObj, group) {
 
         nodes: {
             // color: '#ff0000',
-            fixed: false,
+            fixed: true,
             // font: '12px arial red',
             // scaling: {
             //     label: true
