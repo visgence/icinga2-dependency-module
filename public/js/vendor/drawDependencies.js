@@ -88,6 +88,9 @@ function drawDependencies(hosts, dependencies) {
 function drawNetwork(hostObj, group) {
 
 
+    var redraw = true;
+
+
     color_background = 'white'
 
     var nodes = new vis.DataSet([]);
@@ -161,46 +164,80 @@ function drawNetwork(hostObj, group) {
         },
 
         physics: {
-            // barnesHut: {
-            //     springLength: 55,
-            //     avoidOverlap: 0.16
-            // },
-            // solver: 'hierarchicalRepulsion',
+            barnesHut: {
+                gravitationalConstant: -3000,
+                centralGravity: 0.5,
+                springLength: 50,
+                springConstant: 0.04,
+                damping: 0.09,
+                avoidOverlap: 0.8
+            },
+            solver: 'barnesHut',
             // stabilization: {
-            //     enabled: true,
+            //     enabled: false,
             //     iterations: 0
             // }
         },
 
-            nodes: {
-                // color: '#ff0000',
-                fixed: false,
-                // font: '12px arial red',
-                scaling: {
-                    label: true
-                },
-                // shadow: true,
-                shape: 'dot'
+        nodes: {
+            // color: '#ff0000',
+            fixed: false,
+            // font: '12px arial red',
+            scaling: {
+                label: true
             },
+            // shadow: true,
+            shape: 'dot'
+        },
 
 
-        };
-        var network = new vis.Network(container, data, options);
+    };
+    var network = new vis.Network(container, data, options);
 
-        network.stabilize();
+    // network.stabilize();
 
-        network.on('afterDrawing', function(params){
-            network.setOptions({nodes : {fixed: true}});
-        });
 
-        
-        console.log(network.getSeed())
+    if(redraw === true){
 
-        network.on("doubleClick", function (params) {
+            network.on("stabilizationProgress", function (params) {
+                var maxWidth = 496;
+                var minWidth = 20;
+                var widthFactor = params.iterations / params.total;
+                var width = Math.max(minWidth, maxWidth * widthFactor);
 
-            if (params.nodes[0] != undefined) {
-                href = location.href.split('/');
-                location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+                document.getElementById('bar').style.width = width + 'px';
+                document.getElementById('text').innerHTML = Math.round(widthFactor * 100) + '%';
+            });
+            
+            network.once("stabilizationIterationsDone", function () {
+                document.getElementById('text').innerHTML = '100%';
+                document.getElementById('bar').style.width = '496px';
+                document.getElementById('loadingBar').style.opacity = 0;
+                // really clean the dom element
+                setTimeout(function () {
+                    document.getElementById('loadingBar').style.display = 'none';
+                }, 500);
+            });
+
+            redraw = false;
+
+    }
+    network.on('afterDrawing', function (params) {
+        network.setOptions({
+            nodes: {
+                fixed: true
             }
         });
-    }
+    });
+
+
+    // console.log(network.getSeed())
+
+    network.on("doubleClick", function (params) {
+
+        if (params.nodes[0] != undefined) {
+            href = location.href.split('/');
+            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+        }
+    });
+}
