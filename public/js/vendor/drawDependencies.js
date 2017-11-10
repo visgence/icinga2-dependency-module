@@ -24,7 +24,7 @@ function drawDependencies(hosts, dependencies) {
 
         hostObj[hosts.results[i].name] = { //Use this loop to initialize values that will be changed if dependency data exists for host.
             status: hostStatus,
-            parent: 'NONE',
+            parents: [],
             hasDependencies: false,
             group: hosts.results[i].attrs.groups[0],
             children: [],
@@ -37,7 +37,7 @@ function drawDependencies(hosts, dependencies) {
         [hostName, parentName] = (dependencies.results[i].name).split('!Parent'); //need to split due to names in dependencies.json being 'hostName!ParentparentName'
 
         hostObj[hostName].hasDependencies = true;
-        hostObj[hostName].parent = parentName;
+        hostObj[hostName].parents.push(parentName);
         hostObj[parentName].children.push(hostName); //push child name to parent host entry
         hostObj[parentName].hasDependencies = true;
 
@@ -80,7 +80,7 @@ function drawDependencies(hosts, dependencies) {
         drawNetwork(hostObj, selectedGroups)
     });
 
-
+    console.log(hostObj)
     drawNetwork(hostObj, groups);
 
 }
@@ -133,10 +133,14 @@ function drawNetwork(hostObj, group) {
 
             })
 
-            edges.update({
-                from: hostObj[currHost].parent,
-                to: currHost
-            })
+            for(y = 0;  y < hostObj[currHost].parents.length; y++){
+
+                edges.update({
+                    from: hostObj[currHost].parents[y],
+                    to: currHost
+                })
+
+            }
 
         }
 
