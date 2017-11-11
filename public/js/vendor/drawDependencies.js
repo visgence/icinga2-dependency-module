@@ -225,7 +225,7 @@ function drawNetwork(hostObj, group, type) {
             stabilization: {
                 enabled: true,
                 iterations: 1000,
-                onlyDynamicEdges: true
+                // onlyDynamicEdges: true
             }
         },
 
