@@ -36,7 +36,6 @@
                         alert("API Authentication Not Found, Please run Setup API command on host machine");
                     } else {
                         console.log(hosts, dependencies);
-                        console.log('Calling Draw Function');
                         drawDependencies(hosts, dependencies, layout);
                     }
                 });
@@ -71,7 +70,6 @@
                         alert("API Authentication Not Found, Please run Setup API command on host machine");
                     } else {
                         console.log(hosts, dependencies);
-                        console.log('Calling draw function of hierarchy')
                         drawDependencies(hosts, dependencies, layout);
                     }
                 });
@@ -83,7 +81,6 @@
             else {
 
                 timeout();
-                console.log
             }
         }, 1000);
 
@@ -96,7 +93,6 @@
                 timeout();
             } else {
                 hierarchyExitTimeout();
-                console.log('👍');
             }
         }, 1000);
 
@@ -108,7 +104,6 @@
                 timeout();
             } else {
                 networkExitTimeout();
-                console.log('🔥 🔥 🔥 🔥 🔥')
             }
         }, 1000);
 

@@ -123,12 +123,13 @@ function drawNetwork(hostObj, group, type) {
             nodes.update({
                 id: currHost,
                 label: currHost,
-                // mass: (hostObj[currHost].children.length/4) + 1,
+                mass: (hostObj[currHost].children.length/4) + 1,
                 color: {
                     border: color_border,
                     background: color_background
                 },
-                // event:
+                size: (hostObj[currHost].children.length*3) + 20
+                // event
 
             })
 
@@ -173,19 +174,27 @@ function drawNetwork(hostObj, group, type) {
             // color: '#ff0000',
             fixed: true,
             // font: '12px arial red',
-            scaling: {
-                label: true
-            },
+     scaling:{
+      min: 1,
+      max: 15,
+      label: {
+        enabled: true,
+        min: 14,
+        max: 30,
+        maxVisible: 30,
+        drawThreshold: 5
+      },
             shape: 'square'
         },
+    }
 
 
     };
 
     var networkOptions = {
         layout: {
-            improvedLayout: true,
-            randomSeed: 298956,
+            improvedLayout: false,
+            randomSeed: 728804,
         },
         edges: {
             arrows: {
@@ -195,22 +204,29 @@ function drawNetwork(hostObj, group, type) {
                     // type: 'arrow'
                 }
             },
+
+            smooth : {
+
+                "forceDirection": "none",
+
+            }
         },
 
         physics: {
             barnesHut: {
                 // gravitationalConstant: -10000,
-                // centralGravity: 0.5,
+                // centralGravity: 10,
                 // springLength: 50,
                 // springConstant: 0.04,
                 // damping: 0.09,
                 //    avoidOverlap: 0.5
             },
             // solver: 'forceAtlas2Based',
-            // stabilization: {
-            //     enabled: false,
-            //     iterations: 0
-            // }
+            stabilization: {
+                enabled: true,
+                iterations: 1000,
+                // onlyDynamicEdges: true
+            }
         },
 
         nodes: {
@@ -268,7 +284,7 @@ function drawNetwork(hostObj, group, type) {
     network.on('afterDrawing', function (params) {
         network.setOptions({
             nodes: {
-                // fixed: rue
+                fixed: true
                 
             }
         });
@@ -276,7 +292,7 @@ function drawNetwork(hostObj, group, type) {
     });
 
 
-    // console.log(network.getSeed())
+    console.log(network.getSeed())
 
     network.on("doubleClick", function (params) {
 
