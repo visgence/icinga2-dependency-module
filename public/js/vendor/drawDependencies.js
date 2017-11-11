@@ -1,6 +1,4 @@
-function drawDependencies(hosts, dependencies) {
-
-
+function drawDependencies(hosts, dependencies, type) {
 
     var hostObj = {};
     var groups = [];
@@ -81,11 +79,12 @@ function drawDependencies(hosts, dependencies) {
     });
 
     console.log(hostObj)
-    drawNetwork(hostObj, groups);
+
+    drawNetwork(hostObj, groups, type);
 
 }
 
-function drawNetwork(hostObj, group) {
+function drawNetwork(hostObj, group, type) {
 
 
     var redraw = true;
@@ -124,7 +123,7 @@ function drawNetwork(hostObj, group) {
             nodes.update({
                 id: currHost,
                 label: currHost,
-                mass: (hostObj[currHost].children.length / 4) + 1,
+                // mass: (hostObj[currHost].children.length/4) + 1,
                 color: {
                     border: color_border,
                     background: color_background
@@ -150,13 +149,17 @@ function drawNetwork(hostObj, group) {
         nodes: nodes,
         edges: edges
     };
+
     var container = document.getElementById('dependency-network');
-    var options = {
+
+    var hierarchyOptions = {
         layout: {
             improvedLayout: true,
-            randomSeed: 298956,
+            hierarchical: {
+                enabled: true, 
+                sortMethod: 'directed',
+            }
         },
-
         edges: {
             arrows: {
                 middle: {
@@ -166,17 +169,44 @@ function drawNetwork(hostObj, group) {
                 }
             },
         },
+        nodes: {
+            // color: '#ff0000',
+            fixed: true,
+            // font: '12px arial red',
+            scaling: {
+                label: true
+            },
+            shape: 'square'
+        },
+
+
+    };
+
+    var networkOptions = {
+        layout: {
+            improvedLayout: true,
+            randomSeed: 298956,
+        },
+        edges: {
+            arrows: {
+                middle: {
+                    // enabled: true,
+                    // scaleFactor: 1,
+                    // type: 'arrow'
+                }
+            },
+        },
 
         physics: {
             barnesHut: {
-                gravitationalConstant: -3000,
-                centralGravity: 0.5,
-                springLength: 50,
-                springConstant: 0.04,
-                damping: 0.09,
-                avoidOverlap: 0.8
+                // gravitationalConstant: -10000,
+                // centralGravity: 0.5,
+                // springLength: 50,
+                // springConstant: 0.04,
+                // damping: 0.09,
+                //    avoidOverlap: 0.5
             },
-            solver: 'barnesHut',
+            // solver: 'forceAtlas2Based',
             // stabilization: {
             //     enabled: false,
             //     iterations: 0
@@ -196,10 +226,19 @@ function drawNetwork(hostObj, group) {
 
 
     };
-    var network = new vis.Network(container, data, options);
 
-    // network.stabilize();
 
+    if(type === 'hierarchical'){
+
+        var network = new vis.Network(container, data, hierarchyOptions);
+
+    }
+
+    if(type === 'network'){
+
+        var network = new vis.Network(container, data, networkOptions);
+
+    }
 
     if(redraw === true){
 
@@ -229,9 +268,11 @@ function drawNetwork(hostObj, group) {
     network.on('afterDrawing', function (params) {
         network.setOptions({
             nodes: {
-                fixed: true
+                // fixed: rue
+                
             }
         });
+
     });
 
 

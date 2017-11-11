@@ -4,17 +4,16 @@
     var hosts;
     // Double ajax request to getHostsAction() and getDependencyAction() in module php controller file to retrieve JSONs for hosts, dependencies
 
-    var pushUrl = function (href) {
-        history.pushState({}, '', href);
-        window.dispatchEvent(new Event('popstate'));
-    };
 
     timeout();
 
     function timeout() {
+        
         setTimeout(function () {
 
-            if (window.location.href.endsWith('display')) {
+            if (window.location.href.endsWith('network')) {
+
+                var layout = 'network';
 
                 $.when(
                     $.ajax({
@@ -33,42 +32,87 @@
                         }
                     })
                 ).then(function () {
-                    if(dependencies === 404){
-                           alert("API Authentication Not Found, Please run Setup API command on host machine");
-                    }
-                    else{
+                    if (dependencies === 404) {
+                        alert("API Authentication Not Found, Please run Setup API command on host machine");
+                    } else {
                         console.log(hosts, dependencies);
-                        drawDependencies(hosts, dependencies);
+                        console.log('Calling Draw Function');
+                        drawDependencies(hosts, dependencies, layout);
                     }
                 });
 
 
-            exitTimeout();
+                networkExitTimeout();
 
-            } else {
+            }
+
+            else if (window.location.href.endsWith('hierarchy')) {
+
+                var layout = 'hierarchical';
+
+                $.when(
+                    $.ajax({
+                        url: "/icingaweb2/dependency_plugin/graph/getHosts",
+                        type: 'GET',
+                        success: function (hostData) {
+                            hosts = (JSON.parse(hostData));
+                        }
+                    }),
+
+                    $.ajax({
+                        url: "/icingaweb2/dependency_plugin/graph/getDependency",
+                        type: 'GET',
+                        success: function (dependencyData) {
+                            dependencies = (JSON.parse(dependencyData));
+                        }
+                    })
+                ).then(function () {
+                    if (dependencies === 404) {
+                        alert("API Authentication Not Found, Please run Setup API command on host machine");
+                    } else {
+                        console.log(hosts, dependencies);
+                        console.log('Calling draw function of hierarchy')
+                        drawDependencies(hosts, dependencies, layout);
+                    }
+                });
+
+                hierarchyExitTimeout();
+            
+            } 
+            
+            else {
 
                 timeout();
+                console.log
             }
         }, 1000);
 
-
-
     }
 
-    function exitTimeout(){
+    function hierarchyExitTimeout() {
         setTimeout(function () {
 
-            if (!window.location.href.endsWith('display')) {
-             timeout();   
-            }else{
-                exitTimeout();
+            if (!(window.location.href.endsWith('hierarchy'))) {
+                timeout();
+            } else {
+                hierarchyExitTimeout();
+                console.log('👍');
             }
         }, 1000);
 
-    }
+    }      
+    function networkExitTimeout() {
+        setTimeout(function () {
 
+            if (!(window.location.href.endsWith('network'))) {
+                timeout();
+            } else {
+                networkExitTimeout();
+                console.log('🔥 🔥 🔥 🔥 🔥')
+            }
+        }, 1000);
 
-
+    } 
 
 
 }(Icinga));
