@@ -123,17 +123,17 @@ function drawNetwork(hostObj, group, type) {
             nodes.update({
                 id: currHost,
                 label: currHost,
-                mass: (hostObj[currHost].children.length/4) + 1,
+                mass: (hostObj[currHost].children.length / 4) + 1,
                 color: {
                     border: color_border,
                     background: color_background
                 },
-                size: (hostObj[currHost].children.length*3) + 20
+                size: (hostObj[currHost].children.length * 3) + 20
                 // event
 
             })
 
-            for(y = 0;  y < hostObj[currHost].parents.length; y++){
+            for (y = 0; y < hostObj[currHost].parents.length; y++) {
 
                 edges.update({
                     from: hostObj[currHost].parents[y],
@@ -157,7 +157,7 @@ function drawNetwork(hostObj, group, type) {
         layout: {
             improvedLayout: true,
             hierarchical: {
-                enabled: true, 
+                enabled: true,
                 sortMethod: 'directed',
             }
         },
@@ -171,22 +171,22 @@ function drawNetwork(hostObj, group, type) {
             },
         },
         nodes: {
-            // color: '#ff0000',
+            shape: 'square', // color: '#ff0000',
             fixed: true,
             // font: '12px arial red',
-     scaling:{
-      min: 1,
-      max: 15,
-      label: {
-        enabled: true,
-        min: 14,
-        max: 30,
-        maxVisible: 30,
-        drawThreshold: 5
-      },
-            shape: 'square'
-        },
-    }
+            scaling: {
+                min: 1,
+                max: 15,
+                label: {
+                    enabled: true,
+                    min: 14,
+                    max: 30,
+                    maxVisible: 30,
+                    drawThreshold: 5
+                },
+
+            },
+        }
 
 
     };
@@ -205,7 +205,7 @@ function drawNetwork(hostObj, group, type) {
                 }
             },
 
-            smooth : {
+            smooth: {
 
                 "forceDirection": "none",
 
@@ -225,7 +225,7 @@ function drawNetwork(hostObj, group, type) {
             stabilization: {
                 enabled: true,
                 iterations: 1000,
-                // onlyDynamicEdges: true
+                onlyDynamicEdges: true
             }
         },
 
@@ -244,48 +244,48 @@ function drawNetwork(hostObj, group, type) {
     };
 
 
-    if(type === 'hierarchical'){
+    if (type === 'hierarchical') {
 
         var network = new vis.Network(container, data, hierarchyOptions);
 
     }
 
-    if(type === 'network'){
+    if (type === 'network') {
 
         var network = new vis.Network(container, data, networkOptions);
 
     }
 
-    if(redraw === true){
+    if (redraw === true) {
 
-            network.on("stabilizationProgress", function (params) {
-                var maxWidth = 496;
-                var minWidth = 20;
-                var widthFactor = params.iterations / params.total;
-                var width = Math.max(minWidth, maxWidth * widthFactor);
+        network.on("stabilizationProgress", function (params) {
+            var maxWidth = 496;
+            var minWidth = 20;
+            var widthFactor = params.iterations / params.total;
+            var width = Math.max(minWidth, maxWidth * widthFactor);
 
-                document.getElementById('bar').style.width = width + 'px';
-                document.getElementById('text').innerHTML = Math.round(widthFactor * 100) + '%';
-            });
-            
-            network.once("stabilizationIterationsDone", function () {
-                document.getElementById('text').innerHTML = '100%';
-                document.getElementById('bar').style.width = '496px';
-                document.getElementById('loadingBar').style.opacity = 0;
-                // really clean the dom element
-                setTimeout(function () {
-                    document.getElementById('loadingBar').style.display = 'none';
-                }, 500);
-            });
+            document.getElementById('bar').style.width = width + 'px';
+            document.getElementById('text').innerHTML = Math.round(widthFactor * 100) + '%';
+        });
 
-            redraw = false;
+        network.once("stabilizationIterationsDone", function () {
+            document.getElementById('text').innerHTML = '100%';
+            document.getElementById('bar').style.width = '496px';
+            document.getElementById('loadingBar').style.opacity = 0;
+            // really clean the dom element
+            setTimeout(function () {
+                document.getElementById('loadingBar').style.display = 'none';
+            }, 500);
+        });
+
+        redraw = false;
 
     }
     network.on('afterDrawing', function (params) {
         network.setOptions({
             nodes: {
                 fixed: true
-                
+
             }
         });
 
