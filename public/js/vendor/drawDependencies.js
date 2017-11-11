@@ -155,11 +155,20 @@ function drawNetwork(hostObj, group, type) {
 
     var hierarchyOptions = {
         layout: {
-            improvedLayout: true,
+
+            // improvedLayout: true,
             hierarchical: {
                 enabled: true,
-                sortMethod: 'directed',
-            }
+                levelSeparation: 200,
+                nodeSpacing: 150,
+                treeSpacing: 200,
+                blockShifting: true,
+                edgeMinimization: true,
+                parentCentralization: true,
+                direction: 'UD', // UD, DU, LR, RL
+                sortMethod: 'directed' // hubsize, directed
+            },
+
         },
         edges: {
             arrows: {
