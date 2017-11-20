@@ -53,6 +53,35 @@ class SayCommand extends Command
 1.  Create controller:
 
 
+##Create Database And Users
+###Install and start postgres
+1.  Install postgresql `yum install -y postgresql-server postgresql`
+2.  Initialize db `postgresql-setup initdb`
+3.  Enable and start service 
+```
+systemctl enable postgresql
+systemctl start postgresql
+```
+###Setup db and User
+```
+sudo -u postgres psql -c "CREATE ROLE dependencies WITH LOGIN PASSWORD 'dependencies'"
+sudo -u postgres createdb -O dependencies -E UTF8 dependencies
+```
+
+Add the following to /var/lib/pgsql/data/pg_hba.conf - *above* other ident commands
+
+```
+    # icinga
+    local   dependencies      dependencies                            md5
+    host    dependencies      dependencies      127.0.0.1/32          md5
+    host    dependencies      dependencies      ::1/128               md5
+```
+
+
+
+
+
+
 
 
 
