@@ -4,6 +4,7 @@ namespace Icinga\Module\dependency_plugin\Controllers;
 
 use Icinga\Web\Controller;
 
+
 class GraphController extends Controller{
 
     public function displayAction(){
@@ -60,8 +61,6 @@ class GraphController extends Controller{
 }
 
    public function gethostsAction(){
-       
-        
 
         $request_url = 'https://localhost:5665/v1/objects/hosts';
 
@@ -109,6 +108,66 @@ class GraphController extends Controller{
         exit;
     }
 }
+
+    public function storenodesAction(){
+
+    // require_once 'icingaweb2/library/vendor/Zend/Db/Adapter/Pdo/Pgsql.php';
+
+
+    // $db = Zend_Db::factory('Pdo_Pgsql', array(
+    //     'host'     => '127.0.0.1',
+    //     'username' => 'webuser',
+    //     'password' => 'xxxxxxxx',
+    //     'dbname'   => 'test'
+    // ));
+
+
+
+
+
+
+
+
+    
+
+        $dbconn = pg_connect("host=127.0.0.1  dbname=dependencies user=dependencies password=dependencies")
+    or die('Could not connect: ' . pg_last_error());
+
+        $json = $_POST["json"];
+
+        $data = json_decode($json, true);
+
+        // echo json_encode($data);
+
+        // echo count($data);
+
+        if($data != null){
+
+            foreach($data as $item){
+
+                $name = $item['id'];
+                $node_x = $item['x'];
+                $node_y = $item['y'];
+
+                echo(gettype($item['y']));
+
+                $arr1 = array('node_name'=> $name, 'node_x' => $node_x, 'node_y' => $node_y);
+
+                $res = pg_insert($dbconn, "node_positions", $arr1);
+
+                echo $res;
+            }
+
+
+
+        }
+
+        // echo 'console.log("sasad");';
+        // echo ("WAT2");
+
+        pg_close($dbconn);
+        exit;
+    }
 
    
    

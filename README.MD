@@ -71,11 +71,19 @@ sudo -u postgres createdb -O dependencies -E UTF8 dependencies
 Add the following to /var/lib/pgsql/data/pg_hba.conf - *above* other ident commands
 
 ```
-    # icinga
-    local   dependencies      dependencies                            md5
-    host    dependencies      dependencies      127.0.0.1/32          md5
-    host    dependencies      dependencies      ::1/128               md5
+# icinga
+local   dependencies      dependencies                            md5
+host    dependencies      dependencies      127.0.0.1/32          md5
+host    dependencies      dependencies      ::1/128               md5
 ```
+
+Next restart postgres `service postgresql restart`
+
+###Create Schema
+`export PGPASSWORD=dependencies`
+`psql -U icinga -d icinga < /usr/share/icingaweb2/modules/dependency_plugin/application/schema`
+
+
 
 
 
