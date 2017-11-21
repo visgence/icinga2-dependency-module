@@ -123,24 +123,12 @@ class GraphController extends Controller{
 
     // $pdo = new PDO();
 
-
-
-
-
-
-
-    
-
         $dbconn = pg_connect("host=127.0.0.1  dbname=dependencies user=dependencies password=dependencies")
     or die('Could not connect: ' . pg_last_error());
 
         $json = $_POST["json"];
 
         $data = json_decode($json, true);
-
-        // echo json_encode($data);
-
-        // echo count($data);
 
         if($data != null){
 
@@ -176,11 +164,35 @@ class GraphController extends Controller{
 
         }
 
-        // echo 'console.log("sasad");';
-        // echo ("WAT2");
-
         pg_close($dbconn);
         exit;
+    }
+
+    public function getnodesAction(){
+
+        $dbconn = pg_connect("host=127.0.0.1  dbname=dependencies user=dependencies password=dependencies")
+        or die('Could not connect: ' . pg_last_error());
+
+
+
+
+        $vals = pg_fetch_all(pg_query($dbconn, "SELECT * FROM node_positions;"));
+        $isEmpty = (pg_num_rows(pg_query($dbconn, "SELECT * FROM node_positions;")) == 0);
+
+        if($isEmpty){
+
+            echo "EMPTY!";
+
+            exit;
+        }else{
+
+            $json = json_encode($vals);
+
+            echo $json;
+
+            exit;
+
+        }
     }
 
    
