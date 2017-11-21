@@ -121,6 +121,7 @@ class GraphController extends Controller{
     //     'dbname'   => 'test'
     // ));
 
+    // $pdo = new PDO();
 
 
 
@@ -143,6 +144,14 @@ class GraphController extends Controller{
 
         if($data != null){
 
+            $result = pg_query($dbconn, "TRUNCATE TABLE node_positions RESTART IDENTITY;");
+
+            if(!$result){
+                echo "An error occured.\n";
+                exit;
+            }
+
+
             foreach($data as $item){
 
                 $name = $item['id'];
@@ -154,6 +163,11 @@ class GraphController extends Controller{
                 $arr1 = array('node_name'=> $name, 'node_x' => $node_x, 'node_y' => $node_y);
 
                 $res = pg_insert($dbconn, "node_positions", $arr1);
+
+                if(!$res){
+                echo "An error occured.\n";
+                exit;
+            }
 
                 echo $res;
             }
