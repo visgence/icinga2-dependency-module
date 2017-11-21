@@ -202,17 +202,8 @@ function drawNetwork(hostObj, group, type) {
 
     var networkOptions = {
         layout: {
-            improvedLayout: false,
-            randomSeed: 728804,
         },
         edges: {
-            arrows: {
-                middle: {
-                    // enabled: true,
-                    // scaleFactor: 1,
-                    // type: 'arrow'
-                }
-            },
 
             smooth: {
 
@@ -222,30 +213,13 @@ function drawNetwork(hostObj, group, type) {
         },
 
         physics: {
-            barnesHut: {
-                // gravitationalConstant: -10000,
-                // centralGravity: 10,
-                // springLength: 50,
-                // springConstant: 0.04,
-                // damping: 0.09,
-                //    avoidOverlap: 0.5
-            },
-            // solver: 'forceAtlas2Based',
-            stabilization: {
-                enabled: true,
-                iterations: 1000,
-                // onlyDynamicEdges: true
-            }
         },
 
         nodes: {
-            // color: '#ff0000',
-            fixed: false,
-            // font: '12px arial red',
+
             scaling: {
                 label: true
             },
-            // shadow: true,
             shape: 'dot'
         },
 
@@ -290,18 +264,50 @@ function drawNetwork(hostObj, group, type) {
         redraw = false;
 
     }
-    network.on('afterDrawing', function (params) {
+
+    
+
+
+
+
+
+    $('#zoomBtn').click(function () {
+
         network.setOptions({
             nodes: {
-                fixed: true
-
+                fixed: false
             }
         });
 
+        $('.zoom-btn-sm').toggleClass('scale-out');
+        if($('.zoom-btn-sm').hasClass('scale-out')){
+            network.setOptions({
+                nodes: {
+                    fixed: true
+                }
+            });
+        }
+      
     });
 
+    $('.zoom-btn-sm').click(function () {
 
-    console.log(network.getSeed())
+        network.storePositions()
+
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(nodes._data)
+            }
+        });
+
+
+    });    
+
+
+    // console.log(network.getSeed())
+    console.log(JSON.stringify(nodes._data));
 
     network.on("doubleClick", function (params) {
 
