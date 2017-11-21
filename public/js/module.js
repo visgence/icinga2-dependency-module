@@ -55,6 +55,7 @@
                         type: 'GET',
                         success: function (hostData) {
                             hosts = (JSON.parse(hostData));
+                            console.log(hosts);
                         }
                     }),
 

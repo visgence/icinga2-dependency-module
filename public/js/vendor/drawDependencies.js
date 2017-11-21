@@ -1,155 +1,241 @@
 function drawDependencies(hosts, dependencies, type) {
 
     var hostObj = {};
-    var groups = [];
-    var selectedGroups = [];
+    // var selectedGroups = [];
 
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
     //  Convert to Obj[hostName].var format while combining hosts and dependency objects using loops:
 
-    for (i = 0; i < hosts.results.length; i++) { //Create 
 
-        if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
-            hostStatus = 'UP';
-        } else if (hosts.results[i].attrs.state === 1) {
+    for (i = 0; i < dependencies.results.length; i++) {
 
-            if (hosts.results[i].attrs.last_reachable === false) {
-                hostStatus = 'UNREACHABLE';
-            } else {
-                hostStatus = 'DOWN';
+        [hostName, parentName] = (dependencies.results[i].name).split('!Parent'); //need to split due to names in dependencies.json being 'hostName!ParentparentName'
+
+        if (hostObj[hostName] === undefined) {
+            hostObj[hostName] = {
+                status: '',
+                parents: [parentName],
+                hasDependencies: true,
+                group: '',
+                children: [],
             }
+
+
+        } else {
+
+            hostObj[hostName].parents.push(parentName);
+
         }
 
-        hostObj[hosts.results[i].name] = { //Use this loop to initialize values that will be changed if dependency data exists for host.
-            status: hostStatus,
-            parents: [],
-            hasDependencies: false,
-            group: hosts.results[i].attrs.groups[0],
-            children: [],
+        if(hostObj[parentName] === undefined){
+
+            hostObj[parentName] = {
+                status: '',
+                parents: [],
+                hasDependencies: true,
+                group: '',
+                children: [hostName],
+            }
+            
+        }else{
+            hostObj[parentName].children.push(hostName);
+        }
+
+
+    }
+
+
+
+for (i = 0; i < hosts.results.length; i++) { //Create 
+
+    if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
+        hostStatus = 'UP';
+    } else if (hosts.results[i].attrs.state === 1) {
+
+        if (hosts.results[i].attrs.last_reachable === false) {
+            hostStatus = 'UNREACHABLE';
+        } else {
+            hostStatus = 'DOWN';
+        }
+    }
+
+    if (hostObj[hosts.results[i].name]!= undefined){
+    hostObj[hosts.results[i].name].status = hostStatus;
+    hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
+    }
+
+}
+var newNetwork;
+
+var positionData;
+
+
+
+
+$.ajax({
+    url: "/icingaweb2/dependency_plugin/graph/getNodes",
+    type: 'GET',
+    success: function (response) {
+        if (response === 'EMPTY!') {
+            newNetwork = true;
+            drawNetwork(hostObj, type, newNetwork, 0);
+
+        } else {
+
+            newNetwork = false;
+
+            positionData = JSON.parse(response);
+
+            drawNetwork(hostObj, type, newNetwork, positionData);
+
+        }
+    }
+});
+
+}
+
+function drawNetwork(hostObj, type, newNetwork, positionData) {
+
+
+
+
+    if (newNetwork) {
+
+
+        var redraw = true;
+
+
+        color_background = 'white'
+
+        var nodes = new vis.DataSet([]);
+
+        var edges = new vis.DataSet([]);
+
+
+        for (i = 0; i < Object.keys(hostObj).length; i++) {
+
+            currHost = Object.keys(hostObj)[i];
+
+            if (hostObj[currHost].hasDependencies) {
+
+                if (hostObj[currHost].status === 'DOWN') {
+
+                    color_border = 'red';
+                }
+
+                if (hostObj[currHost].status === 'UNREACHABLE') {
+
+                    color_border = 'purple';
+
+                }
+
+                if (hostObj[currHost].status === 'UP') {
+
+                    color_border = 'green';
+
+                }
+
+                nodes.update({
+                    id: currHost,
+                    label: currHost,
+                    mass: (hostObj[currHost].children.length / 4) + 1,
+                    color: {
+                        border: color_border,
+                        background: color_background
+                    },
+                    size: (hostObj[currHost].children.length * 3) + 20
+                    // event
+
+                })
+
+                for (y = 0; y < hostObj[currHost].parents.length; y++) {
+
+                    edges.update({
+                        from: hostObj[currHost].parents[y],
+                        to: currHost
+                    })
+
+                }
+
+            }
+
+        }
+
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+    } else {
+
+        var redraw = true;
+
+
+        color_background = 'white'
+
+        var nodes = new vis.DataSet([]);
+
+        var edges = new vis.DataSet([]);
+
+
+        for (i = 0; i < Object.keys(hostObj).length; i++) {
+
+            currHost = Object.keys(hostObj)[i];
+
+            if (hostObj[currHost].hasDependencies) {
+
+                if (hostObj[currHost].status === 'DOWN') {
+
+                    color_border = 'red';
+                }
+
+                if (hostObj[currHost].status === 'UNREACHABLE') {
+
+                    color_border = 'purple';
+
+                }
+
+                if (hostObj[currHost].status === 'UP') {
+
+                    color_border = 'green';
+
+                }
+
+
+                nodes.update({
+                    id: currHost,
+                    label: currHost,
+                    mass: (hostObj[currHost].children.length / 4) + 1,
+                    color: {
+                        border: color_border,
+                        background: color_background
+                    },
+                    size: (hostObj[currHost].children.length * 3) + 20,
+                    x: positionData[i].node_x,
+                    y: positionData[i].node_y
+
+                });
+
+                for (y = 0; y < hostObj[currHost].parents.length; y++) {
+
+                    edges.update({
+                        from: hostObj[currHost].parents[y],
+                        to: currHost
+                    });
+
+                }
+
+            }
+
+        }
+
+        var data = {
+            nodes: nodes,
+            edges: edges
         };
 
     }
 
-    for (i = 0; i < dependencies.results.length; i++) { //modifies host entries in hostObj[] for which dependency data exists
-
-        [hostName, parentName] = (dependencies.results[i].name).split('!Parent'); //need to split due to names in dependencies.json being 'hostName!ParentparentName'
-
-        hostObj[hostName].hasDependencies = true;
-        hostObj[hostName].parents.push(parentName);
-        hostObj[parentName].children.push(hostName); //push child name to parent host entry
-        hostObj[parentName].hasDependencies = true;
-
-        if (groups.indexOf(hostObj[hostName].group) == -1) {
-            groups.push(hostObj[hostName].group);
-        }
-    }
-
-
-    $.each(
-        groups,
-
-        function (i, v) {
-            $("#dependency-menu").append("<li>" + v + "</li>");
-        }
-
-    );
-
-    $("#dependency-menu").prepend("<li class = \"selected\"> All</li>");
-
-    selectedGroups = groups;
-
-
-    $("#dependency-menu").on('click', 'li', function (params) {
-        params.currentTarget.classList.toggle('selected')
-        if (params.currentTarget.outerText === 'All') {
-
-            if (selectedGroups === groups) {
-                selectedGroups = [];
-            } else {
-                selectedGroups = groups;
-            }
-
-        } else if (selectedGroups.indexOf(params.currentTarget.outerText) == -1) {
-            selectedGroups.push(params.currentTarget.outerText);
-        } else {
-            selectedGroups.splice(selectedGroups.indexOf(params.currentTarget.outerText), 1);
-        }
-
-        drawNetwork(hostObj, selectedGroups)
-    });
-
-    console.log(hostObj)
-
-    drawNetwork(hostObj, groups, type);
-
-}
-
-function drawNetwork(hostObj, group, type) {
-
-
-    var redraw = true;
-
-
-    color_background = 'white'
-
-    var nodes = new vis.DataSet([]);
-
-    var edges = new vis.DataSet([]);
-
-
-    for (i = 0; i < Object.keys(hostObj).length; i++) {
-
-        currHost = Object.keys(hostObj)[i];
-
-        if (hostObj[currHost].hasDependencies && group.includes(hostObj[currHost].group)) {
-
-            if (hostObj[currHost].status === 'DOWN') {
-
-                color_border = 'red';
-            }
-
-            if (hostObj[currHost].status === 'UNREACHABLE') {
-
-                color_border = 'purple';
-
-            }
-
-            if (hostObj[currHost].status === 'UP') {
-
-                color_border = 'green';
-
-            }
-
-            nodes.update({
-                id: currHost,
-                label: currHost,
-                mass: (hostObj[currHost].children.length / 4) + 1,
-                color: {
-                    border: color_border,
-                    background: color_background
-                },
-                size: (hostObj[currHost].children.length * 3) + 20
-                // event
-
-            })
-
-            for (y = 0; y < hostObj[currHost].parents.length; y++) {
-
-                edges.update({
-                    from: hostObj[currHost].parents[y],
-                    to: currHost
-                })
-
-            }
-
-        }
-
-    }
-
-    var data = {
-        nodes: nodes,
-        edges: edges
-    };
 
     var container = document.getElementById('dependency-network');
 
@@ -201,8 +287,7 @@ function drawNetwork(hostObj, group, type) {
     };
 
     var networkOptions = {
-        layout: {
-        },
+        layout: {},
         edges: {
 
             smooth: {
@@ -212,10 +297,9 @@ function drawNetwork(hostObj, group, type) {
             }
         },
 
-        physics: {
-        },
-
         nodes: {
+
+            fixed: true,
 
             scaling: {
                 label: true
@@ -236,6 +320,14 @@ function drawNetwork(hostObj, group, type) {
     if (type === 'network') {
 
         var network = new vis.Network(container, data, networkOptions);
+
+        if(newNetwork == true){
+            network.setOptions({
+                nodes : {
+                    fixed: false
+                }
+            });
+        }
 
     }
 
@@ -265,7 +357,7 @@ function drawNetwork(hostObj, group, type) {
 
     }
 
-    
+
 
 
 
@@ -280,17 +372,23 @@ function drawNetwork(hostObj, group, type) {
         });
 
         $('.zoom-btn-sm').toggleClass('scale-out');
-        if($('.zoom-btn-sm').hasClass('scale-out')){
+        if ($('.zoom-btn-sm').hasClass('scale-out')) {
             network.setOptions({
                 nodes: {
                     fixed: true
                 }
             });
         }
-      
+
     });
 
     $('.zoom-btn-sm').click(function () {
+
+        network.setOptions({
+            nodes: {
+                fixed: true
+            }
+        });
 
         network.storePositions()
 
@@ -303,11 +401,11 @@ function drawNetwork(hostObj, group, type) {
         });
 
 
-    });    
+    });
 
 
     // console.log(network.getSeed())
-    console.log(JSON.stringify(nodes._data));
+    // console.log(JSON.stringify(nodes._data));
 
     network.on("doubleClick", function (params) {
 
