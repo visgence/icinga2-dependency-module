@@ -181,7 +181,9 @@ class GraphController extends Controller{
 
         if($isEmpty){
 
-            echo "EMPTY!";
+            $json = json_encode('EMPTY!');
+
+            echo $json;
 
             exit;
         }else{

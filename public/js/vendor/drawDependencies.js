@@ -1,17 +1,17 @@
-function drawDependencies(hosts, dependencies, type) {
+function formatDependencies(hosts, dependencies, hierarchical, positionData) {
 
     var hostObj = {};
-    // var selectedGroups = [];
+    var positionObj = {};
+
 
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
-    //  Convert to Obj[hostName].var format while combining hosts and dependency objects using loops:
+    //  Convert to Obj[hostName].var format while combining hosts and dependency objects:
 
-
-    for (i = 0; i < dependencies.results.length; i++) {
+    for (i = 0; i <dependencies.results.length; i++) { //build base hostObj out of dependencies, add state infromation later
 
         [hostName, parentName] = (dependencies.results[i].name).split('!Parent'); //need to split due to names in dependencies.json being 'hostName!ParentparentName'
 
-        if (hostObj[hostName] === undefined) {
+        if (hostObj[hostName] === undefined) { //initialize host obj child entry if it does not exit
             hostObj[hostName] = {
                 status: '',
                 parents: [parentName],
@@ -19,15 +19,11 @@ function drawDependencies(hosts, dependencies, type) {
                 group: '',
                 children: [],
             }
-
-
         } else {
-
             hostObj[hostName].parents.push(parentName);
-
         }
 
-        if(hostObj[parentName] === undefined){
+        if (hostObj[parentName] === undefined) { //initialize host obj parent entry if it does not exit
 
             hostObj[parentName] = {
                 status: '',
@@ -36,171 +32,82 @@ function drawDependencies(hosts, dependencies, type) {
                 group: '',
                 children: [hostName],
             }
-            
-        }else{
-            hostObj[parentName].children.push(hostName);
-        }
-
-
-    }
-
-
-
-for (i = 0; i < hosts.results.length; i++) { //Create 
-
-    if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
-        hostStatus = 'UP';
-    } else if (hosts.results[i].attrs.state === 1) {
-
-        if (hosts.results[i].attrs.last_reachable === false) {
-            hostStatus = 'UNREACHABLE';
         } else {
-            hostStatus = 'DOWN';
+            hostObj[parentName].children.push(hostName); //
+        }
+
+    }
+
+    for (i = 0; i < hosts.results.length; i++) {
+
+        if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
+            hostStatus = 'UP';
+        } else if (hosts.results[i].attrs.state === 1) {
+
+            if (hosts.results[i].attrs.last_reachable === false) {
+                hostStatus = 'UNREACHABLE';
+            } else {
+                hostStatus = 'DOWN';
+            }
+        }
+
+        if (hostObj[hosts.results[i].name] != undefined) { //insert into hostObj if dependencies exist
+            hostObj[hosts.results[i].name].status = hostStatus;
+            hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
+        }
+
+        if(positionData != null && positionData[i] != undefined){ //build positionObj 
+            positionObj[positionData[i].node_name] = {
+                node_x: positionData[i].node_x,
+                node_y: positionData[i].node_y
+            }
         }
     }
 
-    if (hostObj[hosts.results[i].name]!= undefined){
-    hostObj[hosts.results[i].name].status = hostStatus;
-    hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
-    }
-
-}
-var newNetwork;
-
-var positionData;
-
-
-
-
-$.ajax({
-    url: "/icingaweb2/dependency_plugin/graph/getNodes",
-    type: 'GET',
-    success: function (response) {
-        if (response === 'EMPTY!') {
-            newNetwork = true;
-            drawNetwork(hostObj, type, newNetwork, 0);
-
-        } else {
-
-            newNetwork = false;
-
-            positionData = JSON.parse(response);
-
-            drawNetwork(hostObj, type, newNetwork, positionData);
-
-        }
-    }
-});
+    drawNetwork(hostObj, hierarchical, positionObj);
 
 }
 
-function drawNetwork(hostObj, type, newNetwork, positionData) {
+function drawNetwork(hostObj, hierarchical, positionObj) {
 
+    var redraw = true;
 
+    color_background = 'white'
 
+    var nodes = new vis.DataSet([]);
 
-    if (newNetwork) {
+    var edges = new vis.DataSet([]);
 
+    for (i = 0; i < Object.keys(hostObj).length; i++) {
 
-        var redraw = true;
+        currHost = Object.keys(hostObj)[i];
 
+        if (hostObj[currHost].hasDependencies) {
 
-        color_background = 'white'
-
-        var nodes = new vis.DataSet([]);
-
-        var edges = new vis.DataSet([]);
-
-
-        for (i = 0; i < Object.keys(hostObj).length; i++) {
-
-            currHost = Object.keys(hostObj)[i];
-
-            if (hostObj[currHost].hasDependencies) {
-
-                if (hostObj[currHost].status === 'DOWN') {
-
-                    color_border = 'red';
-                }
-
-                if (hostObj[currHost].status === 'UNREACHABLE') {
-
-                    color_border = 'purple';
-
-                }
-
-                if (hostObj[currHost].status === 'UP') {
-
-                    color_border = 'green';
-
-                }
-
-                nodes.update({
-                    id: currHost,
-                    label: currHost,
-                    mass: (hostObj[currHost].children.length / 4) + 1,
-                    color: {
-                        border: color_border,
-                        background: color_background
-                    },
-                    size: (hostObj[currHost].children.length * 3) + 20
-                    // event
-
-                })
-
-                for (y = 0; y < hostObj[currHost].parents.length; y++) {
-
-                    edges.update({
-                        from: hostObj[currHost].parents[y],
-                        to: currHost
-                    })
-
-                }
-
+            if (hostObj[currHost].status === 'DOWN') {
+                color_border = 'red';
             }
 
-        }
+            if (hostObj[currHost].status === 'UNREACHABLE') {
+                color_border = 'purple';
+            }
 
-        var data = {
-            nodes: nodes,
-            edges: edges
-        };
+            if (hostObj[currHost].status === 'UP') {
+                color_border = 'green';
+            }
 
-    } else {
-
-        var redraw = true;
-
-
-        color_background = 'white'
-
-        var nodes = new vis.DataSet([]);
-
-        var edges = new vis.DataSet([]);
-
-
-        for (i = 0; i < Object.keys(hostObj).length; i++) {
-
-            currHost = Object.keys(hostObj)[i];
-
-            if (hostObj[currHost].hasDependencies) {
-
-                if (hostObj[currHost].status === 'DOWN') {
-
-                    color_border = 'red';
-                }
-
-                if (hostObj[currHost].status === 'UNREACHABLE') {
-
-                    color_border = 'purple';
-
-                }
-
-                if (hostObj[currHost].status === 'UP') {
-
-                    color_border = 'green';
-
-                }
-
+            if (Object.keys(positionObj).length === 0) {
+                nodes.update({
+                    id: currHost,
+                    label: currHost,
+                    mass: (hostObj[currHost].children.length / 4) + 1,
+                    color: {
+                        border: color_border,
+                        background: color_background
+                    },
+                    size: (hostObj[currHost].children.length * 3) + 20, //generate new x/y coordinates on network generation
+                });
+            } else {
 
                 nodes.update({
                     id: currHost,
@@ -210,37 +117,38 @@ function drawNetwork(hostObj, type, newNetwork, positionData) {
                         border: color_border,
                         background: color_background
                     },
+                    
                     size: (hostObj[currHost].children.length * 3) + 20,
-                    x: positionData[i].node_x,
-                    y: positionData[i].node_y
+                    x: positionObj[currHost].node_x,
+                    y: positionObj[currHost].node_y
+                });
+            }
 
+
+            for (y = 0; y < hostObj[currHost].parents.length; y++) {
+
+                edges.update({
+                    from: hostObj[currHost].parents[y],
+                    to: currHost
                 });
 
-                for (y = 0; y < hostObj[currHost].parents.length; y++) {
-
-                    edges.update({
-                        from: hostObj[currHost].parents[y],
-                        to: currHost
-                    });
-
-                }
-
             }
 
         }
 
-        var data = {
-            nodes: nodes,
-            edges: edges
-        };
-
     }
 
+    var networkData = {
+        nodes: nodes,
+        edges: edges
+    };
 
     var container = document.getElementById('dependency-network');
 
-    var hierarchyOptions = {
+    const hierarchyOptions = {
         layout: {
+
+            randomSeed: 728804,
 
             // improvedLayout: true,
             hierarchical: {
@@ -282,57 +190,45 @@ function drawNetwork(hostObj, type, newNetwork, positionData) {
 
             },
         }
-
-
     };
 
-    var networkOptions = {
-        layout: {},
+    const networkOptions = {
+
+        layout: {
+            randomSeed: 728804
+        },
         edges: {
-
             smooth: {
-
                 "forceDirection": "none",
-
             }
         },
 
         nodes: {
-
             fixed: true,
-
             scaling: {
                 label: true
             },
             shape: 'dot'
         },
-
-
     };
 
 
-    if (type === 'hierarchical') {
+    if (hierarchical) {
+        var network = new vis.Network(container, networkData, hierarchyOptions);
+    } else {
 
-        var network = new vis.Network(container, data, hierarchyOptions);
+        var network = new vis.Network(container, networkData, networkOptions);
 
-    }
-
-    if (type === 'network') {
-
-        var network = new vis.Network(container, data, networkOptions);
-
-        if(newNetwork == true){
+        if (Object.keys(positionObj).length === 0) {
             network.setOptions({
-                nodes : {
+                nodes: {
                     fixed: false
                 }
             });
         }
-
     }
 
-    if (redraw === true) {
-
+    if (redraw) {
         network.on("stabilizationProgress", function (params) {
             var maxWidth = 496;
             var minWidth = 20;
@@ -352,16 +248,8 @@ function drawNetwork(hostObj, type, newNetwork, positionData) {
                 document.getElementById('loadingBar').style.display = 'none';
             }, 500);
         });
-
         redraw = false;
-
     }
-
-
-
-
-
-
 
     $('#zoomBtn').click(function () {
 
@@ -379,11 +267,9 @@ function drawNetwork(hostObj, type, newNetwork, positionData) {
                 }
             });
         }
-
     });
 
     $('.zoom-btn-sm').click(function () {
-
         network.setOptions({
             nodes: {
                 fixed: true
@@ -399,19 +285,13 @@ function drawNetwork(hostObj, type, newNetwork, positionData) {
                 json: JSON.stringify(nodes._data)
             }
         });
-
-
     });
 
-
-    // console.log(network.getSeed())
-    // console.log(JSON.stringify(nodes._data));
-
     network.on("doubleClick", function (params) {
-
         if (params.nodes[0] != undefined) {
             href = location.href.split('/');
             location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
         }
     });
+
 }
