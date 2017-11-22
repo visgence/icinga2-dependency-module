@@ -64,10 +64,6 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
         }
     }
 
-    console.log(Object.keys(positionObj).length)
-    console.log(Object.keys(hostObj).length)
-
-
     if(Object.keys(positionObj).length != Object.keys(hostObj).length){ //if these are not the same, a host with dependencies has been removed/added
         positionObj = {}; //reset signals new network generation
     }
@@ -119,7 +115,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
                 nodes.update({
                     id: currHost,
-                    label: currHost,
+                    //label: currHost,
                     mass: (hostObj[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
