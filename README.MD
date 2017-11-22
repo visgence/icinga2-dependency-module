@@ -12,7 +12,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 # Icinga 2 Dependency Module
-### An Icinga Web 2 Module for mapping network topography and displaying realtime status of Icinga 2 Networks
+### An Icinga Web 2 Module for mapping network topology and displaying realtime status of Icinga 2 Networks
 ![alt tag](application/img/NetworkExample.png)
 ![alt tag](application/img/HierarchicalExample.png)
 
@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 This module implements vis.js <http://visjs.org> to create a topological network map for Icinga 2 Web similar to NagViz for Icinga 1/Nagios. To generate the relationships between the nodes, a custom variable "parents" is used in the host configurtion files, similar to use in Icinga 1/Nagios. To generate depedency information, an apply rule is applied which creates up to date depenency information, including multiple parentage.
 
 ## Features
-1.  Displays Icinga 2 network topography in either hierarchical or network layouts
+1.  Displays Icinga 2 network topology in either hierarchical or network layouts.
 2.  Displays up-to-date status information for hosts based on state information pulled from Icinga 2 API
-3.  Allows for customization of network topography after initial simulation via dragging nodes to desired locations
+3.  Allows for customization of network topology after initial simulation via dragging nodes to desired locations
 4.  Automatically redraws network when a host is added or removed.
 5.  Directly links to host information via double clicking on nodes.
 
