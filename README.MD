@@ -63,7 +63,7 @@ Next restart postgres `service postgresql restart`
 
 ### Create Schema
 `export PGPASSWORD=dependencies`
-`psql -U icinga -d icinga < /usr/share/icingaweb2/modules/dependency_plugin/application/schema`
+`psql -U dependencies -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/pgsql.sql`
 
 
 

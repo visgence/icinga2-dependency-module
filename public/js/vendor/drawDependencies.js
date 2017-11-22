@@ -115,7 +115,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
                 nodes.update({
                     id: currHost,
-                    //label: currHost,
+                    label: currHost,
                     mass: (hostObj[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
