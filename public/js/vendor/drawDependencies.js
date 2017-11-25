@@ -287,6 +287,9 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             type: 'POST',
             data: {
                 json: JSON.stringify(nodes._data)
+            },
+            success:  function(){
+                $("#notification").css({ "display": "block" }).delay(5000).fadeOut();
             }
         });
     });
