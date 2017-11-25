@@ -219,6 +219,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
     if (hierarchical) {
         var network = new vis.Network(container, networkData, hierarchyOptions);
+            $('.fabs').hide();
     } else {
 
         var network = new vis.Network(container, networkData, networkOptions);
@@ -229,33 +230,31 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                     fixed: false
                 }
             });
+            document.getElementById('loadingBar').style.display = 'block';
+            network.on("stabilizationProgress", function (params) {
+                var maxWidth = 496;
+                var minWidth = 20;
+                var widthFactor = params.iterations / params.total;
+                var width = Math.max(minWidth, maxWidth * widthFactor);
+
+                document.getElementById('bar').style.width = width + 'px';
+                document.getElementById('text').innerHTML = Math.round(widthFactor * 100) + '%';
+            });
+
+            network.once("stabilizationIterationsDone", function () {
+                document.getElementById('text').innerHTML = '100%';
+                document.getElementById('bar').style.width = '496px';
+                document.getElementById('loadingBar').style.opacity = 0;
+                // really clean the dom element
+                setTimeout(function () {
+                    document.getElementById('loadingBar').style.display = 'none';
+                }, 500);
+            });
         }
     }
 
-    if (redraw) {
-        network.on("stabilizationProgress", function (params) {
-            var maxWidth = 496;
-            var minWidth = 20;
-            var widthFactor = params.iterations / params.total;
-            var width = Math.max(minWidth, maxWidth * widthFactor);
 
-            document.getElementById('bar').style.width = width + 'px';
-            document.getElementById('text').innerHTML = Math.round(widthFactor * 100) + '%';
-        });
-
-        network.once("stabilizationIterationsDone", function () {
-            document.getElementById('text').innerHTML = '100%';
-            document.getElementById('bar').style.width = '496px';
-            document.getElementById('loadingBar').style.opacity = 0;
-            // really clean the dom element
-            setTimeout(function () {
-                document.getElementById('loadingBar').style.display = 'none';
-            }, 500);
-        });
-        redraw = false;
-    }
-
-    $('#zoomBtn').click(function () {
+    $('#editBtn').click(function () {
 
         network.setOptions({
             nodes: {
@@ -263,8 +262,8 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             }
         });
 
-        $('.zoom-btn-sm').toggleClass('scale-out');
-        if ($('.zoom-btn-sm').hasClass('scale-out')) {
+        $('.fab-btn-sm').toggleClass('scale-out');
+        if ($('.fab-btn-sm').hasClass('scale-out')) {
             network.setOptions({
                 nodes: {
                     fixed: true
@@ -273,7 +272,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
         }
     });
 
-    $('.zoom-btn-sm').click(function () {
+    $('.fab-btn-sm').click(function () {
         network.setOptions({
             nodes: {
                 fixed: true

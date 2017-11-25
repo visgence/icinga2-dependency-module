@@ -16,6 +16,7 @@
                 getRequests(isHierarchical);
                 networkExitTimeout();
             } else if (window.location.href.endsWith('hierarchy')) {
+                $('.fabs').hide();
                 var isHierarchical = true;
                 getRequests(isHierarchical);
                 hierarchyExitTimeout();
@@ -50,6 +51,7 @@
     }
 
     function getRequests(isHierarchical) {
+        
 
         $.when(
             $.ajax({
