@@ -67,9 +67,11 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
         }
     }
 
-    if (Object.keys(positionObj).length != Object.keys(hostObj).length) { //if these are not the same, a host with dependencies has been removed/added
-        positionObj = {}; //reset signals new network generation
-    }
+    // if (Object.keys(positionObj).length != Object.keys(hostObj).length) { //if these are not the same, a host with dependencies has been removed/added
+    //     positionObj = {}; //reset signals new network generation
+    // }
+
+    // positionObj = {};
 
     drawNetwork(hostObj, hierarchical, positionObj);
 
@@ -78,6 +80,8 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
 function drawNetwork(hostObj, hierarchical, positionObj) {
 
     var redraw = true;
+
+    var newHost = false;
 
     color_background = 'white'
 
@@ -103,7 +107,8 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                 color_border = 'green';
             }
 
-            if (Object.keys(positionObj).length === 0) {
+            if (!positionObj[currHost]) { //if the name of the host does not exist in data base, it is a new host.
+                newHost = true;
                 nodes.update({
                     id: currHost,
                     label: (hostObj[currHost].description + "\n(" + currHost + ")"),
@@ -113,9 +118,8 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                         background: color_background
                     },
                     size: (hostObj[currHost].children.length * 3) + 20, //generate new x/y coordinates on network generation
-                });
+                })
             } else {
-
                 nodes.update({
                     id: currHost,
                     label: (hostObj[currHost].description + "\n(" + currHost + ")"),
@@ -127,7 +131,8 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
                     size: (hostObj[currHost].children.length * 3) + 20,
                     x: positionObj[currHost].node_x,
-                    y: positionObj[currHost].node_y
+                    y: positionObj[currHost].node_y,
+
                 });
             }
 
@@ -212,10 +217,10 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
         },
 
         nodes: {
-            fixed: true,
             scaling: {
                 label: true
             },
+            fixed: true,
             shape: 'dot'
         }
     };
@@ -262,6 +267,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
     $('#editBtn').click(function () {
 
+
         network.setOptions({
             nodes: {
                 fixed: false
@@ -278,7 +284,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
         }
     });
 
-    $('.fab-btn-save').click(function () {
+    $('.fab-btn-save').click(function() {
         network.setOptions({
             nodes: {
                 fixed: true
@@ -294,12 +300,47 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                 json: JSON.stringify(nodes._data)
             },
             success: function () {
-                $("#notification").css({
-                    "display": "block"
-                }).delay(5000).fadeOut();
+                    $("#notification").html(
+                        "<div class = notification-content><h3>Changes Saved Successfully</h3>"
+                    ).css({
+                        "display": "block",
+                    }).delay(5000).fadeOut();
             }
         });
     });
+
+    if(newHost && !hierarchical){
+        network.setOptions({
+            nodes: {
+                fixed: false
+            }
+        });
+
+        network.once("stabilizationIterationsDone", function () {
+            
+            network.setOptions({
+                nodes: {
+                    fixed : false
+                }
+            });
+        });
+
+        // $.ajax({
+        //     url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+        //     type: 'POST',
+        //     data: {
+        //         json: JSON.stringify(nodes._data)
+        //     },
+        //     success: function () {
+        //         $("#notification").html(
+        //             "<div class = notification-content><h3>New Host(s) Added</h3>"
+        //         ).css({
+        //             "display": "block",
+        //         }).delay(5000).fadeOut();
+        //     }
+        // });
+
+    }
 
     // $('.fab-btn-refresh').click(function () {
     //     network.setOptions({
