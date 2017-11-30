@@ -7,13 +7,14 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
     //  Convert to Obj[hostName].var format while combining hosts and dependency objects:
 
-    for (i = 0; i <dependencies.results.length; i++) { //build base hostObj out of dependencies, add state infromation later
+    for (i = 0; i < dependencies.results.length; i++) { //build base hostObj out of dependencies, add state infromation later
 
         [hostName, parentName] = (dependencies.results[i].name).split('!Parent'); //need to split due to names in dependencies.json being 'hostName!ParentparentName'
 
         if (hostObj[hostName] === undefined) { //initialize host obj child entry if it does not exit
             hostObj[hostName] = {
                 status: '',
+                description: '',
                 parents: [parentName],
                 hasDependencies: true,
                 group: '',
@@ -27,6 +28,7 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
 
             hostObj[parentName] = {
                 status: '',
+                description: '',
                 parents: [],
                 hasDependencies: true,
                 group: '',
@@ -54,9 +56,10 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
         if (hostObj[hosts.results[i].name] != undefined) { //insert into hostObj if dependencies exist
             hostObj[hosts.results[i].name].status = hostStatus;
             hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
+            hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
         }
 
-        if(positionData != null && positionData[i] != undefined){ //build positionObj 
+        if (positionData != null && positionData[i] != undefined) { //build positionObj 
             positionObj[positionData[i].node_name] = {
                 node_x: positionData[i].node_x,
                 node_y: positionData[i].node_y
@@ -64,7 +67,7 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
         }
     }
 
-    if(Object.keys(positionObj).length != Object.keys(hostObj).length){ //if these are not the same, a host with dependencies has been removed/added
+    if (Object.keys(positionObj).length != Object.keys(hostObj).length) { //if these are not the same, a host with dependencies has been removed/added
         positionObj = {}; //reset signals new network generation
     }
 
@@ -103,7 +106,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             if (Object.keys(positionObj).length === 0) {
                 nodes.update({
                     id: currHost,
-                    label: currHost,
+                    label: (hostObj[currHost].description + "\n(" + currHost + ")"),
                     mass: (hostObj[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
@@ -115,13 +118,13 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
                 nodes.update({
                     id: currHost,
-                    label: currHost,
+                    label: (hostObj[currHost].description + "\n(" + currHost + ")"),
                     mass: (hostObj[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
                         background: color_background
                     },
-                    
+
                     size: (hostObj[currHost].children.length * 3) + 20,
                     x: positionObj[currHost].node_x,
                     y: positionObj[currHost].node_y
@@ -199,7 +202,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
     const networkOptions = {
 
         layout: {
-            improvedLayout : false,
+            improvedLayout: false,
             randomSeed: 728804
         },
         edges: {
@@ -254,7 +257,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             });
         }
     }
-    
+
 
 
     $('#editBtn').click(function () {
@@ -290,8 +293,10 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             data: {
                 json: JSON.stringify(nodes._data)
             },
-            success:  function(){
-                $("#notification").css({ "display": "block" }).delay(5000).fadeOut();
+            success: function () {
+                $("#notification").css({
+                    "display": "block"
+                }).delay(5000).fadeOut();
             }
         });
     });
@@ -304,7 +309,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
     //         drawNetwork(hostObj,  )
     //     });
-        
+
     // });
 
     network.on("doubleClick", function (params) {
@@ -313,5 +318,24 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
         }
     });
+    network.on("selectNode", function (params) {
 
+        var clickedNode = network.body.nodes[params.nodes[0]];
+        clickedNode.setOptions({
+            font: {
+                background: 'white',
+            }
+        });
+    });
+
+    network.on("deselectNode", function (params) {
+
+        var clickedNode = network.body.nodes[params.previousSelection.nodes[0]];
+        clickedNode.setOptions({
+            font: {
+                background: 'none',
+            }
+        });
+
+    });
 }
