@@ -199,6 +199,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
     const networkOptions = {
 
         layout: {
+            improvedLayout : false,
             randomSeed: 728804
         },
         edges: {
@@ -213,13 +214,12 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                 label: true
             },
             shape: 'dot'
-        },
+        }
     };
 
 
     if (hierarchical) {
         var network = new vis.Network(container, networkData, hierarchyOptions);
-            $('.fabs').hide();
     } else {
 
         var network = new vis.Network(container, networkData, networkOptions);
@@ -230,6 +230,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                     fixed: false
                 }
             });
+            $('.fabs').hide();
             document.getElementById('loadingBar').style.display = 'block';
             network.on("stabilizationProgress", function (params) {
                 var maxWidth = 496;
@@ -249,9 +250,11 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                 setTimeout(function () {
                     document.getElementById('loadingBar').style.display = 'none';
                 }, 500);
+                $('.fabs').show();
             });
         }
     }
+    
 
 
     $('#editBtn').click(function () {
@@ -259,7 +262,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
         network.setOptions({
             nodes: {
                 fixed: false
-            }
+            },
         });
 
         $('.fab-btn-sm').toggleClass('scale-out');
@@ -272,7 +275,7 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
         }
     });
 
-    $('.fab-btn-sm').click(function () {
+    $('.fab-btn-save').click(function () {
         network.setOptions({
             nodes: {
                 fixed: true
@@ -292,6 +295,17 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             }
         });
     });
+
+    // $('.fab-btn-refresh').click(function () {
+    //     network.setOptions({
+    //         nodes: {
+    //             fixed: false
+    //         },
+
+    //         drawNetwork(hostObj,  )
+    //     });
+        
+    // });
 
     network.on("doubleClick", function (params) {
         if (params.nodes[0] != undefined) {

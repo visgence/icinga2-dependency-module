@@ -3,11 +3,25 @@
 namespace Icinga\Module\dependency_plugin\Controllers;
 
 use Icinga\Web\Controller;
-
+use Icinga\Data\Db\DbConnection as IcingaDbConnection;
+use Icinga\Data\ResourceFactory;
 
 class GraphController extends Controller{
 
+
+    public function kickstartAction() {
+        
+
+        // $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
+         
+        // $query = 'SELECT * from node_positions';
+        // echo json_encode($db->fetchAll($query));
+
+        // exit;
+    }
+
     public function displayAction(){
+
 
     }
 
