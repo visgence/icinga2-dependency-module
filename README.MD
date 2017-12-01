@@ -84,9 +84,18 @@ host    dependencies      dependencies      ::1/128               md5
 
 Next restart postgres `service postgresql restart`
 
+
 ### Create Schema
 `export PGPASSWORD=dependencies`
 `psql -U dependencies -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/pgsql.sql`
+
+
+### Add Created Database to Icinga 2 Application Resources
+1.  In Icinga Web 2 select configuration menu item.
+2.  Select resource tab.
+3.  Select create new resource.
+4.  Create new resosurce using "dependencies" as resource name, database name, username, and password.
+5.  Validate resource and save changes.
 
 ###Create Icinga 2 API user
 In order to query data, this module needs full API access to Icinga Web 2. This can be accomplished by adding a new user to api-users.conf file
