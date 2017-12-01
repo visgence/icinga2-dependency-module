@@ -315,31 +315,33 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                 fixed: false
             }
         });
+         network.startSimulation();
+          network.stabilize(100);
 
         network.once("stabilizationIterationsDone", function () {
-            
-            network.setOptions({
+         network.stopSimulation();  
+             network.setOptions({
                 nodes: {
-                    fixed : false
+                    fixed : true 
                 }
-            });
+            }); 
+            network.storePositions();
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(nodes._data)
+            },
+            success: function () {
+                $("#notification").html(
+                    "<div class = notification-content><h3>Network Change Detected</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            }
         });
 
-        // $.ajax({
-        //     url: "/icingaweb2/dependency_plugin/graph/storeNodes",
-        //     type: 'POST',
-        //     data: {
-        //         json: JSON.stringify(nodes._data)
-        //     },
-        //     success: function () {
-        //         $("#notification").html(
-        //             "<div class = notification-content><h3>New Host(s) Added</h3>"
-        //         ).css({
-        //             "display": "block",
-        //         }).delay(5000).fadeOut();
-        //     }
-        // });
-
+        });
     }
 
     // $('.fab-btn-refresh').click(function () {
