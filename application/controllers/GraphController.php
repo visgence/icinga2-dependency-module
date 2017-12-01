@@ -125,34 +125,15 @@ class GraphController extends Controller{
 
     public function storenodesAction(){
 
-    // require_once 'icingaweb2/library/vendor/Zend/Db/Adapter/Pdo/Pgsql.php';
-
-
-    // $db = Zend_Db::factory('Pdo_Pgsql', array(
-    //     'host'     => '127.0.0.1',
-    //     'username' => 'webuser',
-    //     'password' => 'xxxxxxxx',
-    //     'dbname'   => 'test'
-    // ));
-
-    // $pdo = new PDO();
-
-        $dbconn = pg_connect("host=127.0.0.1  dbname=dependencies user=dependencies password=dependencies")
-    or die('Could not connect: ' . pg_last_error());
-
+        $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
+         
         $json = $_POST["json"];
 
         $data = json_decode($json, true);
 
         if($data != null){
 
-            $result = pg_query($dbconn, "TRUNCATE TABLE node_positions RESTART IDENTITY;");
-
-            if(!$result){
-                echo "An error occured.\n";
-                exit;
-            }
-
+           $result = $db->exec("TRUNCATE TABLE node_positions RESTART IDENTITY;");
 
             foreach($data as $item){
 
@@ -162,12 +143,13 @@ class GraphController extends Controller{
 
                 echo(gettype($item['y']));
 
-                $arr1 = array('node_name'=> $name, 'node_x' => $node_x, 'node_y' => $node_y);
+                $res = $db->insert('node_positions', array(
+                    'node_name'=> $name, 'node_x' => $node_x, 'node_y' => $node_y
+                ));
 
-                $res = pg_insert($dbconn, "node_positions", $arr1);
 
                 if(!$res){
-                echo "An error occured.\n";
+                echo "An error occured while attempting to store nodes.\n";
                 exit;
             }
 
@@ -178,20 +160,18 @@ class GraphController extends Controller{
 
         }
 
-        pg_close($dbconn);
         exit;
     }
 
     public function getnodesAction(){
 
-        $dbconn = pg_connect("host=127.0.0.1  dbname=dependencies user=dependencies password=dependencies")
-        or die('Could not connect: ' . pg_last_error());
 
+        $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
 
+        $query = 'SELECT * from node_positions';
+        $vals = $db->fetchAll($query);
 
-
-        $vals = pg_fetch_all(pg_query($dbconn, "SELECT * FROM node_positions;"));
-        $isEmpty = (pg_num_rows(pg_query($dbconn, "SELECT * FROM node_positions;")) == 0);
+        $isEmpty = empty($vals);
 
         if($isEmpty){
 

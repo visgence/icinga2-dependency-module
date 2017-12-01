@@ -108,7 +108,8 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
             }
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in data base, it is a new host.
-                newHost = true;
+                if (Object.keys(positionObj).length > 0)
+                    newHost = true;
                 nodes.update({
                     id: currHost,
                     label: (hostObj[currHost].description + "\n(" + currHost + ")"),
@@ -238,6 +239,11 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
                     fixed: false
                 }
             });
+            $("#notification").html(
+                "<div class = notification-content><h3>Generating New Network</h3>"
+            ).css({
+                "display": "block",
+            }).delay(5000).fadeOut();
             $('.fabs').hide();
             document.getElementById('loadingBar').style.display = 'block';
             network.on("stabilizationProgress", function (params) {
