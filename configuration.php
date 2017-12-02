@@ -12,6 +12,8 @@ $section->add(N_('Hierarchy Map'))
 $section->add(N_('Network Map'))
     ->setUrl('dependency_plugin/graph/display/network');
 
+
+$this->provideJsFile('vendor/fullscreenMode.js');
 $this->provideJsFile('vendor/drawDependencies.js');
 $this->provideJsFile('vendor/vis.min.js');
 // $this->provideCssFile('vendor/network.css');

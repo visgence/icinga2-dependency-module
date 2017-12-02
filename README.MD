@@ -27,7 +27,7 @@ This module implements vis.js <http://visjs.org> to create a topological network
 4.  Automatically redraws network when a host is added or removed.
 5.  Directly links to host information via double clicking on nodes.
 
-#Installation
+# Installation
 First clone this repository into `/usr/share/icingaweb2/modules`
 
 ## Icinga 2 Dependency Apply Rule
@@ -97,7 +97,7 @@ Next restart postgres `service postgresql restart`
 4.  Create new resosurce using "dependencies" as resource name, database name, username, and password.
 5.  Validate resource and save changes.
 
-###Create Icinga 2 API user
+### Create Icinga 2 API user
 In order to query data, this module needs full API access to Icinga Web 2. This can be accomplished by adding a new user to api-users.conf file
 using  `sudo vim /etc/icinga2/conf.d/api-users.conf` add the following lines to the configuration file:
 ```

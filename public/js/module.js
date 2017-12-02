@@ -2,23 +2,28 @@
 
     var dependencies;
     var hosts;
-    // Double ajax request to getHostsAction() and getDependencyAction() in module php controller file to retrieve JSONs for hosts, dependencies
-
 
     timeout();
+   
 
     function timeout() {
 
         setTimeout(function () {
 
-            if (window.location.href.endsWith('network')) {
+            if (window.location.href.indexOf('network') > -1) {
+                var isFullscreen = false;
                 var isHierarchical = false;
-                getRequests(isHierarchical);
+                if (window.location.href.indexOf('Fullscreen') > -1){
+                    isFullscreen = true;
+                    $('.fabs').hide();
+                }
+              
+                getRequests(isHierarchical, isFullscreen);
                 networkExitTimeout();
-            } else if (window.location.href.endsWith('hierarchy')) {
+            } else if (window.location.href.indexOf('hierarchy') > -1) {
                 $('.fabs').hide();
                 var isHierarchical = true;
-                getRequests(isHierarchical);
+                getRequests(isHierarchical, false);
                 hierarchyExitTimeout();
             } else {
                 timeout();
@@ -29,7 +34,7 @@
     function hierarchyExitTimeout() {
 
         setTimeout(function () {
-            if (!(window.location.href.endsWith('hierarchy'))) {
+            if (window.location.href.indexOf('hierarchy') === -1) {
                 timeout();
             } else {
                 hierarchyExitTimeout();
@@ -41,7 +46,7 @@
 
         setTimeout(function () {
 
-            if (!(window.location.href.endsWith('network'))) {
+            if ((window.location.href.indexOf('network') === -1)) {
                 timeout();
             } else {
                 networkExitTimeout();
@@ -50,7 +55,7 @@
 
     }
 
-    function getRequests(isHierarchical) {
+    function getRequests(isHierarchical, isFullscreen) {
         
 
         $.when(
@@ -59,7 +64,7 @@
                 type: 'GET',
                 success: function (hostData) {
                     hosts = (JSON.parse(hostData));
-                    // console.log(hosts);
+                    console.log(hosts);
                 }
             }),
 
@@ -88,7 +93,7 @@
                 alert("API Authentication Not Found, Please run Setup API command on host machine");
             } else {
                 // console.log(hosts, dependencies);
-                formatDependencies(hosts, dependencies, isHierarchical, positionData);
+                formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen);
             }
         });
     }

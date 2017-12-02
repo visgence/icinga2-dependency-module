@@ -1,7 +1,8 @@
-function formatDependencies(hosts, dependencies, hierarchical, positionData) {
+function formatDependencies(hosts, dependencies, hierarchical, positionData, isFullscreen) {
 
     var hostObj = {};
     var positionObj = {};
+    // console.log(isFullscreen);
 
 
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
@@ -73,11 +74,11 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData) {
 
     // positionObj = {};
 
-    drawNetwork(hostObj, hierarchical, positionObj);
+    drawNetwork(hostObj, hierarchical, positionObj, isFullscreen);
 
 }
 
-function drawNetwork(hostObj, hierarchical, positionObj) {
+function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
 
     var redraw = true;
 
@@ -92,6 +93,8 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
     for (i = 0; i < Object.keys(hostObj).length; i++) {
 
         currHost = Object.keys(hostObj)[i];
+
+        // console.log(currHost);
 
         if (hostObj[currHost].hasDependencies) {
 
@@ -229,9 +232,20 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
 
     if (hierarchical) {
         var network = new vis.Network(container, networkData, hierarchyOptions);
-    } else {
+    } else if(isFullscreen){
 
         var network = new vis.Network(container, networkData, networkOptions);
+
+        // console.log("called");
+
+        fullscreenMode(network, nodes);
+
+
+    } else{
+
+        var network = new vis.Network(container, networkData, networkOptions);
+
+        // setTimeout();
 
         if (Object.keys(positionObj).length === 0) {
             network.setOptions({
@@ -387,4 +401,6 @@ function drawNetwork(hostObj, hierarchical, positionObj) {
         });
 
     });
+
+
 }
