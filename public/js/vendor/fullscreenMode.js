@@ -5,7 +5,7 @@ function fullscreenMode(network, nodes) {
     setTimeout(function () {
 
         refreshMap();
-    }, 3000000);
+    }, 600000);
 
     // var problemHosts = [];
 
@@ -38,7 +38,7 @@ function fullscreenMode(network, nodes) {
             idle();
 
 
-        }, 5000);
+        }, 300000);
 
         // setTimeout(function () {
 

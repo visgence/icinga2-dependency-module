@@ -100,10 +100,12 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
 
             if (hostObj[currHost].status === 'DOWN') {
                 color_border = 'red';
+                text_size = 14;
             }
 
             if (hostObj[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
+                text_size = 14;
             }
 
             if (hostObj[currHost].status === 'UP') {
