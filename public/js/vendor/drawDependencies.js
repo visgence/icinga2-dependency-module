@@ -112,6 +112,8 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                 color_border = 'green';
                 text_size = 0;
             }
+            if((hostObj[currHost].children.length) > 3)
+                text_size = 15;
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in data base, it is a new host.
                 if (Object.keys(positionObj).length > 0)
