@@ -100,20 +100,19 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
 
             if (hostObj[currHost].status === 'DOWN') {
                 color_border = 'red';
-                text_size = 25;
             }
 
             if (hostObj[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
-                text_size = 20;
             }
 
             if (hostObj[currHost].status === 'UP') {
                 color_border = 'green';
                 text_size = 0;
             }
+
             if((hostObj[currHost].children.length) > 3)
-                text_size = 15;
+                text_size = 14;
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in data base, it is a new host.
                 if (Object.keys(positionObj).length > 0)

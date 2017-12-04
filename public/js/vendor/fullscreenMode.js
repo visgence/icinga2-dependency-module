@@ -141,11 +141,11 @@ function getStateUpdate(network, nodes) {
 
                 if (hosts.results[i].attrs.last_reachable === false) {
                     color_border = 'purple';
-                    font_size = 20;
+                    font_size = 14;
                     problemHosts.push(hosts.results[i].name);
                 } else {
                     color_border = 'red';
-                    font_size = 30;
+                    font_size = 14;
                     problemHosts.push(hosts.results[i].name);
                 }
             }
@@ -166,7 +166,6 @@ function getStateUpdate(network, nodes) {
             }
         }
 
-        console.log("State Updated");
         // console.log(problemHosts[0]);
 
 
