@@ -100,14 +100,17 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
 
             if (hostObj[currHost].status === 'DOWN') {
                 color_border = 'red';
+                text_size = 25;
             }
 
             if (hostObj[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
+                text_size = 20;
             }
 
             if (hostObj[currHost].status === 'UP') {
                 color_border = 'green';
+                text_size = 0;
             }
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in data base, it is a new host.
@@ -121,6 +124,11 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                         border: color_border,
                         background: color_background
                     },
+
+                    font: {
+                        size: text_size
+                    },
+
                     size: (hostObj[currHost].children.length * 3) + 20, //generate new x/y coordinates on network generation
                 })
             } else {
@@ -131,6 +139,10 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                     color: {
                         border: color_border,
                         background: color_background
+                    },
+
+                    font: {
+                        size: text_size
                     },
 
                     size: (hostObj[currHost].children.length * 3) + 20,
@@ -384,8 +396,10 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
     network.on("selectNode", function (params) {
 
         var clickedNode = network.body.nodes[params.nodes[0]];
+        font_size = clickedNode.options.font.size;
         clickedNode.setOptions({
             font: {
+                size: 30,
                 background: 'white',
             }
         });
@@ -396,6 +410,7 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
         var clickedNode = network.body.nodes[params.previousSelection.nodes[0]];
         clickedNode.setOptions({
             font: {
+                size: font_size,
                 background: 'none',
             }
         });
