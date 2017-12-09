@@ -199,7 +199,28 @@ div.dependency-module-kickstart {
         font-weight: 600;
         margin: 0.556em 0 1em 1em;
     }
-    form fieldset {
+    form 
+    input[type=submit] {
+    border-radius: 3px;
+    -webkit-background-clip: padding-box;
+    width: 15%;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 2px solid #0095bf;
+    color: #0095bf;
+    cursor: pointer;
+    outline: none;
+    padding: 0.5em 1em;
+    -webkit-transition: background 0.3s ease, color 0.3s ease;
+    -moz-transition: background 0.3s ease, color 0.3s ease;
+    -o-transition: background 0.3s ease, color 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
+    border-width: 1px;
+    margin-top: 0.5em;
+}
+    
+    fieldset {
         min-width: 36em;
         border: 0px;
         legend {
@@ -226,7 +247,6 @@ div.dependency-module-kickstart {
             select,
             input {
                 max-width: 36em;
-                min-width: 20em;
                 width: 100%;
                 line-height: 2em;
                 height: 2.4em;

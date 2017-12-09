@@ -8,23 +8,53 @@ use Icinga\Data\ResourceFactory;
 
 class GraphController extends Controller{
 
+    public function hierarchyAction() {}
+    
+    public function networkAction() {}
 
-    public function kickstartAction() {
+    public function kickstartAction() {}
+
+    public function displayAction(){}
+
+    public function getresourcesAction(){
+            
+        $dbArr = [];
+           
+        $resourcesfile = fopen("/etc/icingaweb2/resources.ini", 'r');
+
+         if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
+
+            $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
+            $apiLogin = json_decode($apiLogin);
+
+            $resources['user'] = $apiLogin->user;
+            $resources['address'] = $apiLogin->address;
+            
+            
+         }
+
+        while($line = fgets($resourcesfile)) {
+
+            // echo $line;
+            if(strpos($line, 'dbname') !== false){
+
+                $dbname = explode('=', $line);
+                $dbname = explode('"', $dbname[1]);
+                array_push($dbArr, $dbname[1]);
+
+            }
+
+        }
+
+        $resources['databases'] = $dbArr;
         
-
-        // $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
-         
-        // $query = 'SELECT * from node_positions';
-        // echo json_encode($db->fetchAll($query));
-
-        // exit;
-    }
-
-    public function displayAction(){
+        echo json_encode($resources);
+        fclose($resourcesfile);
+        
+        exit;
 
 
     }
-
 
     public function getdependencyAction() {
                 
