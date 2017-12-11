@@ -135,6 +135,7 @@ class GraphController extends Controller{
                 CURLOPT_SSL_VERIFYHOST => false,
             ));
 
+             $response = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
             if($code === 401){
@@ -146,7 +147,7 @@ class GraphController extends Controller{
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(array('message' => curl_error($ch), 'code' => $code)));
             } 
-            
+
             echo $response;
             exit;
 
