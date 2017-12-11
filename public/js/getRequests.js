@@ -33,7 +33,7 @@ function getRequests(isHierarchical, isFullscreen) {
         })
     ).then(function () {
         if (dependencies === 404) {
-            alert("API Authentication Not Found, Please run Setup API command on host machine");
+            window.location.replace("./kickstart");
         } else {
             // console.log(hosts, dependencies);
             formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen);

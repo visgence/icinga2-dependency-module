@@ -3,6 +3,7 @@
 namespace Icinga\Module\dependency_plugin\Controllers;
 
 use Icinga\Web\Controller;
+use Exception;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
 use Icinga\Data\ResourceFactory;
 
@@ -14,24 +15,13 @@ class GraphController extends Controller{
 
     public function kickstartAction() {}
 
-    public function displayAction(){}
+    public function displayAction() {}
 
     public function getresourcesAction(){
             
         $dbArr = [];
            
         $resourcesfile = fopen("/etc/icingaweb2/resources.ini", 'r');
-
-         if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
-
-            $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
-            $apiLogin = json_decode($apiLogin);
-
-            $resources['user'] = $apiLogin->user;
-            $resources['address'] = $apiLogin->address;
-            
-            
-         }
 
         while($line = fgets($resourcesfile)) {
 
@@ -56,21 +46,75 @@ class GraphController extends Controller{
 
     }
 
+    public function storesettingsAction(){
+
+        $json = $_POST["json"];
+
+        $data = json_decode($json, true);
+        
+        if($data != null){
+
+
+                $resource = $data[0]['value'];
+                $port = $data[1]['value'];
+                $username = $data[2]['value'];
+                $password = $data[3]['value'];
+
+                $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
+
+
+
+                $res = $db->insert('plugin_settings', array(
+                    'database_resource'=> $resource, 'api_user' => $username, 'api_password' => $password
+                , 'api_endpoint' => $port
+                ));
+
+
+                if(!$res){
+                echo "An error occured while attempting to settings.\n";
+                exit;
+            }
+
+                echo $res;
+            
+
+
+
+        }
+
+        exit;
+
+    }
+
+
     public function getdependencyAction() {
-                
-        // TODO handle when file does not exist, echo error message
-        $request_url = 'https://localhost:5665/v1/objects/dependencies';
 
-       if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
+        try {
 
-            $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
 
-            $apiLogin = json_decode($apiLogin);
+            $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
 
-            // echo $apiLogin->user, $apiLogin->password;
+          
 
-            $username = $apiLogin->user;
-            $password = $apiLogin->password;
+            $query = 'SELECT * from plugin_settings';
+            $vals = $db->fetchAll($query);
+            if(!$vals){
+                throw new Exception('Empty Table');
+            
+        }
+    }
+
+        catch(Exception $e){
+
+                echo 404;
+
+             exit;
+           
+        }
+
+            $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/dependencies';
+            $username = $vals[0]->api_user;
+            $password = $vals[0]->api_password;
             $headers = array(
                 'Accept: application/json',
                 'X-HTTP-Method-Override: GET'
@@ -99,28 +143,35 @@ class GraphController extends Controller{
             echo $response;
             exit;
 
-        }else{
-            echo 404;
-            exit;
-        }
+
 }
 
    public function gethostsAction(){
 
-        $request_url = 'https://localhost:5665/v1/objects/hosts';
 
-       
-       if(file_exists('/etc/icingaweb2/modules/dependency_plugin/config.json')){
+        try {
 
+            $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
 
-            $apiLogin = file_get_contents('/etc/icingaweb2/modules/dependency_plugin/config.json');
+            $query = 'SELECT * from plugin_settings';
+            $vals = $db->fetchAll($query);
 
-            $apiLogin = json_decode($apiLogin);
+            if(!$vals){
+                throw new Exception('Empty Table');
+            
+            }
+        }
 
-            // echo $apiLogin->user, $apiLogin->password;
+        catch(Exception $e){
+             
 
-            $username = $apiLogin->user;
-            $password = $apiLogin->password;
+                echo 404;
+                exit;
+        }
+
+            $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/hosts';
+            $username = $vals[0]->api_user;
+            $password = $vals[0]->api_password;
             $headers = array(
                 'Accept: application/json',
                 'X-HTTP-Method-Override: GET'
@@ -148,10 +199,8 @@ class GraphController extends Controller{
 
             echo $response;
             exit;
-    }else{
-        echo 404;
-        exit;
-    }
+
+
 }
 
     public function storenodesAction(){
@@ -230,4 +279,3 @@ class GraphController extends Controller{
 
 
 ?>
-

@@ -1,76 +1,67 @@
 <head>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- <ul  id="dependency-menu"> -->
-<!-- </ul> -->
+    <!-- <ul  id="dependency-menu"> -->
+    <!-- </ul> -->
 
 
-<div class="column" id="dependency-network">
-</div>
+    <div class="column" id="dependency-network">
+    </div>
 
     <div id="loadingBar">
         <div class="outerBorder">
             <div id="text">0%</div>
             <!-- <div id="border"> -->
-                <div id="bar"></div>
+            <div id="bar"></div>
             <!-- </div> -->
         </div>
     </div>
 
- <div class="fabs" id="edit-fabs">
-  <a class="zoom-fab fab-btn-large" id="editBtn">
-  <i class="material-icons">mode_edit</i>
-  </a>
+    <div class="fabs" id="edit-fabs">
+        <a class="zoom-fab fab-btn-large" id="editBtn">
+            <i class="material-icons">mode_edit</i>
+        </a>
 
 
 
-  <ul class="fab-menu">
+        <ul class="fab-menu">
             <!-- <li><a class="zoom-fab fab-btn-sm fab-btn-refresh scale-transition scale-out">
     <i class="material-icons">refresh</i> -->
-    </a>
-    </li>
-    <li><a class="zoom-fab fab-btn-sm fab-btn-save scale-transition scale-out">
-    <i class="material-icons">save</i>
-    </a>
-    </li>
+            </a>
+            </li>
+            <li>
+                <a class="zoom-fab fab-btn-sm fab-btn-save scale-transition scale-out">
+                    <i class="material-icons">save</i>
+                </a>
+            </li>
 
 
-  </ul>
+        </ul>
 
 
+    </div>
 
-
-  </div>
-
-  <div id = "notification" class = "modal">
-    <div class = notification-content>
-    <h3>Changes Saved Succesfully</h3>
-</div>
-</div>
+    <div id="notification" class="modal">
+        <div class=n otification-content>
+            <h3>Changes Saved Succesfully</h3>
+        </div>
+    </div>
 
 </body>
 <script>
-    setTimeout(function() {
-        
+    setTimeout(function () {
+
         getRequests(false, false);
 
-    }, ); 
+    }, );
 
     window.onload = function () {
-   
-        
+
+
         getRequests(false, false);
 
-
-
     }
-
-        
-
-
-    
 </script>

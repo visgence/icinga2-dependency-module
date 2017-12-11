@@ -1,11 +1,11 @@
 <?php
 ?>
 
- 
+
 <body>
     <div class="dependency-module-kickstart">
         <h1>Dependency Module Kickstart Wizard</h1>
-        <form>
+        <form class='settings-form'>
             <fieldset>
                 <legend>Database Backend</legend>
                 <dl>
@@ -13,14 +13,14 @@
                     <dt id="resource-label">Database Resource</dt>
 
                     <dd id="resource-element">
-                        <select name="resource" id="resource">
+                        <select name="resource" id="resource-field">
                         </select>
                     </dd>
 
                 </dl>
             </fieldset>
         </form>
-        <form>
+        <form method="POST" class='settings-form'>
             <fieldset>
                 <legend>API Login Information</legend>
                 <dl>
@@ -29,28 +29,46 @@
                         <label for="port">Port</label>
                     </dt>
                     <dd id="port-element">
-                        <input type="text" name="port" id = "port-field">
+                        <input type="text" name="port" id="port-field">
                     </dd>
 
                     <dt id="username-label">
                         <label for="username">API User</label>
                     </dt>
                     <dd id="username-element">
-                        <input type="text" name="username", id = 'user-field'>
+                        <input type="text" name="username" , id='user-field'>
                     </dd>
 
                     <dt id="password-label">
                         <label for="password">Password</label>
                     </dt>
                     <dd id="password-element">
-                        <input type="password" name="password" id = 'password-field'>
+                        <input type="password" name="password" id='password-field'>
                     </dd>
                 </dl>
                 <dt id="button-label"></dt>
                 <dd id="button-element">
-                    <input type="submit" name="run-import">
+                    <input type="submit">
                 </dd>
             </fieldset>
         </form>
     </div>
+    <div id="notification" class="modal">
+        <div class=n otification-content>
+            <h3>Changes Saved Succesfully</h3>
+        </div>
+    </div>
 </body>
+<script>
+    setTimeout(function () {
+
+        kickstartManager();
+
+    }, );
+
+    window.onload = function () {
+
+        kickstartManager();
+
+    }
+</script>
