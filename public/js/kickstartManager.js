@@ -24,25 +24,50 @@ function kickstartManager() {
 
         $('form').submit(function (data) {
 
-            var $formData =$("form.settings-form").serializeArray();
+            var $formData = $("form.settings-form").serializeArray();
 
             $.ajax({
                 url: "/icingaweb2/dependency_plugin/graph/storeSettings",
                 type: 'POST',
                 data: {
-                json: JSON.stringify($formData)
+                    json: JSON.stringify($formData)
                 },
                 success: function () {
-                    $("#notification").html(
-                        "<div class = notification-content><h3>Settings Saved Succesfully</h3>"
-                    ).css({
-                        "display": "block",
-                    }).delay(5000).fadeOut();
+
+                    $.ajax({
+                        url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
+                        type: 'GET',
+                        success: function (data) {
+                            setTimeout(function () {
+
+                                window.location.replace("./network");
+
+                            }, 1000);
+                            $("#notification").html(
+                                "<div class = notification-content><h3>Settings Saved Succesfully</h3>"
+                            ).css({
+                                "display": "block",
+                            }).delay(5000).fadeOut();
+                        },
+                        error: function (data) {
+                            console.log(data);
+                            alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
+                        }
+
+
+
+                    })
+
+
+
                 }
+
             });
 
-        })
 
-    })
+            return false;
+        });
+
+    });
 
 }

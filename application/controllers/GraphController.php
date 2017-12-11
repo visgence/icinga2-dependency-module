@@ -63,6 +63,9 @@ class GraphController extends Controller{
                 $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
 
 
+                $db->exec("TRUNCATE TABLE plugin_settings;");
+
+
 
                 $res = $db->insert('plugin_settings', array(
                     'database_resource'=> $resource, 'api_user' => $username, 'api_password' => $password
@@ -132,16 +135,22 @@ class GraphController extends Controller{
                 CURLOPT_SSL_VERIFYHOST => false,
             ));
 
-            $response = curl_exec($ch);
-
-            if($response === false){
-                print "Error:" . curl_error($ch) . "(" . $response . ")\n";
-            }
-
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+            if($code === 401){
+                header('HTTP/1.1 401 Unauthorized');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => 'Unauthorized, Please Check Entered Credentials', 'code' => $code)));
+            }else if($code != 200){
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => curl_error($ch), 'code' => $code)));
+            } 
+            
             echo $response;
             exit;
+
+
 
 
 }
@@ -191,12 +200,17 @@ class GraphController extends Controller{
 
             $response = curl_exec($ch);
 
-            if($response === false){
-                print "Error:" . curl_error($ch) . "(" . $response . ")\n";
-            }
-
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+            if($code === 401){
+                header('HTTP/1.1 401 Unauthorized');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => 'Unauthorized, Please Check Entered Credentials', 'code' => $code)));
+            }else if($code != 200){
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => curl_error($ch), 'code' => $code)));
+            } 
             echo $response;
             exit;
 
@@ -213,7 +227,7 @@ class GraphController extends Controller{
 
         if($data != null){
 
-           $result = $db->exec("TRUNCATE TABLE node_positions RESTART IDENTITY;");
+           $result = $db->exec("TRUNCATE TABLE node_positions;");
 
             foreach($data as $item){
 
