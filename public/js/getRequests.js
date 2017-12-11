@@ -1,4 +1,9 @@
-function getRequests(isHierarchical, isFullscreen) {
+function getRequests(isHierarchical) {
+
+    if (window.location.href.indexOf('Fullscreen') > -1) {
+        var isFullscreen = true;
+        $('.fabs').hide();
+    }
 
 
     $.when(

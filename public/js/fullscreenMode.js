@@ -11,7 +11,7 @@ function fullscreenMode(network, nodes) {
 
     var focusOptions = {
         scale: 1.5,
-        animation: { // -------------------> can be a boolean too!
+        animation: { 
             duration: 1500,
             easingFunction: 'easeInCubic'
 
@@ -20,7 +20,7 @@ function fullscreenMode(network, nodes) {
 
     var fitOptions = {
 
-        animation: { // -------------------> can be a boolean too!
+        animation: {
             duration: 2000,
             easingFunction: 'easeOutCubic'
         }
@@ -165,9 +165,6 @@ function getStateUpdate(network, nodes) {
 
             }
         }
-
-        // console.log(problemHosts[0]);
-
 
     });
 
