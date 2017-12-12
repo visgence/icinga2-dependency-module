@@ -60,58 +60,32 @@ NOTE: The apply rule will fail if hosts listed in vars.parents do not exist, ens
 
 ## Create Database And Users
 Both Postgresql and MySQL are supported. 
-### Install and start postgres 
-1.  Install postgresql `yum install -y postgresql-server postgresql`
-2.  Initialize db `postgresql-setup initdb`
-3.  Enable and start service 
-```
-systemctl enable postgresql
-systemctl start postgresql
-```
+
 ### Setup db and User
-<!-- ```
-sudo -u postgres psql -c "CREATE ROLE dependencies WITH LOGIN PASSWORD 'dependencies'"
-sudo -u postgres createdb -O dependencies -E UTF8 dependencies
-```
 
-Add the following to /var/lib/pgsql/data/pg_hba.conf - *above* other ident commands
+###Using Postgresql
+With access to psql:
 
-```
-# icinga
-local   dependencies      dependencies                            md5
-host    dependencies      dependencies      127.0.0.1/32          md5
-host    dependencies      dependencies      ::1/128               md5
-``` -->
 ```
 psql -q -c "CREATE DATABASE dependencies WITH ENCODING 'UTF8';"
-psql director -q -c "CREATE USER dependencies WITH PASSWORD 'some-password';
-GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;
+psql dependencies -q -c "CREATE USER dependencies WITH PASSWORD 'depenencies';
+GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;"
 ```
 
-Next restart postgres `service postgresql restart`
 
+#### Create Schema
 
-## Create Schema
-`psql -U dependencies -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/pgsql.sql`
+`psql -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/init.sql`
 
 ### Altnernatively, using MySQL
 ```
 mysql -e "CREATE DATABASE dependencies CHARACTER SET 'utf8';
 GRANT ALL ON dependencies.* TO dependencies@localhost IDENTIFIED BY 'some-password';"
 ```
-## Create Schema
+#### Create Schema
 ```
-mysql -U dependencies -D dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/pgsql.sql
+mysql -U dependencies -D dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/init.sql
 ```
-
-
-
-### Add Created Database to Icinga 2 Application Resources
-1.  In Icinga Web 2 select configuration menu item.
-2.  Select resource tab.
-3.  Select create new resource.
-4.  Create new resosurce using "dependencies" as resource name, database name, username, and password.
-5.  Validate resource and save changes.
 
 ### Create Icinga 2 API user
 In order to query data, this module needs full API access to Icinga Web 2. This can be accomplished by adding a new user to api-users.conf file
@@ -122,8 +96,20 @@ using  `sudo vim /etc/icinga2/conf.d/api-users.conf` add the following lines to 
       permissions = [ "*" ]
     }
 ```
+
+### Enable Module 
+In Icinga Web, navigate to Configuration > Modules, and select dependency plugin. Next to "State" click enable.
+
+### Add Created Database to Icinga 2 Application Resources
+1.  In Icinga Web 2 select configuration menu item.
+2.  Select resource tab.
+3.  Select create new resource.
+4.  Create new resosurce using "dependencies" as resource name, database name, username, and password.
+5.  Validate resource and save changes.
+
+
 ### Launch Kickstart Page
-Finally, navigate to to the modules entry in Icinga Web 2 to launch the kickstart page and finish the setup process.
+Finally, navigate to to the modules entry in Icinga Web 2 to launch the kickstart page and finish the setup process by selecting created resource and entering in Icinga 2 API information.
 
 
 
