@@ -26,9 +26,11 @@ This module implements vis.js <http://visjs.org> to create a topological network
 3.  Allows for customization of network topology after initial simulation via dragging nodes to desired locations
 4.  Automatically redraws network when a host is added or removed.
 5.  Directly links to host information via double clicking on nodes.
+6.  Display networks in fullscreen while updateing graph realtime.
 
 # Installation
 First clone this repository into `/usr/share/icingaweb2/modules`
+Next rename to depenency_plugin: `mv icinga2-dependency-module depenency_plugin`
 
 ## Icinga 2 Dependency Apply Rule
 An apply rule is used to generate dependency data based on host configuration files. To implement this apply rule a new conf file needs to be created in /etc/icinga2/conf.d: `sudo touch /etc/icinga2/conf.d/parents.conf`. Next add the folowing lines to the file:
@@ -56,10 +58,9 @@ object Host "example-host" {
 NOTE: The apply rule will fail if hosts listed in vars.parents do not exist, ensure that the parents exist before attempting to deploy.
 
 
-
-
 ## Create Database And Users
-### Install and start postgres
+Both Postgresql and MySQL are supported. 
+### Install and start postgres 
 1.  Install postgresql `yum install -y postgresql-server postgresql`
 2.  Initialize db `postgresql-setup initdb`
 3.  Enable and start service 
@@ -68,7 +69,7 @@ systemctl enable postgresql
 systemctl start postgresql
 ```
 ### Setup db and User
-```
+<!-- ```
 sudo -u postgres psql -c "CREATE ROLE dependencies WITH LOGIN PASSWORD 'dependencies'"
 sudo -u postgres createdb -O dependencies -E UTF8 dependencies
 ```
@@ -80,14 +81,29 @@ Add the following to /var/lib/pgsql/data/pg_hba.conf - *above* other ident comma
 local   dependencies      dependencies                            md5
 host    dependencies      dependencies      127.0.0.1/32          md5
 host    dependencies      dependencies      ::1/128               md5
+``` -->
+```
+psql -q -c "CREATE DATABASE dependencies WITH ENCODING 'UTF8';"
+psql director -q -c "CREATE USER dependencies WITH PASSWORD 'some-password';
+GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;
 ```
 
 Next restart postgres `service postgresql restart`
 
 
-### Create Schema
-`export PGPASSWORD=dependencies`
+## Create Schema
 `psql -U dependencies -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/pgsql.sql`
+
+### Altnernatively, using MySQL
+```
+mysql -e "CREATE DATABASE dependencies CHARACTER SET 'utf8';
+GRANT ALL ON dependencies.* TO dependencies@localhost IDENTIFIED BY 'some-password';"
+```
+## Create Schema
+```
+mysql -U dependencies -D dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/pgsql.sql
+```
+
 
 
 ### Add Created Database to Icinga 2 Application Resources
@@ -106,7 +122,8 @@ using  `sudo vim /etc/icinga2/conf.d/api-users.conf` add the following lines to 
       permissions = [ "*" ]
     }
 ```
-Next, run the CLI command and provide the new API login information `icingacli dependency_plugin setup api`  NOTE: in a standard icinga 2 installation the API address is `localhost:5665`.
+### Launch Kickstart Page
+Finally, navigate to to the modules entry in Icinga Web 2 to launch the kickstart page and finish the setup process.
 
 
 

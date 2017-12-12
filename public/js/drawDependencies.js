@@ -1,9 +1,7 @@
-function formatDependencies(hosts, dependencies, hierarchical, positionData, isFullscreen) {
+function formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen) {
 
     var hostObj = {};
     var positionObj = {};
-    // console.log(isFullscreen);
-
 
     //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
     //  Convert to Obj[hostName].var format while combining hosts and dependency objects:
@@ -22,8 +20,10 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData, isF
                 children: [],
             }
         } else {
-            hostObj[hostName].parents.push(parentName);
+            hostObj[hostName].parents.push(parentName); //if host exists,push the additional parent
         }
+
+        //also intitialize parents if undefined because some hosts exist solely as parent entries.
 
         if (hostObj[parentName] === undefined) { //initialize host obj parent entry if it does not exit
 
@@ -36,7 +36,7 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData, isF
                 children: [hostName],
             }
         } else {
-            hostObj[parentName].children.push(hostName); //
+            hostObj[parentName].children.push(hostName); 
         }
 
     }
@@ -68,17 +68,11 @@ function formatDependencies(hosts, dependencies, hierarchical, positionData, isF
         }
     }
 
-    // if (Object.keys(positionObj).length != Object.keys(hostObj).length) { //if these are not the same, a host with dependencies has been removed/added
-    //     positionObj = {}; //reset signals new network generation
-    // }
-
-    // positionObj = {};
-
-    drawNetwork(hostObj, hierarchical, positionObj, isFullscreen);
+    drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen);
 
 }
 
-function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
+function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
 
     var redraw = true;
 
@@ -90,15 +84,14 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
 
     var edges = new vis.DataSet([]);
 
-    for (i = 0; i < Object.keys(hostObj).length; i++) {
+    for (i = 0; i < Object.keys(hostObj).length; i++) { 
 
-        currHost = Object.keys(hostObj)[i];
+        currHost = Object.keys(hostObj)[i]; //gets name of current host based on key iter
 
-        // console.log(currHost);
 
         if (hostObj[currHost].hasDependencies) {
 
-            if (hostObj[currHost].status === 'DOWN') {
+            if (hostObj[currHost].status === 'DOWN') { //node color based on status
                 color_border = 'red';
                 text_size = 14;
             }
@@ -108,16 +101,16 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                 text_size = 14;
             }
 
-            if (hostObj[currHost].status === 'UP') {
+            if (hostObj[currHost].status === 'UP') { //if host is up, hide text.
                 color_border = 'green';
                 text_size = 0;
             }
 
-            if((hostObj[currHost].children.length) > 3)
+            if((hostObj[currHost].children.length) > 3) //label major nodes with more than 3 children regardless
                 text_size = 14;
 
-            if (!positionObj[currHost]) { //if the name of the host does not exist in data base, it is a new host.
-                if (Object.keys(positionObj).length > 0)
+            if (!positionObj[currHost]) { //if the name of the host does not exist in object, it is a new host.
+                if (Object.keys(positionObj).length > 0) //check if it is a new host, or an entire new network.
                     newHost = true;
                 nodes.update({
                     id: currHost,
@@ -132,9 +125,9 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3) + 20, //generate new x/y coordinates on network generation
+                    size: (hostObj[currHost].children.length * 3) + 20
                 })
-            } else {
+            } else { //not a new host
                 nodes.update({
                     id: currHost,
                     label: (hostObj[currHost].description + "\n(" + currHost + ")"),
@@ -149,7 +142,7 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                     },
 
                     size: (hostObj[currHost].children.length * 3) + 20,
-                    x: positionObj[currHost].node_x,
+                    x: positionObj[currHost].node_x, //set x, y position
                     y: positionObj[currHost].node_y,
 
                 });
@@ -179,9 +172,6 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
     const hierarchyOptions = {
         layout: {
 
-            randomSeed: 728804,
-
-            // improvedLayout: true,
             hierarchical: {
                 enabled: true,
                 levelSeparation: 200,
@@ -190,8 +180,8 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                 blockShifting: true,
                 edgeMinimization: true,
                 parentCentralization: true,
-                direction: 'UD', // UD, DU, LR, RL
-                sortMethod: 'directed' // hubsize, directed
+                direction: 'UD',
+                sortMethod: 'directed'
             },
 
         },
@@ -205,9 +195,8 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
             },
         },
         nodes: {
-            shape: 'square', // color: '#ff0000',
+            shape: 'square', 
             fixed: true,
-            // font: '12px arial red',
             scaling: {
                 min: 1,
                 max: 15,
@@ -245,72 +234,67 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
     };
 
 
-    if (hierarchical) {
+    if (isHierarchical) { //display using hierarchyOptions
         var network = new vis.Network(container, networkData, hierarchyOptions);
-    } else if(isFullscreen){
+
+    } else if(isFullscreen){ //display using fullscreen (auto refresh)
 
         var network = new vis.Network(container, networkData, networkOptions);
-
-        // console.log("called");
-
         fullscreenMode(network, nodes);
-
 
     } else{
 
         var network = new vis.Network(container, networkData, networkOptions);
 
-        // setTimeout();
-
-        if (Object.keys(positionObj).length === 0) {
+        if (Object.keys(positionObj).length === 0) { //if there is no position data for the network, simulate network.
             network.setOptions({
                 nodes: {
-                    fixed: false
+                    fixed: false //unlock nodes for physics sim
                 }
             });
+
             $("#notification").html(
                 "<div class = notification-content><h3>Generating New Network</h3>"
             ).css({
                 "display": "block",
             }).delay(5000).fadeOut();
+
             $('.fabs').hide();
-            document.getElementById('loadingBar').style.display = 'block';
-            network.on("stabilizationProgress", function (params) {
+
+            $('#loadingBar').css('display', 'block');
+
+            network.on("stabilizationProgress", function (params) {//as network is simulating animate by percentage of physics iter complete
                 var maxWidth = 496;
                 var minWidth = 20;
                 var widthFactor = params.iterations / params.total;
                 var width = Math.max(minWidth, maxWidth * widthFactor);
-
-                document.getElementById('bar').style.width = width + 'px';
-                document.getElementById('text').innerHTML = Math.round(widthFactor * 100) + '%';
+                $('#bar').css("width", width);
+                $('#text').html(Math.round(widthFactor * 100) + '%');
             });
 
             network.once("stabilizationIterationsDone", function () {
-                document.getElementById('text').innerHTML = '100%';
-                document.getElementById('bar').style.width = '496px';
-                document.getElementById('loadingBar').style.opacity = 0;
+                $('#text').html('100%');
+                $('#bar').css("width", '496');
+                $('#loadingBar').css('opacity', '0');
                 // really clean the dom element
                 setTimeout(function () {
-                    document.getElementById('loadingBar').style.display = 'none';
+                    $('#loadingBar').css('display', 'none');
                 }, 500);
                 $('.fabs').show();
             });
         }
     }
 
+    $('#editBtn').click(function () {//on edit
 
-
-    $('#editBtn').click(function () {
-
-
-        network.setOptions({
+        network.setOptions({ //unlock nodes for editing
             nodes: {
                 fixed: false
             },
         });
 
-        $('.fab-btn-sm').toggleClass('scale-out');
-        if ($('.fab-btn-sm').hasClass('scale-out')) {
+        $('.fab-btn-sm').toggleClass('scale-out'); // show secondary FABs
+        if ($('.fab-btn-sm').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
             network.setOptions({
                 nodes: {
                     fixed: true
@@ -319,16 +303,16 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
         }
     });
 
-    $('.fab-btn-save').click(function() {
+    $('.fab-btn-save').click(function() { //on save
         network.setOptions({
             nodes: {
-                fixed: true
+                fixed: true 
             }
         });
 
-        network.storePositions()
+        network.storePositions()//visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
-        $.ajax({
+        $.ajax({//ajax request to store into DB
             url: "/icingaweb2/dependency_plugin/graph/storeNodes",
             type: 'POST',
             data: {
@@ -344,14 +328,14 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
         });
     });
 
-    if(newHost && !hierarchical){
+    if(newHost && !isHierarchical){ //if a new host was added, and it is not being displayed in hierarchical layout
         network.setOptions({
             nodes: {
-                fixed: false
+                fixed: false //unlock nodes
             }
         });
-         network.startSimulation();
-          network.stabilize(100);
+         network.startSimulation(); //start new physics sim
+          network.stabilize(100); //on sim for 100 iters, usually enough for the node to place itself automatically.
 
         network.once("stabilizationIterationsDone", function () {
          network.stopSimulation();  
@@ -360,7 +344,7 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
                     fixed : true 
                 }
             }); 
-            network.storePositions();
+            network.storePositions(); //after new node added, resave network positions
         $.ajax({
             url: "/icingaweb2/dependency_plugin/graph/storeNodes",
             type: 'POST',
@@ -379,25 +363,14 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
         });
     }
 
-    // $('.fab-btn-refresh').click(function () {
-    //     network.setOptions({
-    //         nodes: {
-    //             fixed: false
-    //         },
-
-    //         drawNetwork(hostObj,  )
-    //     });
-
-    // });
-
-    network.on("doubleClick", function (params) {
+    network.on("doubleClick", function (params) { //double click on node listener
         if (params.nodes[0] != undefined) {
             href = location.href.split('/');
-            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0];
+            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
         }
     });
-    network.on("selectNode", function (params) {
 
+    network.on("selectNode", function (params) { //on selecting node, background of label is made solid white for readabillity. 
         var clickedNode = network.body.nodes[params.nodes[0]];
         font_size = clickedNode.options.font.size;
         clickedNode.setOptions({
@@ -408,7 +381,7 @@ function drawNetwork(hostObj, hierarchical, positionObj, isFullscreen) {
         });
     });
 
-    network.on("deselectNode", function (params) {
+    network.on("deselectNode", function (params) {//on node deselect, label set back to transparent.
 
         var clickedNode = network.body.nodes[params.previousSelection.nodes[0]];
         clickedNode.setOptions({

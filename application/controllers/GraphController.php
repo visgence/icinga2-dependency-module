@@ -3,9 +3,9 @@
 namespace Icinga\Module\dependency_plugin\Controllers;
 
 use Icinga\Web\Controller;
-use Exception;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
 use Icinga\Data\ResourceFactory;
+use Exception;
 
 class GraphController extends Controller{
 
@@ -15,17 +15,14 @@ class GraphController extends Controller{
 
     public function kickstartAction() {}
 
-    public function displayAction() {}
-
     public function getresourcesAction(){
             
         $dbArr = [];
            
-        $resourcesfile = fopen("/etc/icingaweb2/resources.ini", 'r');
+        $resourcesfile = fopen("/etc/icingaweb2/resources.ini", 'r'); //get icinga resources (databases)
 
         while($line = fgets($resourcesfile)) {
 
-            // echo $line;
             if(strpos($line, 'dbname') !== false){
 
                 $dbname = explode('=', $line);
@@ -38,11 +35,10 @@ class GraphController extends Controller{
 
         $resources['databases'] = $dbArr;
         
-        echo json_encode($resources);
+        echo json_encode($resources); 
         fclose($resourcesfile);
         
         exit;
-
 
     }
 
@@ -62,10 +58,7 @@ class GraphController extends Controller{
 
                 $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
 
-
-                $db->exec("TRUNCATE TABLE plugin_settings;");
-
-
+                $db->exec("TRUNCATE TABLE plugin_settings;"); //truncate 
 
                 $res = $db->insert('plugin_settings', array(
                     'database_resource'=> $resource, 'api_user' => $username, 'api_password' => $password
@@ -79,9 +72,6 @@ class GraphController extends Controller{
             }
 
                 echo $res;
-            
-
-
 
         }
 
@@ -89,30 +79,21 @@ class GraphController extends Controller{
 
     }
 
-
     public function getdependencyAction() {
 
         try {
 
-
             $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
-
-          
-
             $query = 'SELECT * from plugin_settings';
             $vals = $db->fetchAll($query);
-            if(!$vals){
-                throw new Exception('Empty Table');
-            
+            if(!$vals){ //if no values
+                throw new Exception('Empty Table'); //settings table empty
+            }
         }
-    }
-
         catch(Exception $e){
 
-                echo 404;
-
+                echo 404; //echoes a '404' which signals js to redirect to settings page.
              exit;
-           
         }
 
             $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/dependencies';
@@ -138,7 +119,7 @@ class GraphController extends Controller{
              $response = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            if($code === 401){
+            if($code === 401){ //echo detailed errors.
                 header('HTTP/1.1 401 Unauthorized');
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(array('message' => 'Unauthorized, Please Check Entered Credentials', 'code' => $code)));
@@ -151,13 +132,9 @@ class GraphController extends Controller{
             echo $response;
             exit;
 
-
-
-
 }
 
    public function gethostsAction(){
-
 
         try {
 
@@ -173,7 +150,6 @@ class GraphController extends Controller{
         }
 
         catch(Exception $e){
-             
 
                 echo 404;
                 exit;
@@ -251,15 +227,12 @@ class GraphController extends Controller{
                 echo $res;
             }
 
-
-
         }
 
         exit;
     }
 
     public function getnodesAction(){
-
 
         $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
 
@@ -285,11 +258,6 @@ class GraphController extends Controller{
 
         }
     }
-
-   
-   
-
-
 }
 
 

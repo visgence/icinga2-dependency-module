@@ -2,13 +2,11 @@ function kickstartManager() {
 
 
     $.ajax({
-        url: "/icingaweb2/dependency_plugin/graph/getResources", //get node positions
+        url: "/icingaweb2/dependency_plugin/graph/getResources", //get Load Icinga Resource List
         type: 'GET',
         success: function (response) {
 
             var resources = JSON.parse(response);
-
-            // console.log(resources);
 
             var $dropdown = $("#resource-field");
 
@@ -19,8 +17,6 @@ function kickstartManager() {
         }
 
     }).then(function (resources) {
-
-        // console.log('then');
 
         $('form').submit(function (data) {
 
@@ -54,16 +50,10 @@ function kickstartManager() {
                             alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
                         }
 
-
-
                     })
-
-
-
                 }
 
             });
-
 
             return false;
         });
