@@ -23,11 +23,13 @@ class GraphController extends Controller{
 
         while($line = fgets($resourcesfile)) {
 
-            if(strpos($line, 'dbname') !== false){
+            if(strpos($line, '[') !== false){
 
-                $dbname = explode('=', $line);
-                $dbname = explode('"', $dbname[1]);
-                array_push($dbArr, $dbname[1]);
+                // echo $line;
+
+                $dbname = explode('[', $line);
+                $dbname = explode(']', $dbname[1]);
+                array_push($dbArr, $dbname[0]);
 
             }
 
@@ -39,6 +41,52 @@ class GraphController extends Controller{
         fclose($resourcesfile);
         
         exit;
+
+    }
+
+    function getResource() {
+    
+    try{
+           
+        $resourcesfile = fopen('/etc/icingaweb2/modules/dependency_plugin/config.ini', 'r'); //get icinga resources (databases)
+    }catch(Exception $e){
+
+        if(!file_exists('/etc/icingaweb2/modules/dependency_plugin/')){
+ 
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json; charset=UTF-8');
+
+        die(json_encode(array('message' => "Setup", 'code' => '500')));
+ 
+    }
+
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json; charset=UTF-8');
+        die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
+
+
+    }
+
+
+        $dbname = [];
+
+        while($line = fgets($resourcesfile)) {
+
+            if(strpos($line, 'resource') !== false){
+
+
+                $dbname = explode('=', $line);
+                $dbname = explode('"', $dbname[1]);
+
+
+            }
+
+        }
+
+        fclose($resourcesfile);
+        
+        return $dbname[1];
+
 
     }
 
@@ -55,15 +103,26 @@ class GraphController extends Controller{
                 $username = $data[2]['value'];
                 $password = $data[3]['value'];
 
-                $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
+                $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
                 $db->exec("TRUNCATE TABLE plugin_settings;"); //truncate 
 
                 $res = $db->insert('plugin_settings', array(
-                    'database_resource'=> $resource, 'api_user' => $username, 'api_password' => $password
+                  'api_user' => $username, 'api_password' => $password
                 , 'api_endpoint' => $port
                 ));
 
+                if(!file_exists('/etc/icingaweb2/modules/dependency_plugin')){
+                    mkdir('/etc/icingaweb2/modules/dependency_plugin');
+                }
+
+                $file = fopen('/etc/icingaweb2/modules/dependency_plugin/config.ini', 'w');
+
+                $config = "[db]\nresource = \"" . $resource . "\"";
+ -        
+ -              fwrite($file, $config);
+ -
+ -              fclose($file);
 
                 if(!$res){
                 echo "An error occured while attempting to store settings.\n";
@@ -81,7 +140,10 @@ class GraphController extends Controller{
     public function getdependencyAction() {
 
         try {
-            $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
+
+            $resource = $this->getResource();
+
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
             $query = 'SELECT * from plugin_settings';
             $vals = $db->fetchAll($query);
             if(!$vals){ //if no values
@@ -138,7 +200,9 @@ class GraphController extends Controller{
 
         try {
 
-            $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
+            $resource = $this->getResource();
+
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
             $query = 'SELECT * from plugin_settings';
             $vals = $db->fetchAll($query);
@@ -196,7 +260,9 @@ class GraphController extends Controller{
 
     public function storenodesAction(){
 
-        $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
+        $resource = $this->getResource();
+
+        $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
          
         $json = $_POST["json"];
 
@@ -236,7 +302,9 @@ class GraphController extends Controller{
 
         try {
 
-            $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
+            $resource = $this->getResource();
+
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
             $query = 'SELECT * from node_positions';
             $vals = $db->fetchAll($query);

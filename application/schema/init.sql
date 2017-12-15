@@ -6,7 +6,6 @@ CREATE TABLE node_positions (
 
 
 CREATE TABLE plugin_settings (
-    database_resource TEXT,
     api_endpoint TEXT,
     api_user TEXT,
     api_password TEXT 

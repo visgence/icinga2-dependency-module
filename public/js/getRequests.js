@@ -13,8 +13,16 @@ function getRequests(isHierarchical) {
                 hosts = (JSON.parse(hostData));
             },
             error: function (data) {
+
+                if (data.responseJSON['message'] === 'Setup') {
+                    window.location.replace("./kickstart");
+                    return;
+                }
+
                 alert('Cannot Load Host Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-                window.location.replace("./kickstart");
+
+
+
             }
         }),
 
@@ -25,7 +33,9 @@ function getRequests(isHierarchical) {
                 dependencies = (JSON.parse(dependencyData));
             },
             error: function (data) {
-                alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+                // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+                // window.location.replace("./kickstart");
+                // return;
             }
         }),
 
@@ -41,11 +51,13 @@ function getRequests(isHierarchical) {
                 }
             },
             error: function (data) {
-                alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+                // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+                // window.location.replace("./kickstart");
+                // return;
             }
 
         })
     ).then(function () {
-            formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen);
+        formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen);
     });
 }
