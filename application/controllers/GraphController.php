@@ -15,6 +15,8 @@ class GraphController extends Controller{
 
     public function kickstartAction() {}
 
+    public function welcomeAction() {}
+
     public function getresourcesAction(){
             
         $dbArr = [];
@@ -178,7 +180,7 @@ class GraphController extends Controller{
                 CURLOPT_SSL_VERIFYHOST => false,
             ));
 
-             $response = curl_exec($ch);
+            $response = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
             if($code === 401){ //echo detailed errors.
@@ -189,7 +191,7 @@ class GraphController extends Controller{
                 header('HTTP/1.1 500 Internal Server Error');
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(array('message' => curl_error($ch), 'code' => $code)));
-            } 
+            }
 
             echo $response;
             exit;

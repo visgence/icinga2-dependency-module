@@ -30,13 +30,22 @@ function getRequests(isHierarchical) {
             url: "/icingaweb2/dependency_plugin/graph/getDependency", //get dependencies
             type: 'GET',
             success: function (dependencyData) {
-                dependencies = (JSON.parse(dependencyData));
+
+                if ((JSON.parse(dependencyData).results.length) === 0) {
+
+                    window.location.replace("./welcome");
+
+                } else {
+
+                    dependencies = (JSON.parse(dependencyData));
+                }
             },
             error: function (data) {
                 // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
                 // window.location.replace("./kickstart");
                 // return;
             }
+
         }),
 
         $.ajax({

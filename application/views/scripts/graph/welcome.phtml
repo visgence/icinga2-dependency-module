@@ -1,0 +1,41 @@
+<head>
+</head>
+
+<body>
+<div id = "welcome-page">
+<h1>Welcome to The Icinga Web 2 Dependency Module</h1>
+The Module Can't Seem to find any dependency or host data. Be sure hosts are added with parent vars, and that The icinga 2 apply rule is implemented.
+
+<h3>Creating The Apply Rule</h3>
+<p>An apply rule is used to generate dependency data based on host configuration files. To implement this apply rule a new conf file needs to be created in /etc/icinga2/conf.d: <code>sudo vim /etc/icinga2/conf.d/parents.conf</code>. Next add the folowing lines to the file:</p>
+
+<pre><code>apply Dependency "Parent" for (parent in host.vars.parents) to Host {
+      parent_host_name = parent
+      assign where host.address &amp;&amp; host.vars.parents
+} 
+</code></pre>
+
+<h2 id="formatofhostconfigurationfiles">Format of Host Configuration Files</h2>
+
+<p>This plugin requires some configuration of stock host files in order to function.</p>
+
+<h3 id="customvariableparents">Custom Variable "Parents"</h3>
+
+<p>The apply rule generates dependency data using a custom variable names "parents". this custom variable needs to be an array and can be manually inserted into host configuration files or modified using icinga director. An example host with the correct parent variable is: </p>
+
+<pre><code>object Host "example-host" {
+    import "generic-host"
+
+    display_name = "example-host"
+    address = "127.0.0.1"
+    check_command = "check-host-alive"
+    groups = [ "homegroup" ]
+    vars.parents = [ "Parent-1", "Parent-2" ]
+}
+</code></pre>
+
+</div>
+
+
+</body>
+<script></script>
