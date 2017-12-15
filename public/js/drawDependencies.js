@@ -357,6 +357,10 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
                 ).css({
                     "display": "block",
                 }).delay(5000).fadeOut();
+            },
+            error: function (data) {
+                console.log(data);
+                alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
             }
         });
 

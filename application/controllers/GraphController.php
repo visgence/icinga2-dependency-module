@@ -50,7 +50,6 @@ class GraphController extends Controller{
         
         if($data != null){
 
-
                 $resource = $data[0]['value'];
                 $port = $data[1]['value'];
                 $username = $data[2]['value'];
@@ -67,7 +66,7 @@ class GraphController extends Controller{
 
 
                 if(!$res){
-                echo "An error occured while attempting to settings.\n";
+                echo "An error occured while attempting to store settings.\n";
                 exit;
             }
 
@@ -82,7 +81,6 @@ class GraphController extends Controller{
     public function getdependencyAction() {
 
         try {
-
             $db = IcingaDbConnection::fromResourceName('dependencies')->getDbAdapter();
             $query = 'SELECT * from plugin_settings';
             $vals = $db->fetchAll($query);
@@ -92,8 +90,10 @@ class GraphController extends Controller{
         }
         catch(Exception $e){
 
-                echo 404; //echoes a '404' which signals js to redirect to settings page.
-             exit;
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
+
+                die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
         }
 
             $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/dependencies';
@@ -148,11 +148,11 @@ class GraphController extends Controller{
             
             }
         }
-
         catch(Exception $e){
 
-                echo 404;
-                exit;
+                header('HTTP/1.1 500 Unauthorized');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => $e->getMessage(), 'code' => "500")));
         }
 
             $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/hosts';
@@ -234,31 +234,40 @@ class GraphController extends Controller{
 
     public function getnodesAction(){
 
-        $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
+        try {
 
-        $query = 'SELECT * from node_positions';
-        $vals = $db->fetchAll($query);
+            $db = IcingaDbConnection::fromResourceName("dependencies")->getDbAdapter();
 
-        $isEmpty = empty($vals);
+            $query = 'SELECT * from node_positions';
+            $vals = $db->fetchAll($query);
 
-        if($isEmpty){
+            if(!$vals){
+                    throw new Exception('Empty Table');
+            }
 
-            $json = json_encode('EMPTY!');
+        } catch(Exception $e){
 
-            echo $json;
+            if($e-> getMessage() == 'Empty Table'){
 
-            exit;
-        }else{
+                $json = json_encode('EMPTY!');
+
+                echo $json;
+
+                exit;
+
+            } else {
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
+            }
+        }
 
             $json = json_encode($vals);
 
             echo $json;
 
             exit;
-
-        }
     }
 }
-
 
 ?>

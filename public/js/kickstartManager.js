@@ -2,7 +2,7 @@ function kickstartManager() {
 
 
     $.ajax({
-        url: "/icingaweb2/dependency_plugin/graph/getResources", //get Load Icinga Resource List
+        url: "/icingaweb2/dependency_plugin/graph/getResources", //get Icinga Resource List
         type: 'GET',
         success: function (response) {
 
@@ -15,6 +15,7 @@ function kickstartManager() {
             }
 
         }
+        
 
     }).then(function (resources) {
 
@@ -28,7 +29,7 @@ function kickstartManager() {
                 data: {
                     json: JSON.stringify($formData)
                 },
-                success: function () {
+                success: function () { //on successful POST to settings db, test auth info by getting from Icinga API
 
                     $.ajax({
                         url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
@@ -36,7 +37,7 @@ function kickstartManager() {
                         success: function (data) {
                             setTimeout(function () {
 
-                                window.location.replace("./network");
+                                window.location.replace("./network"); //on succes redirect to network.
 
                             }, 1000);
                             $("#notification").html(
@@ -45,7 +46,7 @@ function kickstartManager() {
                                 "display": "block",
                             }).delay(5000).fadeOut();
                         },
-                        error: function (data) {
+                        error: function (data) { 
                             console.log(data);
                             alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
                         }

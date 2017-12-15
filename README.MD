@@ -29,11 +29,13 @@ This module implements vis.js <http://visjs.org> to create a topological network
 6.  Display networks in fullscreen while updateing graph realtime.
 
 # Installation
+These instructions assume all listed operations are being performed on a machine that has icinga 2 and icinga web 2 installed, including a database system such as MySQL or Postgresql.
+
 First clone this repository into `/usr/share/icingaweb2/modules`
 Next rename to depenency_plugin: `mv icinga2-dependency-module depenency_plugin`
 
 ## Icinga 2 Dependency Apply Rule
-An apply rule is used to generate dependency data based on host configuration files. To implement this apply rule a new conf file needs to be created in /etc/icinga2/conf.d: `sudo touch /etc/icinga2/conf.d/parents.conf`. Next add the folowing lines to the file:
+An apply rule is used to generate dependency data based on host configuration files. To implement this apply rule a new conf file needs to be created in /etc/icinga2/conf.d: `sudo vim /etc/icinga2/conf.d/parents.conf`. Next add the folowing lines to the file:
 ```
 apply Dependency "Parent" for (parent in host.vars.parents) to Host {
       parent_host_name = parent
@@ -41,7 +43,9 @@ apply Dependency "Parent" for (parent in host.vars.parents) to Host {
 } 
 ```
 
-## Format of Hosts Configuration Files
+## Format of Host Configuration Files
+This plugin requires some configuration of stock host files in order to function.
+
 ### Custom Variable "Parents"
 The apply rule generates dependency data using a custom variable names "parents". this custom variable needs to be an array and can be manually inserted into host configuration files or modified using icinga director. An example host with the correct parent variable is: 
 ```
@@ -55,7 +59,7 @@ object Host "example-host" {
     vars.parents = [ "Parent-1", "Parent-2" ]
 }
 ```
-NOTE: The apply rule will fail if hosts listed in vars.parents do not exist, ensure that the parents exist before attempting to deploy.
+***Note: The apply rule will fail if hosts listed in vars.parents do not exist, ensure that the parents exist before attempting to deploy.***
 
 
 ## Create Database And Users
@@ -71,6 +75,7 @@ psql -q -c "CREATE DATABASE dependencies WITH ENCODING 'UTF8';"
 psql dependencies -q -c "CREATE USER dependencies WITH PASSWORD 'depenencies';
 GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;"
 ```
+***Note: replace password "dependencies" with desired password***
 
 
 #### Create Schema
@@ -80,8 +85,10 @@ GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;"
 ### Altnernatively, using MySQL
 ```
 mysql -e "CREATE DATABASE dependencies CHARACTER SET 'utf8';
-GRANT ALL ON dependencies.* TO dependencies@localhost IDENTIFIED BY 'some-password';"
+GRANT ALL ON dependencies.* TO dependencies@localhost IDENTIFIED BY 'dependencies';"
 ```
+***Note: replace password "dependencies" with desired password***
+
 #### Create Schema
 ```
 mysql -U dependencies -D dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/init.sql
@@ -96,16 +103,19 @@ using  `sudo vim /etc/icinga2/conf.d/api-users.conf` add the following lines to 
       permissions = [ "*" ]
     }
 ```
+***Note: replace password "dependencies" with desired password***
 
 ### Enable Module 
 In Icinga Web, navigate to Configuration > Modules, and select dependency plugin. Next to "State" click enable.
 
 ### Add Created Database to Icinga 2 Application Resources
 1.  In Icinga Web 2 select configuration menu item.
-2.  Select resource tab.
+2.  Select Application entry.
+3.  Select Resource Tab.
 3.  Select create new resource.
-4.  Create new resosurce using "dependencies" as resource name, database name, username, and password.
+4.  Create new resosurce using filling in resource name, database name, username, and password. (default is dependencies for all)
 5.  Validate resource and save changes.
+6.  Refresh Icinga 2 Page
 
 
 ### Launch Kickstart Page

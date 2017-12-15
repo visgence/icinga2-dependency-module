@@ -5,14 +5,16 @@ function getRequests(isHierarchical) {
         $('.fabs').hide();
     }
 
-
     $.when(
         $.ajax({
             url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
             type: 'GET',
             success: function (hostData) {
                 hosts = (JSON.parse(hostData));
-                console.log(hosts);
+            },
+            error: function (data) {
+                alert('Cannot Load Host Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+                window.location.replace("./kickstart");
             }
         }),
 
@@ -21,6 +23,9 @@ function getRequests(isHierarchical) {
             type: 'GET',
             success: function (dependencyData) {
                 dependencies = (JSON.parse(dependencyData));
+            },
+            error: function (data) {
+                alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
             }
         }),
 
@@ -34,14 +39,13 @@ function getRequests(isHierarchical) {
                 } else {
                     positionData = response;
                 }
+            },
+            error: function (data) {
+                alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
             }
+
         })
     ).then(function () {
-        if (dependencies === 404) {
-            window.location.replace("./kickstart");
-        } else {
-            // console.log(hosts, dependencies);
             formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen);
-        }
     });
 }
