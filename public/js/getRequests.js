@@ -10,7 +10,13 @@ function getRequests(isHierarchical) {
             url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
             type: 'GET',
             success: function (hostData) {
-                hosts = (JSON.parse(hostData));
+
+                if ((JSON.parse(hostData).results.length) === 0) {
+
+                    window.location.replace("./welcome");
+                } else {
+                    hosts = (JSON.parse(hostData));
+                }
             },
             error: function (data) {
 
@@ -31,14 +37,8 @@ function getRequests(isHierarchical) {
             type: 'GET',
             success: function (dependencyData) {
 
-                if ((JSON.parse(dependencyData).results.length) === 0) {
+                dependencies = (JSON.parse(dependencyData));
 
-                    window.location.replace("./welcome");
-
-                } else {
-
-                    dependencies = (JSON.parse(dependencyData));
-                }
             },
             error: function (data) {
                 // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);

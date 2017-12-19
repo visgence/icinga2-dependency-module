@@ -169,6 +169,4 @@ function getStateUpdate(network, nodes) {
     });
 
 
-
-
 }

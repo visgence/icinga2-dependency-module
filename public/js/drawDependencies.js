@@ -36,7 +36,7 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
                 children: [hostName],
             }
         } else {
-            hostObj[parentName].children.push(hostName); 
+            hostObj[parentName].children.push(hostName);
         }
 
     }
@@ -54,7 +54,16 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
             }
         }
 
-        if (hostObj[hosts.results[i].name] != undefined) { //insert into hostObj if dependencies exist
+        if (hostObj[hosts.results[i].name] === undefined) { //initialize host obj child entry if it does not exit
+            hostObj[hosts.results[i].name] = {
+                status: hostStatus,
+                description: hosts.results[i].attrs.display_name,
+                parents: [],
+                hasDependencies: true,
+                group: hosts.results[i].attrs.groups[0],
+                children: [],
+            }
+        } else { //insert into hostObj if dependencies exist
             hostObj[hosts.results[i].name].status = hostStatus;
             hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
             hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
@@ -84,7 +93,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
 
     var edges = new vis.DataSet([]);
 
-    for (i = 0; i < Object.keys(hostObj).length; i++) { 
+    for (i = 0; i < Object.keys(hostObj).length; i++) {
 
         currHost = Object.keys(hostObj)[i]; //gets name of current host based on key iter
 
@@ -106,7 +115,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
                 text_size = 0;
             }
 
-            if((hostObj[currHost].children.length) > 3) //label major nodes with more than 3 children regardless
+            if ((hostObj[currHost].children.length) > 3) //label major nodes with more than 3 children regardless
                 text_size = 14;
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in object, it is a new host.
@@ -195,7 +204,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
             },
         },
         nodes: {
-            shape: 'square', 
+            shape: 'square',
             fixed: true,
             scaling: {
                 min: 1,
@@ -237,12 +246,12 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
     if (isHierarchical) { //display using hierarchyOptions
         var network = new vis.Network(container, networkData, hierarchyOptions);
 
-    } else if(isFullscreen){ //display using fullscreen (auto refresh)
+    } else if (isFullscreen) { //display using fullscreen (auto refresh)
 
         var network = new vis.Network(container, networkData, networkOptions);
         fullscreenMode(network, nodes);
 
-    } else{
+    } else {
 
         var network = new vis.Network(container, networkData, networkOptions);
 
@@ -263,7 +272,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
 
             $('#loadingBar').css('display', 'block');
 
-            network.on("stabilizationProgress", function (params) {//as network is simulating animate by percentage of physics iter complete
+            network.on("stabilizationProgress", function (params) { //as network is simulating animate by percentage of physics iter complete
                 var maxWidth = 496;
                 var minWidth = 20;
                 var widthFactor = params.iterations / params.total;
@@ -285,7 +294,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
         }
     }
 
-    $('#editBtn').click(function () {//on edit
+    $('#editBtn').click(function () { //on edit
 
         network.setOptions({ //unlock nodes for editing
             nodes: {
@@ -303,49 +312,16 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
         }
     });
 
-    $('.fab-btn-save').click(function() { //on save
+    $('.fab-btn-save').click(function () { //on save
         network.setOptions({
             nodes: {
-                fixed: true 
+                fixed: true
             }
         });
 
-        network.storePositions()//visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
+        network.storePositions() //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
-        $.ajax({//ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify(nodes._data)
-            },
-            success: function () {
-                    $("#notification").html(
-                        "<div class = notification-content><h3>Changes Saved Successfully</h3>"
-                    ).css({
-                        "display": "block",
-                    }).delay(5000).fadeOut();
-            }
-        });
-    });
-
-    if(newHost && !isHierarchical){ //if a new host was added, and it is not being displayed in hierarchical layout
-        network.setOptions({
-            nodes: {
-                fixed: false //unlock nodes
-            }
-        });
-         network.startSimulation(); //start new physics sim
-          network.stabilize(100); //on sim for 100 iters, usually enough for the node to place itself automatically.
-
-        network.once("stabilizationIterationsDone", function () {
-         network.stopSimulation();  
-             network.setOptions({
-                nodes: {
-                    fixed : true 
-                }
-            }); 
-            network.storePositions(); //after new node added, resave network positions
-        $.ajax({
+        $.ajax({ //ajax request to store into DB
             url: "/icingaweb2/dependency_plugin/graph/storeNodes",
             type: 'POST',
             data: {
@@ -353,16 +329,49 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
             },
             success: function () {
                 $("#notification").html(
-                    "<div class = notification-content><h3>Network Change Detected</h3>"
+                    "<div class = notification-content><h3>Changes Saved Successfully</h3>"
                 ).css({
                     "display": "block",
                 }).delay(5000).fadeOut();
-            },
-            error: function (data) {
-                console.log(data);
-                alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
             }
         });
+    });
+
+    if (newHost && !isHierarchical) { //if a new host was added, and it is not being displayed in hierarchical layout
+        network.setOptions({
+            nodes: {
+                fixed: false //unlock nodes
+            }
+        });
+        network.startSimulation(); //start new physics sim
+        network.stabilize(100); //on sim for 100 iters, usually enough for the node to place itself automatically.
+
+        network.once("stabilizationIterationsDone", function () {
+            network.stopSimulation();
+            network.setOptions({
+                nodes: {
+                    fixed: true
+                }
+            });
+            network.storePositions(); //after new node added, resave network positions
+            $.ajax({
+                url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+                type: 'POST',
+                data: {
+                    json: JSON.stringify(nodes._data)
+                },
+                success: function () {
+                    $("#notification").html(
+                        "<div class = notification-content><h3>Network Change Detected</h3>"
+                    ).css({
+                        "display": "block",
+                    }).delay(5000).fadeOut();
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
+                }
+            });
 
         });
     }
@@ -385,7 +394,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
         });
     });
 
-    network.on("deselectNode", function (params) {//on node deselect, label set back to transparent.
+    network.on("deselectNode", function (params) { //on node deselect, label set back to transparent.
 
         var clickedNode = network.body.nodes[params.previousSelection.nodes[0]];
         clickedNode.setOptions({
