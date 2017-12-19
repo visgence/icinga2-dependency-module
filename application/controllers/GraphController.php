@@ -3,6 +3,7 @@
 namespace Icinga\Module\dependency_plugin\Controllers;
 
 use Icinga\Web\Controller;
+use Icinga\Application\Config;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
 use Icinga\Data\ResourceFactory;
 use Exception;
@@ -114,17 +115,18 @@ class GraphController extends Controller{
                 , 'api_endpoint' => $port
                 ));
 
-                if(!file_exists('/etc/icingaweb2/modules/dependency_plugin')){
-                    mkdir('/etc/icingaweb2/modules/dependency_plugin');
-                }
+                $config = $this->config();
+                $config->setSection('db', array('resource' => $resource));
 
-                $file = fopen('/etc/icingaweb2/modules/dependency_plugin/config.ini', 'w');
 
-                $config = "[db]\nresource = \"" . $resource . "\"";
- -        
- -              fwrite($file, $config);
- -
- -              fclose($file);
+                try {
+                        $config->saveIni();
+                    } catch (Exception $e) {
+
+
+            echo $e->getMessage();
+            exit;
+        }
 
                 if(!$res){
                 echo "An error occured while attempting to store settings.\n";
