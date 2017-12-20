@@ -10,18 +10,15 @@
 
 </body>
 <script>
-    setTimeout(function() {
-        
-        getRequests(true);
+if (document.readyState === "complete") {
 
-    }, ); 
+    getRequests(true);
 
+} else {
     window.onload = function () {
 
-        
         getRequests(true);
 
-
     }
-
+}
 </script>

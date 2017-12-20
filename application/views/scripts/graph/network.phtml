@@ -52,16 +52,16 @@
 
 </body>
 <script>
-    setTimeout(function () {
+
+if (document.readyState === "complete"){
 
         getRequests(false);
 
-    }, );
-
+} else {
     window.onload = function () {
-
 
         getRequests(false);
 
     }
+}
 </script>

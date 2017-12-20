@@ -60,15 +60,15 @@
     </div>
 </body>
 <script>
-    setTimeout(function () {
+if (document.readyState === "complete"){
 
-        kickstartManager();
+       kickstartManager();
 
-    }, );
-
+} else {
     window.onload = function () {
 
-        kickstartManager();
+       kickstartManager();
 
     }
+}
 </script>

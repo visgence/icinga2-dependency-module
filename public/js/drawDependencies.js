@@ -322,7 +322,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
             }
         });
 
-        network.storePositions() //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
+        network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
         $.ajax({ //ajax request to store into DB
             url: "/icingaweb2/dependency_plugin/graph/storeNodes",
