@@ -120,7 +120,7 @@ class GraphController extends Controller{
 
 
                 try {
-                        $config->saveIni();
+                      $config->saveIni();
                     } catch (Exception $e) {
 
 
@@ -218,7 +218,7 @@ class GraphController extends Controller{
         }
         catch(Exception $e){
 
-                header('HTTP/1.1 500 Unauthorized');
+                header('HTTP/1.1 500 Internal Server Error');
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(array('message' => $e->getMessage(), 'code' => "500")));
         }

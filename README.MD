@@ -72,15 +72,30 @@ With access to psql:
 
 ```
 psql -q -c "CREATE DATABASE dependencies WITH ENCODING 'UTF8';"
-psql dependencies -q -c "CREATE USER dependencies WITH PASSWORD 'depenencies';
+psql dependencies -q -c "CREATE USER dependencies WITH PASSWORD 'dependencies';
 GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;"
 ```
 ***Note: replace password "dependencies" with desired password***
 
 
+
+***Depending on postgres configuration, this may be neccesary if "ident" errors are encountered during setup***
+
+add the following to /var/lib/pgsql/data/pg_hba.conf  (CentOS)
+or /etc/postgresql/***9.1***/main/pg_hba.conf (Debian)
+***Note: Replace 9.1 with system version number***
+
+```
+        local   dependencies   dependencies                         md5
+        host    dependencies   dependencies   127.0.0.1/32          md5
+        host    dependencies   dependencies   ::1/128               md5
+```
+and restart postgres `systemctl restart postgresql`
+
+
 #### Create Schema
 
-`psql -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/init.sql`
+`psql dependencies -d dependencies < /usr/share/icingaweb2/modules/dependency_plugin/application/schema/init.sql`
 
 ### Altnernatively, using MySQL
 ```
