@@ -67,7 +67,7 @@ Both Postgresql and MySQL are supported.
 
 ### Setup db and User
 
-###Using Postgresql
+### Using Postgresql
 With access to psql:
 
 ```
@@ -79,11 +79,10 @@ GRANT ALL PRIVILEGES ON DATABASE dependencies TO dependencies;"
 
 
 
-***Depending on postgres configuration, this may be neccesary if "ident" errors are encountered during setup***
-
+#### Depending on postgres configuration, this may be neccesary if "ident" errors are encountered during setup:
 add the following to /var/lib/pgsql/data/pg_hba.conf  (CentOS)
-or /etc/postgresql/***9.1***/main/pg_hba.conf (Debian)
-***Note: Replace 9.1 with system version number***
+or /etc/postgresql/***Postgres Version***/main/pg_hba.conf (Debian)
+
 
 ```
         local   dependencies   dependencies                         md5

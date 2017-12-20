@@ -8,7 +8,8 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
 
     for (i = 0; i < dependencies.results.length; i++) { //build base hostObj out of dependencies, add state infromation later
 
-        [hostName, parentName] = (dependencies.results[i].name).split('!Parent'); //need to split due to names in dependencies.json being 'hostName!ParentparentName'
+        hostName = dependencies.results[i].attrs.child_host_name;
+        parentName = dependencies.results[i].attrs.parent_host_name;
 
         if (hostObj[hostName] === undefined) { //initialize host obj child entry if it does not exit
             hostObj[hostName] = {
@@ -85,6 +86,8 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
 
     var redraw = true;
 
+    var color_border = 'yellow';
+    
     var newHost = false;
 
     color_background = 'white'
