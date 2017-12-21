@@ -1,0 +1,80 @@
+<body>
+
+<div id="network-preview"></div>
+    <div class="dependency-module-settings">
+        <h1>Dependency Module Settings</h1>
+        <form method="POST" class='settings-form' id= 'settings-form'>
+            <fieldset>
+                <legend>Module Settings</legend>
+                <dl>
+                    <!-- <div class="hint"></div> -->
+                    <dt id="layout-label">
+                        <label for="layout">Default Layout</label>
+                    </dt>
+                    <dd id="layout-radio">
+                        <input type="radio" name="layout"  id=hierarchy-radio>Hierarchical<br>
+                        <input type="radio" name="layout"  id=network-radio>Network
+                    </dd>
+
+                    <dt id="node-text-label">
+                        <label for="node-text">Label Display Mode</label>
+                    </dt>
+                    <dd id="node-text-element">
+                        <input type="checkbox" name="node-text" value = "up" id='node-text-up-checkbox'>Up<br>
+                        <input type="checkbox" name="node-text" value = "down" id='node-text-down-checkbox'>Down<br>
+                        <input type="checkbox" name="node-text" value = "unreachable" id='node-text-unreachable-checkbox'>Unreachable
+                    </dd>
+
+                    <dt id="host-mode-label">
+                        <label for="host-mode">Host Display Mode</label>
+                    </dt>
+                    <dd id="host-mode-element">
+                        <input type="checkbox" name="Host Display Mode" id='host-mode-checkbox'>Display Only Hosts With Dependency Data
+                    </dd>
+
+                    <dt id="scaling-mode-label">
+                        <label for="scaling-mode">Scaling Mode</label>
+                    </dt>
+                    <dd id="scaling-mode-element">
+                        <input type="checkbox" name="Scaling Mode" id='scaling-mode-field'>Scale Nodes Based On Number Of Children 
+                    </dd>
+                    
+                    <dt id="text-size-label">
+                        <label for="text-size-mode">Text Size</label>
+                    </dt>
+                    <dd id="text-size-element">
+                        <input type="range" name="Text Size" id='text-size-range'>
+                    </dd>
+
+
+
+                </dl>
+                <dt id="button-label"></dt>
+                <dd id="button-element">
+                    <input type="submit">
+                </dd>
+            </fieldset>
+        </form>
+    </div>
+    <div id="notification" class="modal">
+        <div class=n otification-content>
+            <h3>Changes Saved Succesfully</h3>
+        </div>
+    </div>
+
+</body>
+<script>
+if (document.readyState === "complete"){
+
+       settingsManager();
+
+} else {
+    window.onload = function () {
+
+        setTimeout(() => {
+          settingsManager();  
+        }, );
+
+}
+}
+</script>

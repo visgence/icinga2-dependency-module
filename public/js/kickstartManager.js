@@ -17,7 +17,7 @@ function kickstartManager() {
         }
         
 
-    }).then(function (resources) {
+    }).then(function () {
 
         $('form').submit(function (data) {
 

@@ -18,6 +18,8 @@ class GraphController extends Controller{
 
     public function welcomeAction() {}
 
+    public function settingsAction() {}
+
     public function getresourcesAction(){
             
         $dbArr = [];
@@ -111,7 +113,8 @@ class GraphController extends Controller{
                 $db->exec("TRUNCATE TABLE plugin_settings;"); //truncate 
 
                 $res = $db->insert('plugin_settings', array(
-                  'api_user' => $username, 'api_password' => $password
+                  'api_user' => $username, 
+                  'api_password' => $password
                 , 'api_endpoint' => $port
                 ));
 
@@ -339,6 +342,50 @@ class GraphController extends Controller{
             echo $json;
 
             exit;
+    }
+
+    public function storegraphsettingsAction(){
+
+        $json = $_POST["json"];
+
+        $resource = $this->getResource();
+
+        $data = json_decode($json, true);
+        
+        if($data != null){
+
+
+                $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
+
+                $db->exec("TRUNCATE TABLE graph_settings;");
+
+
+                $res = $db->insert('graph_settings', array(
+                  'default_network' => (int)$data['displayOnlyDependencies'], 
+                  'display_up' => (int)$data['hostLabels']['up'],
+                  'display_down' => (int) $data['hostLabels']['down'], 
+                  'display_unreachable' => (int)$data['hostLabels']['unreachable'],
+                  'display_only_dependencies' => (int)$data['displayOnlyDependencies'], 
+                  'scaling' => (int)$data['scaling'], 
+                  'text_size' => $data['textSize']
+                ));
+
+            exit;
+        }
+
+                if(!$res){
+                echo "An error occured while attempting to store settings.\n";
+                exit;
+            }
+
+                echo $res;
+
+        exit;
+
+        
+
+        
+
     }
 }
 

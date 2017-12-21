@@ -19,6 +19,7 @@ $this->provideJsFile('vendor/vis.min.js');
 $this->provideJsFile('drawDependencies.js');
 $this->provideJsFile('getRequests.js');
 $this->provideJsFile('kickstartManager.js');
+$this->provideJsFile('settingsManager.js');
 // $this->provideCssFile('vendor/network.css');
 
 ?>

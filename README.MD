@@ -32,7 +32,7 @@ This module implements vis.js <http://visjs.org> to create a topological network
 These instructions assume all listed operations are being performed on a machine that has icinga 2 and icinga web 2 installed, including a database system such as MySQL or Postgresql.
 
 First clone this repository into `/usr/share/icingaweb2/modules`
-Next rename to depenency_plugin: `mv icinga2-dependency-module depenency_plugin`
+Next rename to dependency_plugin: `mv icinga2-dependency-module dependency_plugin`
 
 ## Icinga 2 Dependency Apply Rule
 An apply rule is used to generate dependency data based on host configuration files. To implement this apply rule a new conf file needs to be created in /etc/icinga2/conf.d: `sudo vim /etc/icinga2/conf.d/parents.conf`. Next add the folowing lines to the file:
