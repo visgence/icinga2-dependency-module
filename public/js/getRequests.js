@@ -78,6 +78,7 @@ function getRequests(isHierarchical) {
 
                 if(settings[0].default_network === '1'){
                     isHierarchical = true;
+                    $('.fabs').hide();
                 }else{
                     isHierarchical = false;
                 }
