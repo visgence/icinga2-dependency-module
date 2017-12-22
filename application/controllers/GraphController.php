@@ -361,7 +361,7 @@ class GraphController extends Controller{
 
 
                 $res = $db->insert('graph_settings', array(
-                  'default_network' => (int)$data['displayOnlyDependencies'], 
+                  'default_network' => (int)$data['isHierarchical'], 
                   'display_up' => (int)$data['hostLabels']['up'],
                   'display_down' => (int) $data['hostLabels']['down'], 
                   'display_unreachable' => (int)$data['hostLabels']['unreachable'],
@@ -382,11 +382,38 @@ class GraphController extends Controller{
 
         exit;
 
-        
-
-        
-
     }
+
+    public function getgraphsettingsAction() {
+
+        try {
+
+            $resource = $this->getResource();
+
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
+
+            $query = 'SELECT * from graph_settings';
+            $vals = $db->fetchAll($query);
+
+            if(!$vals){
+                    throw new Exception('Empty Table');
+            }
+        } catch(Exception $e){
+
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
+            }
+        
+
+            $json = json_encode($vals);
+
+            echo $json;
+
+            exit;
+    }
+
+    
 }
 
 ?>

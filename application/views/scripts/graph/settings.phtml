@@ -3,7 +3,7 @@
 <div id="network-preview"></div>
     <div class="dependency-module-settings">
         <h1>Dependency Module Settings</h1>
-        <form method="POST" class='settings-form' id= 'settings-form'>
+        <form class='settings-form' id= 'settings-form'>
             <fieldset>
                 <legend>Module Settings</legend>
                 <dl>
@@ -36,7 +36,7 @@
                         <label for="scaling-mode">Scaling Mode</label>
                     </dt>
                     <dd id="scaling-mode-element">
-                        <input type="checkbox" name="Scaling Mode" id='scaling-mode-field'>Scale Nodes Based On Number Of Children 
+                        <input type="checkbox" name="Scaling Mode" id='scaling-mode-checkbox'>Scale Nodes Based On Number Of Children 
                     </dd>
                     
                     <dt id="text-size-label">
@@ -49,10 +49,7 @@
 
 
                 </dl>
-                <dt id="button-label"></dt>
-                <dd id="button-element">
-                    <input type="submit">
-                </dd>
+                <button id = 'submit-button' type='button'>Submit</button>
             </fieldset>
         </form>
     </div>
@@ -66,12 +63,15 @@
 <script>
 if (document.readyState === "complete"){
 
+
        settingsManager();
 
 } else {
     window.onload = function () {
 
         setTimeout(() => {
+
+        
           settingsManager();  
         }, );
 

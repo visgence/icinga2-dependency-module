@@ -1,14 +1,13 @@
 function settingsManager() {
 
-    loadDefaults();
-
-    drawPreviewNetwork();
+    loadSaved();
+    
 
      $("#settings-form").change(function () {
          drawPreviewNetwork();
     });
 
-    $('#settings-form').submit(() => {
+    $('#submit-button').click(() => {
         saveSettings();
     });
 
@@ -32,7 +31,7 @@ function loadSettings() {
 
         'scaling': true,
 
-        'textSize': 20
+        'textSize': 50
     }
 
 
@@ -41,7 +40,8 @@ function loadSettings() {
     moduleSettings.hostLabels.up = $("#node-text-up-checkbox").prop('checked');
     moduleSettings.hostLabels.down  = $("#node-text-down-checkbox").prop('checked');
     moduleSettings.hostLabels.unreachable  = $("#node-text-unreachable-checkbox").prop('checked');
-    // moduleSettings.textSize = $("text-size-range");
+    moduleSettings.scaling = $("#scaling-mode-checkbox").prop('checked');
+    moduleSettings.textSize = $("#text-size-range").val() / 2;
 
  
 
@@ -49,12 +49,18 @@ function loadSettings() {
 }
 
 function drawPreviewNetwork(moduleSettings) {
-
+    
     var moduleSettings = loadSettings();
+
+    if(moduleSettings.scaling === true){
+        scalingSize = 15;
+    } else{
+        scalingSize = 0;
+    }
 
     var nodes = new vis.DataSet([{
             id: 1,
-            size: 45,
+            size: 25 + (scalingSize * 1.5),
             color: {
                 border: 'green',
                 background: 'white'
@@ -64,7 +70,7 @@ function drawPreviewNetwork(moduleSettings) {
         },
         {
             id: 2,
-            size: 35,
+            size: 25 + scalingSize, 
             color: {
                 border: 'green',
                 background: 'white'
@@ -350,7 +356,7 @@ function drawPreviewNetwork(moduleSettings) {
 
 }
 
-function saveSettings(moduleSettings)
+function saveSettings(moduleSettings){
 
     var moduleSettings = loadSettings();
 
@@ -374,25 +380,33 @@ function saveSettings(moduleSettings)
             alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
         }
 
-    })
+    });
 
 
 }
 
-function loadDefaults(){
+function loadSaved(){
 
     $.ajax({
         url: "/icingaweb2/dependency_plugin/graph/getgraphSettings", //get host states
         type: 'GET',
         success: function (data) {
 
-            settings = json.parse(data)
+            settings = JSON.parse(data)
 
-            moduleSettings.isHierarchical = $('#hierarchy-radio').prop('checked');
-            moduleSettings.displayOnlyDependencies = $("#host-mode-checkbox").prop('checked');
-            moduleSettings.hostLabels.up = $("#node-text-up-checkbox").prop('checked');
-            moduleSettings.hostLabels.down = $("#node-text-down-checkbox").prop('checked');
-            moduleSettings.hostLabels.unreachable = $("#node-text-unreachable-checkbox").prop('checked');
+            $('#hierarchy-radio').prop('checked', (settings[0].default_network === '1'));
+            $('#network-radio').prop('checked', (settings[0].default_network === '0'));
+            $("#host-mode-checkbox").prop('checked', (settings[0].display_only_dependencies === '1'));
+            $("#node-text-up-checkbox").prop('checked', (settings[0].display_up === '1'));
+            $("#node-text-down-checkbox").prop('checked', (settings[0].display_down === '1'));
+            $("#node-text-unreachable-checkbox").prop('checked', (settings[0].display_unreachable === '1'));
+            $("#scaling-mode-checkbox").prop('checked', (settings[0].scaling === '1'));
+            $("#text-size-range").val(settings[0].text_size*2);
+
+            console.log(settings);
+            console.log(settings[0].default_network);
+
+            drawPreviewNetwork();
 
 
         },
@@ -401,14 +415,11 @@ function loadDefaults(){
 
             alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
 
-
-
         }
-    }),
 
+    });
 
-
-
-
+    
 }
+
 
