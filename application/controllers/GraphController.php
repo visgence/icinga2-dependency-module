@@ -19,6 +19,8 @@ class GraphController extends Controller{
     public function welcomeAction() {}
 
     public function settingsAction() {}
+        
+    public function homeAction() {}
 
     public function getresourcesAction(){
             

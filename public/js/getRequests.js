@@ -65,8 +65,34 @@ function getRequests(isHierarchical) {
                 // return;
             }
 
+        }),
+
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/graph/getgraphSettings", //get host states
+            type: 'GET',
+            success: function (data) {
+
+                settings = JSON.parse(data);
+
+                if(window.location.href.indexOf('home') > -1){
+
+                if(settings[0].default_network === '1'){
+                    isHierarchical = true;
+                }else{
+                    isHierarchical = false;
+                }
+            }
+
+            },
+            error: function (data) {
+
+                alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+
+            }
+
         })
+
     ).then(function () {
-        formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen);
+        formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen, settings);
     });
 }

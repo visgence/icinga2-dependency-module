@@ -1,4 +1,4 @@
-function formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen) {
+function formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen, settings) {
 
     var hostObj = {};
     var positionObj = {};
@@ -55,19 +55,31 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
             }
         }
 
-        if (hostObj[hosts.results[i].name] === undefined) { //initialize host obj child entry if it does not exit
-            hostObj[hosts.results[i].name] = {
-                status: hostStatus,
-                description: hosts.results[i].attrs.display_name,
-                parents: [],
-                hasDependencies: true,
-                group: hosts.results[i].attrs.groups[0],
-                children: [],
+
+        if (settings[0].display_only_dependencies === '0') { //if set to display all hosts
+
+            if (hostObj[hosts.results[i].name] === undefined) { //insert host regardless if there is dependency data
+                hostObj[hosts.results[i].name] = {
+                    status: hostStatus,
+                    description: hosts.results[i].attrs.display_name,
+                    parents: [],
+                    hasDependencies: true,
+                    group: hosts.results[i].attrs.groups[0],
+                    children: [],
+                }
+            } else { 
+                hostObj[hosts.results[i].name].status = hostStatus;
+                hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
+                hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
             }
-        } else { //insert into hostObj if dependencies exist
-            hostObj[hosts.results[i].name].status = hostStatus;
-            hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
-            hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
+        } else {//only hosts with dependency data
+            if (hostObj[hosts.results[i].name]) { //update state info for hosts already placed by dependencies
+
+                hostObj[hosts.results[i].name].status = hostStatus;
+                hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
+                hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
+            }
+
         }
 
         if (positionData != null && positionData[i] != undefined) { //build positionObj 
@@ -78,16 +90,16 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
         }
     }
 
-    drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen);
+    drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, settings);
 
 }
 
-function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
+function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, settings) {
 
     var redraw = true;
 
     var color_border = 'yellow';
-    
+
     var newHost = false;
 
     color_background = 'white'
@@ -105,25 +117,38 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
 
             if (hostObj[currHost].status === 'DOWN') { //node color based on status
                 color_border = 'red';
-                text_size = 14;
+
+                if(settings[0].display_down === '1'){
+                    text_size = parseInt(settings[0].text_size)/2;
+                }else{
+                    text_size = 0;
+                }
             }
 
             if (hostObj[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
-                text_size = 14;
+
+                if (settings[0].display_unreachable === '1') {
+                    text_size = parseInt(settings[0].text_size)/2;
+                } else {
+                    text_size = 0;
+                }
             }
 
             if (hostObj[currHost].status === 'UP') { //if host is up, hide text.
                 color_border = 'green';
-                text_size = 0;
-            }
 
-            if ((hostObj[currHost].children.length) > 3) //label major nodes with more than 3 children regardless
-                text_size = 14;
+                if (settings[0].display_up === '1') {
+                    text_size = parseInt(settings[0].text_size/2);
+                } else {
+                    text_size = 0;
+                }
+            }
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in object, it is a new host.
                 if (Object.keys(positionObj).length > 0) //check if it is a new host, or an entire new network.
                     newHost = true;
+
                 nodes.update({
                     id: currHost,
                     label: (hostObj[currHost].description + "\n(" + currHost + ")"),
@@ -137,7 +162,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3) + 20
+                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling)+ 20) 
                 })
             } else { //not a new host
                 nodes.update({
@@ -153,7 +178,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3) + 20,
+                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20) ,
                     x: positionObj[currHost].node_x, //set x, y position
                     y: positionObj[currHost].node_y,
 

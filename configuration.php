@@ -1,7 +1,7 @@
 <?php
 $section = $this->menuSection(
     N_('Dependencies')
-)->setUrl('dependency_plugin/graph/network')->setIcon('plus'
+)->setUrl('dependency_plugin/graph/home')->setIcon('plus'
 )->setRenderer(array(
     'SummaryNavigationItemRenderer',
     'state' => 'critical'
@@ -11,6 +11,8 @@ $section->add(N_('Hierarchy Map'))
     ->setUrl('dependency_plugin/graph/hierarchy');
 $section->add(N_('Network Map'))
     ->setUrl('dependency_plugin/graph/network');
+$section->add(N_('Settings'))
+    ->setUrl('dependency_plugin/graph/settings');
 
 
 $this->provideJsFile('fullscreenMode.js');

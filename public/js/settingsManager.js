@@ -403,8 +403,7 @@ function loadSaved(){
             $("#scaling-mode-checkbox").prop('checked', (settings[0].scaling === '1'));
             $("#text-size-range").val(settings[0].text_size*2);
 
-            console.log(settings);
-            console.log(settings[0].default_network);
+
 
             drawPreviewNetwork();
 
