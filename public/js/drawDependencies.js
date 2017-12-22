@@ -87,7 +87,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
     var redraw = true;
 
     var color_border = 'yellow';
-    
+
     var newHost = false;
 
     color_background = 'white'
@@ -263,6 +263,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
                 nodes: {
                     fixed: false //unlock nodes for physics sim
                 }
+
             });
 
             $("#notification").html(
@@ -293,6 +294,24 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
                     $('#loadingBar').css('display', 'none');
                 }, 500);
                 $('.fabs').show();
+
+                network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
+
+                $.ajax({ //ajax request to store into DB
+                    url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+                    type: 'POST',
+                    data: {
+                        json: JSON.stringify(nodes._data)
+                    },
+                    success: function () {
+                        $("#notification").html(
+                            "<div class = notification-content><h3>New Network Saved</h3>"
+                        ).css({
+                            "display": "block",
+                        }).delay(5000).fadeOut();
+                    }
+                });
+
             });
         }
     }
@@ -314,6 +333,29 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen) {
             });
         }
     });
+
+    $('.fab-btn-delete').click(function () {
+        $.ajax({ //ajax request to store into DB
+            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify('RESET')
+            },
+            success: function () {
+                setTimeout(function () {
+
+                    window.location.replace("./network"); //on succes redirect to network.
+
+                }, 2000);
+                $("#notification").html(
+                    "<div class = notification-content><h3>Network Reset</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            }
+        });
+    });
+
 
     $('.fab-btn-save').click(function () { //on save
         network.setOptions({
