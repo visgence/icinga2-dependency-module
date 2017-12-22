@@ -277,7 +277,11 @@ class GraphController extends Controller{
 
         $data = json_decode($json, true);
 
-        if($data != null){
+        if($data == 'RESET'){
+            $db->exec("TRUNCATE TABLE node_positions;");
+        }
+
+        else if($data != null){
 
            $result = $db->exec("TRUNCATE TABLE node_positions;");
 
