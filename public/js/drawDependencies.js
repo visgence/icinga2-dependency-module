@@ -101,6 +101,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
     var color_border = 'yellow';
 
     var newHost = false;
+    
 
     color_background = 'white'
 
@@ -276,8 +277,9 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
 
     } else if (isFullscreen) { //display using fullscreen (auto refresh)
 
-        var network = new vis.Network(container, networkData, networkOptions);
-        fullscreenMode(network, nodes);
+        fullscreenMode(container, networkData);
+
+        return;
 
     } else {
 
