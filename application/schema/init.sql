@@ -13,11 +13,11 @@ CREATE TABLE plugin_settings (
 
 CREATE TABLE graph_settings (
 
-    default_network BOOLEAN DEFAULT TRUE,
-    display_up BOOLEAN DEFAULT TRUE,
-    display_down BOOLEAN DEFAULT TRUE,
-    display_unreachable BOOLEAN DEFAULT TRUE,
-    display_only_dependencies BOOLEAN DEFAULT TRUE, 
-    scaling BOOLEAN DEFAULT TRUE,
+    default_network SMALLINT DEFAULT 1,
+    display_up SMALLINT DEFAULT 1,
+    display_down SMALLINT DEFAULT 1,
+    display_unreachable SMALLINT DEFAULT 1,
+    display_only_dependencies SMALLINT DEFAULT 1, 
+    scaling SMALLINT DEFAULT 1,
     text_size INTEGER DEFAULT 25
 );

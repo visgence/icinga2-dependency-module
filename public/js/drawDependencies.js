@@ -119,7 +119,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
             if (hostObj[currHost].status === 'DOWN') { //node color based on status
                 color_border = 'red';
 
-                if(settings[0].display_down === '1'){
+                if (parseInt(settings[0].display_down) === 1){
                     text_size = parseInt(settings[0].text_size)/2;
                 }else{
                     text_size = 0;
@@ -129,7 +129,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
             if (hostObj[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
 
-                if (settings[0].display_unreachable === '1') {
+                if (parseInt(settings[0].display_unreachable) === 1) {
                     text_size = parseInt(settings[0].text_size)/2;
                 } else {
                     text_size = 0;
@@ -139,7 +139,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
             if (hostObj[currHost].status === 'UP') { //if host is up, hide text.
                 color_border = 'green';
 
-                if (settings[0].display_up === '1') {
+                if (parseInt(settings[0].display_up) === 1) {
                     text_size = parseInt(settings[0].text_size/2);
                 } else {
                     text_size = 0;

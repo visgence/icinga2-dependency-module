@@ -394,14 +394,14 @@ function loadSaved(){
 
             settings = JSON.parse(data)
 
-            $('#hierarchy-radio').prop('checked', (settings[0].default_network === '1'));
-            $('#network-radio').prop('checked', (settings[0].default_network === '0'));
-            $("#host-mode-checkbox").prop('checked', (settings[0].display_only_dependencies === '1'));
-            $("#node-text-up-checkbox").prop('checked', (settings[0].display_up === '1'));
-            $("#node-text-down-checkbox").prop('checked', (settings[0].display_down === '1'));
-            $("#node-text-unreachable-checkbox").prop('checked', (settings[0].display_unreachable === '1'));
-            $("#scaling-mode-checkbox").prop('checked', (settings[0].scaling === '1'));
-            $("#text-size-range").val(settings[0].text_size*2);
+            $('#hierarchy-radio').prop('checked', (parseInt(settings[0].default_network) === 1));
+            $('#network-radio').prop('checked', (parseInt(settings[0].default_network) === 0));
+            $("#host-mode-checkbox").prop('checked', (parseInt(settings[0].display_only_dependencies) === 1));
+            $("#node-text-up-checkbox").prop('checked', (parseInt(settings[0].display_up) === 1));
+            $("#node-text-down-checkbox").prop('checked', (parseInt(settings[0].display_down) === 1));
+            $("#node-text-unreachable-checkbox").prop('checked', (parseInt(settings[0].display_unreachable) === 1));
+            $("#scaling-mode-checkbox").prop('checked', (parseInt(settings[0].scaling) === 1));
+            $("#text-size-range").val(parseInt(settings[0]).text_size*2);
 
 
 

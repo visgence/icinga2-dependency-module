@@ -373,7 +373,7 @@ class GraphController extends Controller{
                   'display_unreachable' => (int)$data['hostLabels']['unreachable'],
                   'display_only_dependencies' => (int)$data['displayOnlyDependencies'], 
                   'scaling' => (int)$data['scaling'], 
-                  'text_size' => $data['textSize']
+                  'text_size' => (int)$data['textSize']
                 ));
 
             exit;

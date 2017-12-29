@@ -1,6 +1,7 @@
 function fullscreenMode(container, networkData) {
 
     $('#dependency-network').css("background-color", '#262626');
+    $('#dependency-network').css("width", '100%');
 
     const fullscreenOptions = {
 
