@@ -34,20 +34,19 @@ These instructions assume all listed operations are being performed on a machine
 First clone this repository into `/usr/share/icingaweb2/modules`
 Next rename to dependency_plugin: `mv icinga2-dependency-module dependency_plugin`
 
-## Icinga 2 Dependency Apply Rule
-An apply rule is used to generate dependency data based on host configuration files. To implement this apply rule a new conf file needs to be created in /etc/icinga2/conf.d: `sudo vim /etc/icinga2/conf.d/parents.conf`. Next add the folowing lines to the file:
+## Icinga 2 Dependencies
+This module will attempt to graph ***any*** dependencies, an example apply rule to generate dependencies is shown below:
 ```
 apply Dependency "Parent" for (parent in host.vars.parents) to Host {
       parent_host_name = parent
       assign where host.address && host.vars.parents
 } 
 ```
+this apply rule generates a dependency between hosts using a custom variable "parents".
 
-## Format of Host Configuration Files
-This plugin requires some configuration of stock host files in order to function.
 
 ### Custom Variable "Parents"
-The apply rule generates dependency data using a custom variable names "parents". this custom variable needs to be an array and can be manually inserted into host configuration files or modified using icinga director. An example host with the correct parent variable is: 
+To use the example apply rule to generate dependencies, insert the following into host configuration files or modify using icinga director. An example host with the correct parent variable is: 
 ```
 object Host "example-host" {
     import "generic-host"
