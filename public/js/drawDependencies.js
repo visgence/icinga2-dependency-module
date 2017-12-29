@@ -140,7 +140,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                 color_border = 'green';
 
                 if (parseInt(settings[0].display_up) === 1) {
-                    text_size = parseInt(settings[0].text_size/2);
+                    text_size = parseInt(settings[0].text_size)/2;
                 } else {
                     text_size = 0;
                 }

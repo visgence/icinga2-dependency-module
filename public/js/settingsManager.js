@@ -401,7 +401,7 @@ function loadSaved(){
             $("#node-text-down-checkbox").prop('checked', (parseInt(settings[0].display_down) === 1));
             $("#node-text-unreachable-checkbox").prop('checked', (parseInt(settings[0].display_unreachable) === 1));
             $("#scaling-mode-checkbox").prop('checked', (parseInt(settings[0].scaling) === 1));
-            $("#text-size-range").val(parseInt(settings[0]).text_size*2);
+            $("#text-size-range").val(parseInt(settings[0].text_size)*2);
 
 
 

@@ -402,7 +402,18 @@ class GraphController extends Controller{
             $vals = $db->fetchAll($query);
 
             if(!$vals){
-                    throw new Exception('Empty Table');
+                   $db->insert('graph_settings', array(
+                  'default_network' => 0, 
+                  'display_up' => 1,
+                  'display_down' => 1, 
+                  'display_unreachable' => 1,
+                  'display_only_dependencies' => 1, 
+                  'scaling' => 1, 
+                  'text_size' => 25
+                ));
+
+               $vals = $db->fetchAll($query);
+
             }
         } catch(Exception $e){
 

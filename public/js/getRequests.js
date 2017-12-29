@@ -76,7 +76,7 @@ function getRequests(isHierarchical) {
 
                 if(window.location.href.indexOf('home') > -1){
 
-                if(settings[0].default_network === '1'){
+                if(parseInt(settings[0].default_network) === 1){
                     isHierarchical = true;
                     $('.fabs').hide();
                 }else{
