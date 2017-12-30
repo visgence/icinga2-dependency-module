@@ -401,8 +401,8 @@ class GraphController extends Controller{
             $query = 'SELECT * from graph_settings';
             $vals = $db->fetchAll($query);
 
-            if(!$vals){
-                   $db->insert('graph_settings', array(
+            if(!$vals){ //catch empty settings table
+                   $db->insert('graph_settings', array( //insert default
                   'default_network' => 0, 
                   'display_up' => 1,
                   'display_down' => 1, 

@@ -56,7 +56,7 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
         }
 
 
-        if (settings[0].display_only_dependencies === '0') { //if set to display all hosts
+        if (parseInt(settings[0].display_only_dependencies) === '0') { //if set to display all hosts
 
             if (hostObj[hosts.results[i].name] === undefined) { //insert host regardless if there is dependency data
                 hostObj[hosts.results[i].name] = {
