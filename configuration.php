@@ -7,13 +7,12 @@ $section = $this->menuSection(
     'state' => 'critical'
 ));
 
-$section->add(N_('Hierarchy Map'))
-    ->setUrl('dependency_plugin/graph/hierarchy');
-$section->add(N_('Network Map'))
-    ->setUrl('dependency_plugin/graph/network');
+// $section->add(N_('Hierarchy Map'))
+//     ->setUrl('dependency_plugin/graph/hierarchy');
+// $section->add(N_('Network Map'))
+//     ->setUrl('dependency_plugin/graph/network');
 $section->add(N_('Settings'))
     ->setUrl('dependency_plugin/graph/settings');
-
 
 $this->provideJsFile('fullscreenMode.js');
 $this->provideJsFile('drawDependencies.js');

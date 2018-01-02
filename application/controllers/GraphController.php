@@ -5,14 +5,40 @@ namespace Icinga\Module\dependency_plugin\Controllers;
 use Icinga\Web\Controller;
 use Icinga\Application\Config;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Data\ResourceFactory;
 use Exception;
 
 class GraphController extends Controller{
 
-    public function hierarchyAction() {}
+    public function hierarchyAction() {
+        $this->getTabs()->add('Network', array(
+            'active'    => false,
+            'label'     => $this->translate('Network Map'),
+            'url'       => 'dependency_plugin/graph/network'
+        ));
+
+        $this->getTabs()->add('Hierarchy', array(
+            'active'    => true,
+            'label'     => $this->translate('Hierarchy Map'),
+            'url'       => 'dependency_plugin/graph/hierarchy'
+        ));
+    }
     
-    public function networkAction() {}
+    public function networkAction() {
+        $this->getTabs()->add('Network', array(
+            'active'    => true,
+            'label'     => $this->translate('Network Map'),
+            'url'       => 'dependency_plugin/graph/network'
+        ));
+
+        $this->getTabs()->add('Hierarchy', array(
+            'active'    => false,
+            'label'     => $this->translate('Hierarchy Map'),
+            'url'       => 'dependency_plugin/graph/hierarchy'
+        ));
+
+    }
 
     public function kickstartAction() {}
 
@@ -20,7 +46,23 @@ class GraphController extends Controller{
 
     public function settingsAction() {}
         
-    public function homeAction() {}
+    public function homeAction() {
+
+        $this->getTabs()->add('Network', array(
+            'active'    => true,
+            'label'     => $this->translate('Network Map'),
+            'url'       => 'dependency_plugin/graph/network'
+        ));
+
+        $this->getTabs()->add('Hierarchy', array(
+            'active'    => false,
+            'label'     => $this->translate('Hierarchy Map'),
+            'url'       => 'dependency_plugin/graph/hierarchy'
+        ));
+
+        
+
+    }
 
     public function getresourcesAction(){
             

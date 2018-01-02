@@ -2,7 +2,6 @@
     width: 100%;
     height: 100%;
     float: left;
-    border: 1px solid lightgray;
 }
 
 #hud {
@@ -153,6 +152,8 @@
     width: 150px;
     list-style: none;
     text-align: right;
+        margin: 0;
+    padding: 0;
 }
 
 .fab-menu li {
@@ -242,12 +243,7 @@ div.outerBorder {
     box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.4);
 }
 
-ul {
-    margin: 0;
-    padding: 0;
-}
-
-ul li {
+.fab-menu ul li {
     cursor: pointer;
     position: relative;
     padding: 5px;
@@ -260,7 +256,7 @@ ul li {
     user-select: none;
 }
 
-ul li.selected {
+.fab-menu ul li.selected {
     border-left: 5px solid transparent; // line-height: 2.167em;
     border-color: @icinga-blue;
     color: @icinga-blue;
