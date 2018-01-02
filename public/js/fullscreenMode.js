@@ -2,6 +2,8 @@ function fullscreenMode(container, networkData) {
 
     $('#dependency-network').css("background-color", '#262626');
     $('#main').css("width", '100%');
+    $('#main').css("height", '90%');
+    $('#hud').css('display', 'block');
 
     const fullscreenOptions = {
 
@@ -41,7 +43,9 @@ function fullscreenMode(container, networkData) {
         }
     }).then(function () {
 
-        console.log(hosts);
+        var hostsUp = 0; 
+        var hostsDown = 0; 
+        var hostsUnreachable = 0;
 
         for (i = 0; i < hosts.results.length; i++) {
 
@@ -52,15 +56,18 @@ function fullscreenMode(container, networkData) {
             if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
                 color_border = 'green';
                 font_size = 0;
+                hostsUp++;
             } else if (hosts.results[i].attrs.state === 1) {
 
                 if (hosts.results[i].attrs.last_reachable === false) {
                     color_border = 'purple';
                     font_size = 20;
+                    hostsUnreachable ++;
                     // problemHosts.push(hosts.results[i].name);
                 } else {
                     color_border = 'red';
                     font_size = 20;
+                    hostsDown ++;
                     // problemHosts.push(hosts.results[i].name);
                 }
             }
@@ -91,6 +98,16 @@ function fullscreenMode(container, networkData) {
 
         var network = new vis.Network(container, networkData, fullscreenOptions);
 
+        var date = new Date();
+        var time = ' ' + date.getHours() + ':' + date.getMinutes()
+        var timeUpdated = time + ' ' + date.getFullYear() + '-' + date.getMonth() + 1  + '-' + date.getDate();
+
+        console.log(timeUpdated);
+
+        $('#hud-down').html("<h2>" + hostsDown + ' Hosts DOWN' + "</h2>");
+        $('#hud-unreachable').html('<h2>'+ hostsUnreachable + ' Hosts UNREACHABLE' + '</h2>');
+        $('#hud-up').html('<h2>' + hostsUp + ' Hosts UP' + '</h2>');
+        $('#hud-title').html('<h2>Visgence Network ' + timeUpdated + '</h2>');
     });
 
     setTimeout(function () {

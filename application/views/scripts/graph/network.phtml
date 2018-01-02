@@ -7,7 +7,12 @@
     <!-- <ul  id="dependency-menu"> -->
     <!-- </ul> -->
 
-
+    <div id="hud">
+        <div class = 'hud-box' id = 'hud-title'></div>
+        <div class='hud-box' id = 'hud-down'></div>
+        <div class='hud-box' id = 'hud-unreachable'></div>
+        <div class='hud-box' id = 'hud-up'></div>
+    </div>
     <div class="column" id="dependency-network">
     </div>
 
@@ -28,9 +33,10 @@
 
 
         <ul class="fab-menu">
-            <li><a class="zoom-fab fab-btn-sm fab-btn-delete scale-transition scale-out">
-    <i class="material-icons">delete_forever</i>
-            </a>
+            <li>
+                <a class="zoom-fab fab-btn-sm fab-btn-delete scale-transition scale-out">
+                    <i class="material-icons">delete_forever</i>
+                </a>
             </li>
             <li>
                 <a class="zoom-fab fab-btn-sm fab-btn-save scale-transition scale-out">
@@ -45,23 +51,22 @@
     </div>
 
     <div id="notification" class="modal">
-        <div class= notification-content>
+        <div class=n otification-content>
             <h3>Changes Saved Succesfully</h3>
         </div>
     </div>
 
 </body>
 <script>
-
-if (document.readyState === "complete"){
-
-        getRequests(false);
-
-} else {
-    window.onload = function () {
+    if (document.readyState === "complete") {
 
         getRequests(false);
 
+    } else {
+        window.onload = function () {
+
+            getRequests(false);
+
+        }
     }
-}
 </script>
