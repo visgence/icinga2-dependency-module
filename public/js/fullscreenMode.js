@@ -100,15 +100,15 @@ function fullscreenMode(container, networkData) {
         var network = new vis.Network(container, networkData, fullscreenOptions);
 
         var date = new Date();
-        var time = ' ' + date.getHours() + ':' + date.getMinutes()
-        var timeUpdated = time + ' ' + date.getFullYear() + '-' + date.getMonth() + 1  + '-' + date.getDate();
+        var time = ' ' + date.getHours() + ':' + date.getMinutes();
+        var timeUpdated = date;
 
         console.log(timeUpdated);
 
         $('#hud-down').html("<h1>" + hostsDown + ' Hosts DOWN' + "</h1>");
         $('#hud-unreachable').html('<h1>'+ hostsUnreachable + ' Hosts UNREACHABLE' + '</h1>');
         $('#hud-up').html('<h1>' + hostsUp + ' Hosts UP' + '</h1>');
-        $('#hud-title').html('<h1>Visgence Network ' + timeUpdated + '</h1>');
+        $('#hud-title').html('<h1>' + timeUpdated + '</h1>');
     });
 
     setTimeout(function () {
