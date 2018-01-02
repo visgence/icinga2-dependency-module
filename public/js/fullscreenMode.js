@@ -41,9 +41,13 @@ function fullscreenMode(container, networkData) {
         }
     }).then(function () {
 
+        console.log(hosts);
+
         for (i = 0; i < hosts.results.length; i++) {
 
             var node = networkData.nodes['_data'][hosts.results[i].name];
+
+            // console.log(node);
 
             if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
                 color_border = 'green';
@@ -61,7 +65,14 @@ function fullscreenMode(container, networkData) {
                 }
             }
 
+
+           
+
             if (node != undefined) {
+
+                if (node.mass > 1.5) {
+                    font_size = 20;
+                }
 
                 networkData.nodes.update({
                     id: hosts.results[i].name,
