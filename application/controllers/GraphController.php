@@ -373,6 +373,8 @@ class GraphController extends Controller{
                   'display_unreachable' => (int)$data['hostLabels']['unreachable'],
                   'display_only_dependencies' => (int)$data['displayOnlyDependencies'], 
                   'scaling' => (int)$data['scaling'], 
+                  'always_display_large_labels' => (int)$data['labelLargeNodes'],
+                  'alias_only' => (int)$data['aliasOnly'],
                   'text_size' => (int)$data['textSize']
                 ));
 
@@ -409,6 +411,8 @@ class GraphController extends Controller{
                   'display_unreachable' => 1,
                   'display_only_dependencies' => 1, 
                   'scaling' => 1, 
+                  'always_display_large_labels' => 1,
+                  'alias_only' => 1,
                   'text_size' => 25
                 ));
 

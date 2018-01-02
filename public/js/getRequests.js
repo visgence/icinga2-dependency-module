@@ -26,9 +26,6 @@ function getRequests(isHierarchical) {
                 }
 
                 alert('Cannot Load Host Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-
-
-
             }
         }),
 

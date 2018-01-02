@@ -67,12 +67,12 @@ function formatDependencies(hosts, dependencies, isHierarchical, positionData, i
                     group: hosts.results[i].attrs.groups[0],
                     children: [],
                 }
-            } else { 
+            } else {
                 hostObj[hosts.results[i].name].status = hostStatus;
                 hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
                 hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
             }
-        } else {//only hosts with dependency data
+        } else { //only hosts with dependency data
             if (hostObj[hosts.results[i].name]) { //update state info for hosts already placed by dependencies
 
                 hostObj[hosts.results[i].name].status = hostStatus;
@@ -101,7 +101,6 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
     var color_border = 'yellow';
 
     var newHost = false;
-    
 
     color_background = 'white'
 
@@ -119,9 +118,9 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
             if (hostObj[currHost].status === 'DOWN') { //node color based on status
                 color_border = 'red';
 
-                if (parseInt(settings[0].display_down) === 1){
-                    text_size = parseInt(settings[0].text_size)/2;
-                }else{
+                if (parseInt(settings[0].display_down) === 1) {
+                    text_size = parseInt(settings[0].text_size) / 2;
+                } else {
                     text_size = 0;
                 }
             }
@@ -130,7 +129,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                 color_border = 'purple';
 
                 if (parseInt(settings[0].display_unreachable) === 1) {
-                    text_size = parseInt(settings[0].text_size)/2;
+                    text_size = parseInt(settings[0].text_size) / 2;
                 } else {
                     text_size = 0;
                 }
@@ -140,10 +139,24 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                 color_border = 'green';
 
                 if (parseInt(settings[0].display_up) === 1) {
-                    text_size = parseInt(settings[0].text_size)/2;
+                    text_size = parseInt(settings[0].text_size) / 2;
                 } else {
                     text_size = 0;
                 }
+            
+            }
+
+            
+
+            if (parseInt(settings[0].always_display_large_labels) && hostObj[currHost].children.length > 3){
+                text_size = parseInt(settings[0].text_size) / 2;
+            }
+
+            if (parseInt(settings[0].alias_only)){
+
+                hostLabel = hostObj[currHost].description;
+            }else{
+                hostLabel = (hostObj[currHost].description + "\n(" + currHost + ")");
             }
 
             if (!positionObj[currHost]) { //if the name of the host does not exist in object, it is a new host.
@@ -152,7 +165,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
 
                 nodes.update({
                     id: currHost,
-                    label: (hostObj[currHost].description + "\n(" + currHost + ")"),
+                    label: hostLabel,
                     mass: (hostObj[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
@@ -163,12 +176,12 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling)+ 20) 
+                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20)
                 })
             } else { //not a new host
                 nodes.update({
                     id: currHost,
-                    label: (hostObj[currHost].description + "\n(" + currHost + ")"),
+                    label: hostLabel,
                     mass: (hostObj[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
@@ -179,7 +192,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20) ,
+                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20),
                     x: positionObj[currHost].node_x, //set x, y position
                     y: positionObj[currHost].node_y,
 
@@ -285,63 +298,55 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
 
         var network = new vis.Network(container, networkData, networkOptions);
 
-        if (Object.keys(positionObj).length === 0) { //if there is no position data for the network, simulate network.
-            network.setOptions({
-                nodes: {
-                    fixed: false //unlock nodes for physics sim
-                }
 
-            });
 
-            $("#notification").html(
-                "<div class = notification-content><h3>Generating New Network</h3>"
-            ).css({
-                "display": "block",
-            }).delay(5000).fadeOut();
+        if (Object.keys(positionObj).length === 0) {
+            simulateNewNetwork(network, nodes); //if there is no position data for the network, simulate network.
+        }
 
-            $('.fabs').hide();
+        startEventListeners(network, nodes);
 
-            $('#loadingBar').css('display', 'block');
 
-            network.on("stabilizationProgress", function (params) { //as network is simulating animate by percentage of physics iter complete
-                var maxWidth = 496;
-                var minWidth = 20;
-                var widthFactor = params.iterations / params.total;
-                var width = Math.max(minWidth, maxWidth * widthFactor);
-                $('#bar').css("width", width);
-                $('#text').html(Math.round(widthFactor * 100) + '%');
-            });
+        if (newHost && !isHierarchical) { //if a new host was added, and it is not being displayed in hierarchical layout
 
-            network.once("stabilizationIterationsDone", function () {
-                $('#text').html('100%');
-                $('#bar').css("width", '496');
-                $('#loadingBar').css('opacity', '0');
-                // really clean the dom element
-                setTimeout(function () {
-                    $('#loadingBar').css('display', 'none');
-                }, 500);
-                $('.fabs').show();
+            simulateChangedNetwork(network, nodes);
 
-                network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
-
-                $.ajax({ //ajax request to store into DB
-                    url: "/icingaweb2/dependency_plugin/graph/storeNodes",
-                    type: 'POST',
-                    data: {
-                        json: JSON.stringify(nodes._data)
-                    },
-                    success: function () {
-                        $("#notification").html(
-                            "<div class = notification-content><h3>New Network Saved</h3>"
-                        ).css({
-                            "display": "block",
-                        }).delay(5000).fadeOut();
-                    }
-                });
-
-            });
         }
     }
+}
+
+
+function startEventListeners(network, nodes) {
+
+    network.on("doubleClick", function (params) { //double click on node listener
+        if (params.nodes[0] != undefined) {
+            href = location.href.split('/');
+            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
+        }
+    });
+
+    network.on("selectNode", function (params) { //on selecting node, background of label is made solid white for readabillity. 
+        var clickedNode = network.body.nodes[params.nodes[0]];
+        font_size = clickedNode.options.font.size;
+        clickedNode.setOptions({
+            font: {
+                size: 30,
+                background: 'white',
+            }
+        });
+    });
+
+    network.on("deselectNode", function (params) { //on node deselect, label set back to transparent.
+
+        var clickedNode = network.body.nodes[params.previousSelection.nodes[0]];
+        clickedNode.setOptions({
+            font: {
+                size: font_size,
+                background: 'none',
+            }
+        });
+
+    });
 
     $('#editBtn').click(function () { //on edit
 
@@ -409,74 +414,103 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
         });
     });
 
-    if (newHost && !isHierarchical) { //if a new host was added, and it is not being displayed in hierarchical layout
-        network.setOptions({
-            nodes: {
-                fixed: false //unlock nodes
+}
+
+function simulateNewNetwork(network, nodes) {
+
+    network.setOptions({
+        nodes: {
+            fixed: false //unlock nodes for physics sim
+        }
+
+    });
+
+    $("#notification").html(
+        "<div class = notification-content><h3>Generating New Network</h3>"
+    ).css({
+        "display": "block",
+    }).delay(5000).fadeOut();
+
+    $('.fabs').hide();
+
+    $('#loadingBar').css('display', 'block');
+
+    network.on("stabilizationProgress", function (params) { //as network is simulating animate by percentage of physics iter complete
+        var maxWidth = 496;
+        var minWidth = 20;
+        var widthFactor = params.iterations / params.total;
+        var width = Math.max(minWidth, maxWidth * widthFactor);
+        $('#bar').css("width", width);
+        $('#text').html(Math.round(widthFactor * 100) + '%');
+    });
+
+    network.once("stabilizationIterationsDone", function () {
+        $('#text').html('100%');
+        $('#bar').css("width", '496');
+        $('#loadingBar').css('opacity', '0');
+        // really clean the dom element
+        setTimeout(function () {
+            $('#loadingBar').css('display', 'none');
+        }, 500);
+        $('.fabs').show();
+
+        network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
+
+        $.ajax({ //ajax request to store into DB
+            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(nodes._data)
+            },
+            success: function () {
+                $("#notification").html(
+                    "<div class = notification-content><h3>New Network Saved</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
             }
         });
-        network.startSimulation(); //start new physics sim
-        network.stabilize(100); //on sim for 100 iters, usually enough for the node to place itself automatically.
 
-        network.once("stabilizationIterationsDone", function () {
-            network.stopSimulation();
-            network.setOptions({
-                nodes: {
-                    fixed: true
-                }
-            });
-            network.storePositions(); //after new node added, resave network positions
-            $.ajax({
-                url: "/icingaweb2/dependency_plugin/graph/storeNodes",
-                type: 'POST',
-                data: {
-                    json: JSON.stringify(nodes._data)
-                },
-                success: function () {
-                    $("#notification").html(
-                        "<div class = notification-content><h3>Network Change Detected</h3>"
-                    ).css({
-                        "display": "block",
-                    }).delay(5000).fadeOut();
-                },
-                error: function (data) {
-                    console.log(data);
-                    alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
-                }
-            });
+    });
+}
 
-        });
-    }
+function simulateChangedNetwork(network, nodes) {
 
-    network.on("doubleClick", function (params) { //double click on node listener
-        if (params.nodes[0] != undefined) {
-            href = location.href.split('/');
-            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
+    network.setOptions({
+        nodes: {
+            fixed: false //unlock nodes
         }
     });
 
-    network.on("selectNode", function (params) { //on selecting node, background of label is made solid white for readabillity. 
-        var clickedNode = network.body.nodes[params.nodes[0]];
-        font_size = clickedNode.options.font.size;
-        clickedNode.setOptions({
-            font: {
-                size: 30,
-                background: 'white',
+    network.startSimulation(); //start new physics sim
+    network.stabilize(200); //on sim for 100 iters, usually enough for the node to place itself automatically.
+
+    network.once("stabilizationIterationsDone", function () {
+        network.stopSimulation();
+        network.setOptions({
+            nodes: {
+                fixed: true
             }
         });
-    });
-
-    network.on("deselectNode", function (params) { //on node deselect, label set back to transparent.
-
-        var clickedNode = network.body.nodes[params.previousSelection.nodes[0]];
-        clickedNode.setOptions({
-            font: {
-                size: font_size,
-                background: 'none',
+        network.storePositions(); //after new node added, resave network positions
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(nodes._data)
+            },
+            success: function () {
+                $("#notification").html(
+                    "<div class = notification-content><h3>Network Change Detected</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            },
+            error: function (data) {
+                console.log(data);
+                alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
             }
         });
 
     });
-
-
 }

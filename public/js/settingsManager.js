@@ -31,6 +31,10 @@ function loadSettings() {
 
         'scaling': true,
 
+        'aliasOnly': true,
+
+        'labelLargeNodes': true,
+
         'textSize': 50
     }
 
@@ -42,8 +46,8 @@ function loadSettings() {
     moduleSettings.hostLabels.unreachable  = $("#node-text-unreachable-checkbox").prop('checked');
     moduleSettings.scaling = $("#scaling-mode-checkbox").prop('checked');
     moduleSettings.textSize = $("#text-size-range").val() / 2;
-
- 
+    moduleSettings.labelLargeNodes = $('#label-mode-checkbox').prop('checked');
+    moduleSettings.aliasOnly = $('#alias-label-checkbox').prop('checked');
 
     return moduleSettings;
 }
@@ -58,7 +62,8 @@ function drawPreviewNetwork(moduleSettings) {
         scalingSize = 0;
     }
 
-    var nodes = new vis.DataSet([{
+    if(moduleSettings.aliasOnly){
+        var nodes = new vis.DataSet([{
             id: 1,
             size: 25 + (scalingSize * 1.5),
             color: {
@@ -70,7 +75,7 @@ function drawPreviewNetwork(moduleSettings) {
         },
         {
             id: 2,
-            size: 25 + scalingSize, 
+            size: 25 + scalingSize,
             color: {
                 border: 'green',
                 background: 'white'
@@ -180,7 +185,135 @@ function drawPreviewNetwork(moduleSettings) {
         }
 
 
-    ]);
+        ]);
+
+    } 
+    else {
+        var nodes = new vis.DataSet([{
+            id: 1,
+            size: 25 + (scalingSize * 1.5),
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 1' + '\n(host-1)'
+        },
+        {
+            id: 2,
+            size: 25 + scalingSize,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 2' + '\n(host-2)'
+        },
+        {
+            id: 3,
+            size: 25,
+            color: {
+                border: 'red',
+                background: 'white'
+            },
+            group: 'down',
+            label: 'host 3' + '\n(host-3)'
+        },
+        {
+            id: 4,
+            size: 25,
+            color: {
+                border: 'purple',
+                background: 'white'
+            },
+            group: 'unreachable',
+            label: 'host 4' + '\n(host-4)'
+        },
+        {
+            id: 5,
+            size: 25,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 5' + '\n(host-5)'
+        },
+        {
+            id: 6,
+            size: 25,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 6' + '\n(host-6)'
+        },
+        {
+            id: 7,
+            size: 25,
+            color: {
+                border: 'red',
+                background: 'white'
+            },
+            group: 'down',
+            label: 'host 7' + '\n(host-7)'
+        },
+        {
+            id: 8,
+            size: 25,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 8' + '\n(host-8)'
+        },
+        {
+            id: 9,
+            size: 25,
+            color: {
+                border: 'red',
+                background: 'white'
+            },
+            group: 'down',
+            label: 'host 9' + '\n(host-9)'
+        },
+        {
+            id: 10,
+            size: 25,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 10' + '\n(host-10)'
+        },
+        {
+            id: 11,
+            size: 25,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 11' + '\n(host-11)'
+        },
+        {
+            id: 12,
+            size: 25,
+            color: {
+                border: 'green',
+                background: 'white'
+            },
+            group: 'up',
+            label: 'host 12' + '\n(host-12)'
+        }
+
+
+        ]);
+}
+
 
     var edges = new vis.DataSet([{
             from: 3,
@@ -239,6 +372,26 @@ function drawPreviewNetwork(moduleSettings) {
         var unreachableSize = moduleSettings.textSize;
     } else {
         var unreachableSize = 0;
+    }
+
+    if (moduleSettings.labelLargeNodes){
+
+        nodes.update({
+            id: 1,
+            font: {
+                size: moduleSettings.textSize
+            },
+            group:  ''
+        });
+
+        nodes.update({
+            id: 2,
+            font: {
+                size: moduleSettings.textSize
+            },
+            group: ''
+        });
+
     }
 
 
@@ -402,8 +555,8 @@ function loadSaved(){
             $("#node-text-unreachable-checkbox").prop('checked', (parseInt(settings[0].display_unreachable) === 1));
             $("#scaling-mode-checkbox").prop('checked', (parseInt(settings[0].scaling) === 1));
             $("#text-size-range").val(parseInt(settings[0].text_size)*2);
-
-
+            $('#label-mode-checkbox').prop('checked', (parseInt(settings[0].always_display_large_labels)));
+            $('#alias-label-checkbox').prop('checked', (parseInt(settings[0].alias_only)));
 
             drawPreviewNetwork();
 

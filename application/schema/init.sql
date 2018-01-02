@@ -18,6 +18,8 @@ CREATE TABLE graph_settings (
     display_down SMALLINT DEFAULT 1,
     display_unreachable SMALLINT DEFAULT 1,
     display_only_dependencies SMALLINT DEFAULT 1, 
+    always_display_large_labels SMALLINT DEFAULT 1,
+    alias_only SMALLINT DEFAULT 1,
     scaling SMALLINT DEFAULT 1,
     text_size INTEGER DEFAULT 25
 );
