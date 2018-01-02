@@ -1,8 +1,9 @@
 function fullscreenMode(container, networkData) {
 
     $('#dependency-network').css("background-color", '#262626');
+    $('#dependency-network').css("height", '90%')
     $('#main').css("width", '100%');
-    $('#main').css("height", '90%');
+    $('#main').css("height", '100%');
     $('#hud').css('display', 'block');
 
     const fullscreenOptions = {
@@ -104,10 +105,10 @@ function fullscreenMode(container, networkData) {
 
         console.log(timeUpdated);
 
-        $('#hud-down').html("<h2>" + hostsDown + ' Hosts DOWN' + "</h2>");
-        $('#hud-unreachable').html('<h2>'+ hostsUnreachable + ' Hosts UNREACHABLE' + '</h2>');
-        $('#hud-up').html('<h2>' + hostsUp + ' Hosts UP' + '</h2>');
-        $('#hud-title').html('<h2>Visgence Network ' + timeUpdated + '</h2>');
+        $('#hud-down').html("<h1>" + hostsDown + ' Hosts DOWN' + "</h1>");
+        $('#hud-unreachable').html('<h1>'+ hostsUnreachable + ' Hosts UNREACHABLE' + '</h1>');
+        $('#hud-up').html('<h1>' + hostsUp + ' Hosts UP' + '</h1>');
+        $('#hud-title').html('<h1>Visgence Network ' + timeUpdated + '</h1>');
     });
 
     setTimeout(function () {
