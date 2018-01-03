@@ -1,7 +1,21 @@
 <?php
+/*
+* Icinga 2 Dependency Module
+*
+* naming scheme explanation: In order to call functions from frontend, a capital "Action"
+* must be present at the end of every function, and there can be no other capitals or underscores in the exposed function name.
+* 
+* Additionally, functions are automatically routed by /module-name/name-of-controller/name-of-function
+* 
+*
+* Finally each exposed function requires a .phmtl page of the same name to be present in the /scripts/views folder in order to 
+* function, unless the function is terminated with 'exit'. this also means that any additional phtml page must have a 
+* corresponding 'pageAction() {}' function in the module controller in order to be displayed.
+*/
+
+
 
 namespace Icinga\Module\dependency_plugin\Controllers;
-
 use Icinga\Web\Controller;
 use Icinga\Application\Config;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
@@ -9,58 +23,81 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Data\ResourceFactory;
 use Exception;
 
-class GraphController extends Controller{
+class ModuleController extends Controller{
 
     public function hierarchyAction() {
+
         $this->getTabs()->add('Network', array(
             'active'    => false,
             'label'     => $this->translate('Network Map'),
-            'url'       => 'dependency_plugin/graph/network'
+            'url'       => 'dependency_plugin/module/network'
         ));
 
         $this->getTabs()->add('Hierarchy', array(
             'active'    => true,
             'label'     => $this->translate('Hierarchy Map'),
-            'url'       => 'dependency_plugin/graph/hierarchy'
+            'url'       => 'dependency_plugin/module/hierarchy'
         ));
     }
     
     public function networkAction() {
+
         $this->getTabs()->add('Network', array(
             'active'    => true,
             'label'     => $this->translate('Network Map'),
-            'url'       => 'dependency_plugin/graph/network'
+            'url'       => 'dependency_plugin/module/network'
         ));
 
         $this->getTabs()->add('Hierarchy', array(
             'active'    => false,
             'label'     => $this->translate('Hierarchy Map'),
-            'url'       => 'dependency_plugin/graph/hierarchy'
+            'url'       => 'dependency_plugin/module/hierarchy'
         ));
 
     }
 
-    public function kickstartAction() {}
+    public function kickstartAction() {
 
-    public function welcomeAction() {}
+        $this->getTabs()->add('Kickstart', array(
+            'active'    => true,
+            'label'     => $this->translate('Kickstart'),
+            'url'       => 'dependency_plugin/module/Kickstart'
+        ));
+    }
 
-    public function settingsAction() {}
+    public function welcomeAction() {
+
+        $this->getTabs()->add('Welcome', array(
+            'active'    => true,
+            'label'     => $this->translate('Welcome'),
+            'url'       => 'dependency_plugin/module/welcome'
+        ));
+
+    }
+
+    public function settingsAction() {
+
+        $this->getTabs()->add('Settings', array(
+            'active'    => true,
+            'label'     => $this->translate('Settings'),
+            'url'       => 'dependency_plugin/module/settings'
+        ));
+
+    }
         
     public function homeAction() {
 
         $this->getTabs()->add('Network', array(
             'active'    => true,
             'label'     => $this->translate('Network Map'),
-            'url'       => 'dependency_plugin/graph/network'
+            'url'       => 'dependency_plugin/module/network'
         ));
 
         $this->getTabs()->add('Hierarchy', array(
             'active'    => false,
             'label'     => $this->translate('Hierarchy Map'),
-            'url'       => 'dependency_plugin/graph/hierarchy'
+            'url'       => 'dependency_plugin/module/hierarchy'
         ));
-
-        
 
     }
 
@@ -98,6 +135,7 @@ class GraphController extends Controller{
     try{
            
         $resourcesfile = fopen('/etc/icingaweb2/modules/dependency_plugin/config.ini', 'r'); //get icinga resources (databases)
+
     }catch(Exception $e){
 
         if(!file_exists('/etc/icingaweb2/modules/dependency_plugin/')){
@@ -123,10 +161,8 @@ class GraphController extends Controller{
 
             if(strpos($line, 'resource') !== false){
 
-
                 $dbname = explode('=', $line);
                 $dbname = explode('"', $dbname[1]);
-
 
             }
 
@@ -136,10 +172,12 @@ class GraphController extends Controller{
         
         return $dbname[1];
 
-
     }
 
-    public function storesettingsAction(){
+    public function storeettingsAction(){
+
+    //  this function uses a built-in icinga web function saveIni(); which automatically saves any passed data to 
+    //  /etc/icingaweb2/modules/name-of-moudle/config.ini 
 
         $json = $_POST["json"];
 
@@ -154,7 +192,7 @@ class GraphController extends Controller{
 
                 $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
-                $db->exec("TRUNCATE TABLE plugin_settings;"); //truncate 
+                $db->exec("TRUNCATE TABLE plugin_settings;"); //delete to only store latest settings 
 
                 $res = $db->insert('plugin_settings', array(
                   'api_user' => $username, 
@@ -393,6 +431,12 @@ class GraphController extends Controller{
     }
 
     public function storegraphsettingsAction(){
+    // For some reason in this function, icingas database manager 'IcingaDbConnection' will store and retrieve data 
+    // based on whether the database is postgres or mysql, for example booleans for true and false are retrieved as
+    // '1' and '' (empty string), due to reading the data using a php method to convert to strings on retrieval at 
+    // some point, and integers are retrieved as strings for MySql, and actual ints for Postgres.
+
+    //to get around this, every thing is cast as an integer to avoid going through php's toString function
 
         $json = $_POST["json"];
 

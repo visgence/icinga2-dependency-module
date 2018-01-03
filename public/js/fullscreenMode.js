@@ -36,7 +36,7 @@ function fullscreenMode(container, networkData) {
     };
 
     $.ajax({
-        url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
+        url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
         type: 'GET',
         success: function (hostData) {
             hosts = (JSON.parse(hostData));
@@ -72,9 +72,6 @@ function fullscreenMode(container, networkData) {
                     // problemHosts.push(hosts.results[i].name);
                 }
             }
-
-
-           
 
             if (node != undefined) {
 

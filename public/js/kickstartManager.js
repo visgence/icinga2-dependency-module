@@ -2,7 +2,7 @@ function kickstartManager() {
 
 
     $.ajax({
-        url: "/icingaweb2/dependency_plugin/graph/getResources", //get Icinga Resource List
+        url: "/icingaweb2/dependency_plugin/module/getResources", //get Icinga Resource List
         type: 'GET',
         success: function (response) {
 
@@ -24,7 +24,7 @@ function kickstartManager() {
             var $formData = $("form.settings-form").serializeArray();
 
             $.ajax({
-                url: "/icingaweb2/dependency_plugin/graph/storeSettings",
+                url: "/icingaweb2/dependency_plugin/module/storeSettings",
                 type: 'POST',
                 data: {
                     json: JSON.stringify($formData)
@@ -32,7 +32,7 @@ function kickstartManager() {
                 success: function () { //on successful POST to settings db, test auth info by getting from Icinga API
 
                     $.ajax({
-                        url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
+                        url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
                         type: 'GET',
                         success: function (data) {
                             setTimeout(function () {

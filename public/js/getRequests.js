@@ -7,7 +7,7 @@ function getRequests(isHierarchical) {
 
     $.when(
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/getHosts", //get host states
+            url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
             type: 'GET',
             success: function (hostData) {
 
@@ -30,7 +30,7 @@ function getRequests(isHierarchical) {
         }),
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/getDependency", //get dependencies
+            url: "/icingaweb2/dependency_plugin/module/getDependency", //get dependencies
             type: 'GET',
             success: function (dependencyData) {
 
@@ -46,7 +46,7 @@ function getRequests(isHierarchical) {
         }),
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/getNodes", //get node positions
+            url: "/icingaweb2/dependency_plugin/module/getNodes", //get node positions
             type: 'GET',
             success: function (response) {
                 response = JSON.parse(response);
@@ -57,15 +57,13 @@ function getRequests(isHierarchical) {
                 }
             },
             error: function (data) {
-                // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-                // window.location.replace("./kickstart");
-                // return;
+
             }
 
         }),
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/getgraphSettings", //get host states
+            url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
             type: 'GET',
             success: function (data) {
 

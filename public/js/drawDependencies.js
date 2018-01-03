@@ -368,7 +368,7 @@ function startEventListeners(network, nodes) {
 
     $('.fab-btn-delete').click(function () {
         $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify('RESET')
@@ -399,7 +399,7 @@ function startEventListeners(network, nodes) {
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
         $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify(nodes._data)
@@ -457,7 +457,7 @@ function simulateNewNetwork(network, nodes) {
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
         $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify(nodes._data)
@@ -494,7 +494,7 @@ function simulateChangedNetwork(network, nodes) {
         });
         network.storePositions(); //after new node added, resave network positions
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/graph/storeNodes",
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify(nodes._data)

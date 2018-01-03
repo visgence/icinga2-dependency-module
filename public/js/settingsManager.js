@@ -516,7 +516,7 @@ function saveSettings(moduleSettings){
 
     $.ajax({
 
-        url: "/icingaweb2/dependency_plugin/graph/storeGraphSettings", //get host states
+        url: "/icingaweb2/dependency_plugin/module/storeGraphSettings", //get host states
         type: 'POST',
         data: {
             json: JSON.stringify(moduleSettings)
@@ -541,7 +541,7 @@ function saveSettings(moduleSettings){
 function loadSaved(){
 
     $.ajax({
-        url: "/icingaweb2/dependency_plugin/graph/getgraphSettings", //get host states
+        url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
         type: 'GET',
         success: function (data) {
 

@@ -1,82 +1,9 @@
+
+/*Main Pages*********************************************************/
 #dependency-network {
     width: 100%;
     height: 100%;
     float: left;
-}
-
-#hud {
-    height: 10%;
-    display: none;
-    background: #383838;
-    .hud-box {
-        display: block;
-        float: left; // text-decoration: underline;
-        margin: 0.5% 0.5% 0.5% 0.5%;
-        font-size: large;
-        text-align: center;
-        color: white;
-        height: 73%;
-        width: 24%;
-    }
-    .hud-title-box {
-        display: block;
-        float: left; // text-decoration: underline;
-        margin: 0.5% 0.5% 0.5% 0.5%;
-        font-size: large;
-        text-align: center;
-        color: white;
-        height: 73%;
-        width: 24%;
-    }
-    #hud-title {
-        h1 {
-            font-weight: 600;
-            font-size: 1.15vw;
-            margin: 1.15em 0 0.333em;
-            border: none;
-        }
-        background: grey;
-        text-decoration: none;
-    }
-    #hud-down {
-        h1 {
-            font-weight: 600;
-            font-size: 1.25vw;
-            margin: 1em 0 0.333em;
-            border: none;
-        }
-        background: red;
-    }
-    #hud-unreachable {
-        h1 {
-            font-weight: 600;
-            font-size: 1.25vw;
-            margin: 1em 0 0.333em;
-            border: none;
-        }
-        background: purple;
-    }
-    #hud-up {
-        h1 {
-            font-weight: 600;
-            font-size: 1.25vw;
-            margin: 1em 0 0.333em;
-            border: none;
-        }
-        background: green;
-    }
-}
-
-#network-preview {
-    width: 100%;
-    height: 60%;
-    float: left;
-    border: 1px solid lightgray;
-}
-
-#welcome-page {
-    padding: 10px;
-    color: #666;
 }
 
 .modal {
@@ -152,8 +79,8 @@
     width: 150px;
     list-style: none;
     text-align: right;
-        margin: 0;
-    padding: 0;
+    margin: 0;
+    padding-top: 0.6em;
 }
 
 .fab-menu li {
@@ -243,98 +170,85 @@ div.outerBorder {
     box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.4);
 }
 
-.fab-menu ul li {
-    cursor: pointer;
-    position: relative;
-    padding: 5px;
-    background: @body-bg-color;
-    font-size: 12px;
-    transition: 0.2s;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+
+
+/*Fulscreen HUD******************************************************/
+#hud {
+    height: 10%;
+    display: none;
+    background: #383838;
+    .hud-box {
+        display: block;
+        float: left; // text-decoration: underline;
+        margin: 0.5% 0.5% 0.5% 0.5%;
+        font-size: large;
+        text-align: center;
+        color: white;
+        height: 73%;
+        width: 24%;
+    }
+    .hud-title-box {
+        display: block;
+        float: left; // text-decoration: underline;
+        margin: 0.5% 0.5% 0.5% 0.5%;
+        font-size: large;
+        text-align: center;
+        color: white;
+        height: 73%;
+        width: 24%;
+    }
+    #hud-title {
+        h1 {
+            font-weight: 600;
+            font-size: 1.15vw;
+            margin: 1.15em 0 0.333em;
+            border: none;
+        }
+        background: grey;
+        text-decoration: none;
+    }
+    #hud-down {
+        h1 {
+            font-weight: 600;
+            font-size: 1.25vw;
+            margin: 1em 0 0.333em;
+            border: none;
+        }
+        background: red;
+    }
+    #hud-unreachable {
+        h1 {
+            font-weight: 600;
+            font-size: 1.25vw;
+            margin: 1em 0 0.333em;
+            border: none;
+        }
+        background: purple;
+    }
+    #hud-up {
+        h1 {
+            font-weight: 600;
+            font-size: 1.25vw;
+            margin: 1em 0 0.333em;
+            border: none;
+        }
+        background: green;
+    }
 }
 
-.fab-menu ul li.selected {
-    border-left: 5px solid transparent; // line-height: 2.167em;
-    border-color: @icinga-blue;
-    color: @icinga-blue;
+
+/*Settings Page*****************************************************/
+#module-settings {
+    max-width: 20%;
+    padding: 10px;
+    float: left;
 }
 
-div.dependency-module-form {
-    // padding: 8px 0 0 8px;
-    h1 {
-        border-bottom: 1px solid #eee;
-        font-size: 1.333em;
-        font-weight: 600;
-        margin: 0.556em 0 1em 1em;
-    }
-    form input[type=submit] {
-        border-radius: 3px;
-        -webkit-background-clip: padding-box;
-        width: 15%;
-        -moz-background-clip: padding;
-        background-clip: padding-box;
-        background-color: #fff;
-        border: 2px solid #0095bf;
-        color: #0095bf;
-        cursor: pointer;
-        outline: none;
-        padding: 0.5em 1em;
-        -webkit-transition: background 0.3s ease, color 0.3s ease;
-        -moz-transition: background 0.3s ease, color 0.3s ease;
-        -o-transition: background 0.3s ease, color 0.3s ease;
-        transition: background 0.3s ease, color 0.3s ease;
-        border-width: 1px;
-        margin-top: 0.5em;
-    }
-    fieldset {
-        min-width: 36em;
-        border: 0px;
-        legend {
-            margin: 0em 0 0.5em 0.5em;
-            font-size: 1em;
-            border-bottom: 1px solid #c9c9c9;
-            font-weight: bold;
-            display: block;
-            width: 100%; // padding-left: 1em;
-            line-height: 2em;
-            cursor: pointer;
-        }
-        dt {
-            display: inline-block;
-            vertical-align: top;
-            min-width: 12em;
-            min-height: 2.5em;
-            width: 30%;
-            padding: 0.5em 0.5em;
-            margin: 0;
-        }
-        dd {
-            select,
-            input {
-                max-width: 36em;
-                width: 100%;
-                line-height: 2em;
-                height: 2.4em;
-                padding-left: 0.5em;
-                border-style: solid;
-                border-color: transparent;
-                border-bottom-color: #eee; // border: 1px solid #ddd;
-                cursor: pointer;
-                background: none;
-                border-width: 1px 1px 1px 3px;
-                background-color: white;
-            }
-            display: inline-block;
-            width: 63%;
-            min-height: 2.5em;
-            vertical-align: top;
-            margin: 0;
-            padding: 0.3em 0.5em;
-        }
-    }
+#network-preview {
+    width: 80%;
+    height: 100%;
+    float: right;
+    border: 1px solid lightgray;
 }
 
 #settings-form {
@@ -373,15 +287,68 @@ div.dependency-module-form {
     }
 }
 
-#module-settings {
-    max-width: 20%;
+/*Welcome Page***************************************************/
+#welcome-page {
     padding: 10px;
-    float: left;
+    color: #666;
 }
 
-#network-preview {
-    width: 80%;
-    height: 100%;
-    float: right;
-    border: 1px solid lightgray;
+/*Kickstart Page********************************************************/
+div.dependency-module-form {
+    h1 {
+        margin: 0.556em 0 1em 1em;
+    }
+    label {
+        width: auto;
+        font-weight: normal;
+        font-size: inherit;
+    }
+    fieldset {
+        min-width: 36em;
+        border: 0px;
+        legend {
+            margin: 0em 0 0.5em 0.5em;
+            font-size: 1em;
+            border-bottom: 1px solid #c9c9c9;
+            font-weight: bold;
+            display: block;
+            width: 100%; // padding-left: 1em;
+            line-height: 2em;
+        }
+        dt {
+            display: inline-block;
+            vertical-align: top;
+            min-width: 12em;
+            min-height: 2.5em;
+            width: 30%;
+            padding: 1em 0.5em;
+            margin: 0;
+        }
+        dd {
+            select,
+            input[type=text], input[type=password] {
+                max-width: 36em;
+                width: 100%;
+                line-height: 2em;
+                height: 2.4em;
+                padding-left: 0.5em;
+                border-style: solid;
+                border-color: transparent;
+                border-bottom-color: #eee; // border: 1px solid #ddd;
+                cursor: pointer;
+                background: none;
+                border-width: 1px 1px 1px 3px;
+                background-color: white;
+            }
+            display: inline-block;
+            width: 63%;
+            min-height: 2.5em;
+            vertical-align: top;
+            margin: 0;
+            padding: 0.3em 0.5em;
+        }
+    }
 }
+
+
+
