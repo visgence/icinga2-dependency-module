@@ -1,106 +1,42 @@
-function formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen, settings) {
+function formatDependencies(hostData, dependencyData, isHierarchical, positionData, isFullscreen, settings) {
+    //Function takes host state data, dependency data, and position data and builds a vis.js usable object using 
+    //the HostArray and Host objects. Neccesary due to needing match hosts with passed dependencies.
 
-    var hostObj = {};
-    var positionObj = {};
+    var Hosts = new HostArray();
 
-    //  Passed objects are are ordered by Obj.results[i].attrs.hostName.var, would be easier to use Obj['hostName'].var
-    //  Convert to Obj[hostName].var format while combining hosts and dependency objects:
+    for (i = 0; i < hostData.results.length; i++) {
 
-    for (i = 0; i < dependencies.results.length; i++) { //build base hostObj out of dependencies, add state infromation later
-
-        hostName = dependencies.results[i].attrs.child_host_name;
-        parentName = dependencies.results[i].attrs.parent_host_name;
-
-        if (hostObj[hostName] === undefined) { //initialize host obj child entry if it does not exit
-            hostObj[hostName] = {
-                status: '',
-                description: '',
-                parents: [parentName],
-                hasDependencies: true,
-                group: '',
-                children: [],
-            }
-        } else {
-            hostObj[hostName].parents.push(parentName); //if host exists,push the additional parent
-        }
-
-        //also intitialize parents if undefined because some hosts exist solely as parent entries.
-
-        if (hostObj[parentName] === undefined) { //initialize host obj parent entry if it does not exit
-
-            hostObj[parentName] = {
-                status: '',
-                description: '',
-                parents: [],
-                hasDependencies: true,
-                group: '',
-                children: [hostName],
-            }
-        } else {
-            hostObj[parentName].children.push(hostName);
-        }
+        Hosts.addHost(hostData.results[i].attrs);
 
     }
 
-    for (i = 0; i < hosts.results.length; i++) {
+    for (i = 0; i < dependencyData.results.length; i++) {
 
-        if (hosts.results[i].attrs.state === 0) { //if host is in a sate of 0 it is up, if '1' it is considered down, but can also be unreachable.
-            hostStatus = 'UP';
-        } else if (hosts.results[i].attrs.state === 1) {
+        Hosts.addDependency(dependencyData.results[i].attrs);
 
-            if (hosts.results[i].attrs.last_reachable === false) {
-                hostStatus = 'UNREACHABLE';
-            } else {
-                hostStatus = 'DOWN';
-            }
-        }
+    }
 
+    if (positionData) {
 
-        if (parseInt(settings[0].display_only_dependencies) === 0) { //if set to display all hosts
+        for (i = 0; i < positionData.length; i++) {
 
-            if (hostObj[hosts.results[i].name] === undefined) { //insert host regardless if there is dependency data
-                hostObj[hosts.results[i].name] = {
-                    status: hostStatus,
-                    description: hosts.results[i].attrs.display_name,
-                    parents: [],
-                    hasDependencies: true,
-                    group: hosts.results[i].attrs.groups[0],
-                    children: [],
-                }
-            } else {
-                hostObj[hosts.results[i].name].status = hostStatus;
-                hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
-                hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
-            }
-        } else { //only hosts with dependency data
-            if (hostObj[hosts.results[i].name]) { //update state info for hosts already placed by dependencies
+            Hosts.addPosition(positionData[i]);
 
-                hostObj[hosts.results[i].name].status = hostStatus;
-                hostObj[hosts.results[i].name].group = hosts.results[i].attrs.groups[0];
-                hostObj[hosts.results[i].name].description = hosts.results[i].attrs.display_name;
-            }
-
-        }
-
-        if (positionData != null && positionData[i] != undefined) { //build positionObj 
-            positionObj[positionData[i].node_name] = {
-                node_x: positionData[i].node_x,
-                node_y: positionData[i].node_y
-            }
         }
     }
 
-    drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, settings);
+    drawNetwork(Hosts, isHierarchical, isFullscreen, settings);
 
 }
 
-function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, settings) {
+function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
-    var redraw = true;
+    //function uses data provided by the 'Hosts' and 'settings' objects to draw a vis.js network
+    //In accordance with passed settings and data. 
 
     var color_border = 'yellow';
 
-    var newHost = false;
+    var newHost = false; //is true when a host is present with no positon data.
 
     color_background = 'white'
 
@@ -108,24 +44,25 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
 
     var edges = new vis.DataSet([]);
 
-    for (i = 0; i < Object.keys(hostObj).length; i++) {
+    for (i = 0; i < Hosts.length; i++) {
 
-        currHost = Object.keys(hostObj)[i]; //gets name of current host based on key iter
+        currHost = Object.keys(Hosts.hostObject)[i]; //gets name of current host based on key iter
 
+        if (Hosts.hostObject[currHost].hasDependencies) {
 
-        if (hostObj[currHost].hasDependencies) {
+            //colors based on host state
 
-            if (hostObj[currHost].status === 'DOWN') { //node color based on status
+            if (Hosts.hostObject[currHost].status === 'DOWN') {
                 color_border = 'red';
 
                 if (parseInt(settings[0].display_down) === 1) {
-                    text_size = parseInt(settings[0].text_size) / 2;
+                    text_size = parseInt(settings[0].text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
                 } else {
                     text_size = 0;
                 }
             }
 
-            if (hostObj[currHost].status === 'UNREACHABLE') {
+            if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
 
                 if (parseInt(settings[0].display_unreachable) === 1) {
@@ -135,7 +72,7 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                 }
             }
 
-            if (hostObj[currHost].status === 'UP') { //if host is up, hide text.
+            if (Hosts.hostObject[currHost].status === 'UP') {
                 color_border = 'green';
 
                 if (parseInt(settings[0].display_up) === 1) {
@@ -143,30 +80,26 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                 } else {
                     text_size = 0;
                 }
-            
+
             }
 
-            
 
-            if (parseInt(settings[0].always_display_large_labels) && hostObj[currHost].children.length > 3){
+            if (parseInt(settings[0].always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
                 text_size = parseInt(settings[0].text_size) / 2;
             }
 
-            if (parseInt(settings[0].alias_only)){
-
-                hostLabel = hostObj[currHost].description;
-            }else{
-                hostLabel = (hostObj[currHost].description + "\n(" + currHost + ")");
+            if (parseInt(settings[0].alias_only)) {
+                hostLabel = Hosts.hostObject[currHost].description;
+            } else {
+                hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
             }
 
-            if (!positionObj[currHost]) { //if the name of the host does not exist in object, it is a new host.
-                if (Object.keys(positionObj).length > 0) //check if it is a new host, or an entire new network.
-                    newHost = true;
+            if (Hosts.hostObject[currHost].hasPositionData) {
 
-                nodes.update({
+                nodes.update({ //vis.js function
                     id: currHost,
                     label: hostLabel,
-                    mass: (hostObj[currHost].children.length / 4) + 1,
+                    mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
                         background: color_background
@@ -176,13 +109,19 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20)
-                })
-            } else { //not a new host
+                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20),
+
+                    x: Hosts.hostObject[currHost].position.x, //set x, y position
+                    y: Hosts.hostObject[currHost].position.y,
+                });
+
+            } else {
+                newHost = true; //has no position data, newly added
+
                 nodes.update({
                     id: currHost,
                     label: hostLabel,
-                    mass: (hostObj[currHost].children.length / 4) + 1,
+                    mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
                     color: {
                         border: color_border,
                         background: color_background
@@ -192,18 +131,16 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
                         size: text_size
                     },
 
-                    size: (hostObj[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20),
-                    x: positionObj[currHost].node_x, //set x, y position
-                    y: positionObj[currHost].node_y,
+                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20),
 
                 });
             }
 
 
-            for (y = 0; y < hostObj[currHost].parents.length; y++) {
+            for (y = 0; y < Hosts.hostObject[currHost].parents.length; y++) {
 
                 edges.update({
-                    from: hostObj[currHost].parents[y],
+                    from: Hosts.hostObject[currHost].parents[y],
                     to: currHost
                 });
 
@@ -284,7 +221,6 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
         }
     };
 
-
     if (isHierarchical) { //display using hierarchyOptions
         var network = new vis.Network(container, networkData, hierarchyOptions);
 
@@ -298,25 +234,135 @@ function drawNetwork(hostObj, isHierarchical, positionObj, isFullscreen, setting
 
         var network = new vis.Network(container, networkData, networkOptions);
 
-
-
-        if (Object.keys(positionObj).length === 0) {
+        if (Hosts.isNewNetwork) {
             simulateNewNetwork(network, nodes); //if there is no position data for the network, simulate network.
-        }
 
-        startEventListeners(network, nodes);
-
-
-        if (newHost && !isHierarchical) { //if a new host was added, and it is not being displayed in hierarchical layout
+        } else if (newHost && !isHierarchical) { //if a new host was added, and it is not being displayed in hierarchical layout
 
             simulateChangedNetwork(network, nodes);
 
         }
+
+        startEventListeners(network, nodes);
+
     }
 }
 
+function simulateNewNetwork(network, nodes) {
+
+    //simulates new network with a full number of physics iterations, neccecsary to layout an entire new network
+    //somewhat accurately. Automatically saves position upon finishing simulation.
+
+    network.setOptions({
+        nodes: {
+            fixed: false //unlock nodes for physics sim
+        }
+
+    });
+
+    //animate notification, loading bar
+    $("#notification").html(
+        "<div class = notification-content><h3>Generating New Network</h3>"
+    ).css({
+        "display": "block",
+    }).delay(5000).fadeOut();
+
+    $('.fabs').hide();
+
+    $('#loadingBar').css('display', 'block');
+
+    network.on("stabilizationProgress", function (params) { //as network is simulating animate by percentage of physics iter complete
+        var maxWidth = 496;
+        var minWidth = 20;
+        var widthFactor = params.iterations / params.total;
+        var width = Math.max(minWidth, maxWidth * widthFactor);
+        $('#bar').css("width", width);
+        $('#text').html(Math.round(widthFactor * 100) + '%');
+    });
+
+    network.once("stabilizationIterationsDone", function () {
+        $('#text').html('100%');
+        $('#bar').css("width", '496');
+        $('#loadingBar').css('opacity', '0');
+        // really clean the dom element
+        setTimeout(function () {
+            $('#loadingBar').css('display', 'none');
+        }, 500);
+        $('.fabs').show();
+
+        network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
+
+        $.ajax({ //ajax request to store into DB
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(nodes._data)
+            },
+            success: function () {
+                $("#notification").html(
+                    "<div class = notification-content><h3>New Network Saved</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            }
+        });
+
+        network.setOptions({
+            nodes: {
+                fixed: true 
+            }
+
+        });
+
+    });
+}
+
+function simulateChangedNetwork(network, nodes) {
+    //function simulates the network for a limited number of physics iterations, 
+    //usually enough to correctly place a newly added host/hosts.
+
+    network.setOptions({
+        nodes: {
+            fixed: false //unlock nodes
+        }
+    });
+
+    network.startSimulation(); //start new physics sim
+    network.stabilize(200); //on sim for 200 iters, usually enough for the node to place itself automatically.
+
+    network.once("stabilizationIterationsDone", function () {
+        network.stopSimulation();
+        network.setOptions({
+            nodes: {
+                fixed: true
+            }
+        });
+        network.storePositions(); //after new node added, resave network positions
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(nodes._data)
+            },
+            success: function () {
+                $("#notification").html(
+                    "<div class = notification-content><h3>Network Change Detected</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            },
+            error: function (data) {
+                console.log(data);
+                alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
+            }
+        });
+
+    });
+}
 
 function startEventListeners(network, nodes) {
+
+    //function launches all event listeners for the network, and buttons.
 
     network.on("doubleClick", function (params) { //double click on node listener
         if (params.nodes[0] != undefined) {
@@ -416,101 +462,113 @@ function startEventListeners(network, nodes) {
 
 }
 
-function simulateNewNetwork(network, nodes) {
+function Host(hostData) {
 
-    network.setOptions({
-        nodes: {
-            fixed: false //unlock nodes for physics sim
+    //function accepts raw host data pulled from icinga 2 api, and formats it into a more usable format 
+    //while providing functions to add dependencies and position 
+
+    determineStatus = (state, wasReachable) => {
+
+        if (state === 0) {
+            return 'UP';
+        }
+        else if (state === 1 && !wasReachable) {
+
+            return 'UNREACHABLE'
+
+        } else {
+
+            return 'DOWN';
         }
 
-    });
+    }
 
-    $("#notification").html(
-        "<div class = notification-content><h3>Generating New Network</h3>"
-    ).css({
-        "display": "block",
-    }).delay(5000).fadeOut();
+    this.name = '' || hostData.name;
+    this.status = determineStatus(hostData.state, hostData.last_reachable);
+    this.description = '' || hostData.display_name;
+    this.hasDependencies = false;
+    this.parents = [];
+    this.isLargeNode = false;
+    this.group = '' || hostData.groups;
+    this.children = [];
+    this.position = {
+        x: 0,
+        y: 0
+    };
+    this.hasPositionData = false;
 
-    $('.fabs').hide();
+    this.addParent = (parent) => {
+        this.parents.push(parent);
+        this.hasDependencies = true;
+    }
 
-    $('#loadingBar').css('display', 'block');
+    this.addChild = (Child) => {
+        this.children.push(Child);
+        this.hasDependencies = true;
 
-    network.on("stabilizationProgress", function (params) { //as network is simulating animate by percentage of physics iter complete
-        var maxWidth = 496;
-        var minWidth = 20;
-        var widthFactor = params.iterations / params.total;
-        var width = Math.max(minWidth, maxWidth * widthFactor);
-        $('#bar').css("width", width);
-        $('#text').html(Math.round(widthFactor * 100) + '%');
-    });
+        if (this.children.length > 3) {
+            this.isLargeNode = true;
+        }
+    }
 
-    network.once("stabilizationIterationsDone", function () {
-        $('#text').html('100%');
-        $('#bar').css("width", '496');
-        $('#loadingBar').css('opacity', '0');
-        // really clean the dom element
-        setTimeout(function () {
-            $('#loadingBar').css('display', 'none');
-        }, 500);
-        $('.fabs').show();
-
-        network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
-
-        $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify(nodes._data)
-            },
-            success: function () {
-                $("#notification").html(
-                    "<div class = notification-content><h3>New Network Saved</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
-            }
-        });
-
-    });
+    this.setPositionData = (data) => {
+        this.position.x = data.node_x;
+        this.position.y = data.node_y;
+        this.hasPositionData = true;
+    }
 }
 
-function simulateChangedNetwork(network, nodes) {
+function HostArray() {
 
-    network.setOptions({
-        nodes: {
-            fixed: false //unlock nodes
+    this.hostObject = {};
+
+    this.isNewNetwork = true; //if there any node has position data
+
+    this.length = 0;
+
+    this.addHost = (hostData) => {
+        this.hostObject[hostData.name] = new Host(hostData)
+
+        this.length++;
+    }
+
+    this.addDependency = (dependency) => {
+
+        childName = dependency.child_host_name;
+
+        parentName = dependency.parent_host_name;
+
+        if (isInHosts(parentName)) {
+
+            this.hostObject[parentName].addChild(childName);
+
         }
-    });
 
-    network.startSimulation(); //start new physics sim
-    network.stabilize(200); //on sim for 100 iters, usually enough for the node to place itself automatically.
+        if (isInHosts(childName)) {
 
-    network.once("stabilizationIterationsDone", function () {
-        network.stopSimulation();
-        network.setOptions({
-            nodes: {
-                fixed: true
-            }
-        });
-        network.storePositions(); //after new node added, resave network positions
-        $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify(nodes._data)
-            },
-            success: function () {
-                $("#notification").html(
-                    "<div class = notification-content><h3>Network Change Detected</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
-            },
-            error: function (data) {
-                console.log(data);
-                alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
-            }
-        });
+            this.hostObject[childName].addParent(parentName);
+        }
 
-    });
+    }
+
+    this.addPosition = (positionData) => {
+
+        name = positionData.node_name;
+
+        if (isInHosts(name)) {
+
+            this.hostObject[name].setPositionData(positionData);
+
+            this.isNewNetwork = false;
+
+        }
+
+    }
+
+    isInHosts = (name) => {
+
+        return (this.hostObject[name] != undefined);
+    }
+
+
 }
