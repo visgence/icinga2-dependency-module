@@ -13,13 +13,8 @@ CREATE TABLE plugin_settings (
 
 CREATE TABLE graph_settings (
 
-    default_network SMALLINT DEFAULT 1,
-    display_up SMALLINT DEFAULT 1,
-    display_down SMALLINT DEFAULT 1,
-    display_unreachable SMALLINT DEFAULT 1,
-    display_only_dependencies SMALLINT DEFAULT 1, 
-    always_display_large_labels SMALLINT DEFAULT 1,
-    alias_only SMALLINT DEFAULT 1,
-    scaling SMALLINT DEFAULT 1,
-    text_size INTEGER DEFAULT 25
+    setting_name TEXT,
+    setting_value INTEGER
+
 );
+

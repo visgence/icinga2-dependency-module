@@ -451,28 +451,23 @@ class ModuleController extends Controller{
 
                 $db->exec("TRUNCATE TABLE graph_settings;");
 
+                // echo $json;
 
-                $res = $db->insert('graph_settings', array(
-                  'default_network' => (int)$data['isHierarchical'], 
-                  'display_up' => (int)$data['hostLabels']['up'],
-                  'display_down' => (int) $data['hostLabels']['down'], 
-                  'display_unreachable' => (int)$data['hostLabels']['unreachable'],
-                  'display_only_dependencies' => (int)$data['displayOnlyDependencies'], 
-                  'scaling' => (int)$data['scaling'], 
-                  'always_display_large_labels' => (int)$data['labelLargeNodes'],
-                  'alias_only' => (int)$data['aliasOnly'],
-                  'text_size' => (int)$data['textSize']
-                ));
+                foreach($data as $name => $setting){
 
-            exit;
+                    $res = $db->insert('graph_settings', array(
+                        'setting_name' => $name, 
+                        'setting_value' => (int)$setting
+                    )); 
+                }
+            
+           exit;
         }
 
                 if(!$res){
                 echo "An error occured while attempting to store settings.\n";
                 exit;
             }
-
-                echo $res;
 
         exit;
 
@@ -482,27 +477,32 @@ class ModuleController extends Controller{
 
         try {
 
+            $expectedNumberOfSettings = 8; //Number of settings expected out of database
+
             $resource = $this->getResource();
 
             $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
-            $query = 'SELECT * from graph_settings';
+            $query = 'SELECT setting_name, setting_value from graph_settings';
             $vals = $db->fetchAll($query);
 
-            if(!$vals){ //catch empty settings table
-                   $db->insert('graph_settings', array( //insert default
-                  'default_network' => 0, 
-                  'display_up' => 1,
-                  'display_down' => 1, 
-                  'display_unreachable' => 1,
-                  'display_only_dependencies' => 1, 
-                  'scaling' => 1, 
-                  'always_display_large_labels' => 1,
-                  'alias_only' => 1,
-                  'text_size' => 25
-                ));
+            $vals = (array_values($vals));
 
+            if(!$vals || count($vals) != $expectedNumberOfSettings){ //catch empty or incomplete settings table, provide default
+                   
+                   $db->exec("TRUNCATE TABLE graph_settings;");
+
+                   $db->insert('graph_settings', array('setting_name' => 'is_hierarchical', 'setting_value' => 1));
+                   $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 1));
+                   $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 1)); 
+                   $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 1));
+                   $db->insert('graph_settings', array('setting_name' => 'display_only_dependencies', 'setting_value' => 1)); 
+                   $db->insert('graph_settings', array('setting_name' => 'scaling', 'setting_value' => 1)); 
+                   $db->insert('graph_settings', array('setting_name' => 'always_display_large_labels', 'setting_value' => 1));
+                   $db->insert('graph_settings', array('setting_name' => 'alias_only', 'setting_value' => 1));
+                   $db->insert('graph_settings', array('setting_name' => 'text_size', 'setting_value' => 25));
                $vals = $db->fetchAll($query);
+
 
             }
         } catch(Exception $e){

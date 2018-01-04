@@ -55,8 +55,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
             if (Hosts.hostObject[currHost].status === 'DOWN') {
                 color_border = 'red';
 
-                if (parseInt(settings[0].display_down) === 1) {
-                    text_size = parseInt(settings[0].text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
+                if (parseInt(settings.display_down) === 1) {
+                    text_size = parseInt(settings.text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
                 } else {
                     text_size = 0;
                 }
@@ -65,8 +65,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
             if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
                 color_border = 'purple';
 
-                if (parseInt(settings[0].display_unreachable) === 1) {
-                    text_size = parseInt(settings[0].text_size) / 2;
+                if (parseInt(settings.display_unreachable) === 1) {
+                    text_size = parseInt(settings.text_size) / 2;
                 } else {
                     text_size = 0;
                 }
@@ -75,8 +75,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
             if (Hosts.hostObject[currHost].status === 'UP') {
                 color_border = 'green';
 
-                if (parseInt(settings[0].display_up) === 1) {
-                    text_size = parseInt(settings[0].text_size) / 2;
+                if (parseInt(settings.display_up) === 1) {
+                    text_size = parseInt(settings.text_size) / 2;
                 } else {
                     text_size = 0;
                 }
@@ -84,11 +84,11 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
             }
 
 
-            if (parseInt(settings[0].always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
-                text_size = parseInt(settings[0].text_size) / 2;
+            if (parseInt(settings.always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
+                text_size = parseInt(settings.text_size) / 2;
             }
 
-            if (parseInt(settings[0].alias_only)) {
+            if (parseInt(settings.alias_only)) {
                 hostLabel = Hosts.hostObject[currHost].description;
             } else {
                 hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
@@ -109,7 +109,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
                         size: text_size
                     },
 
-                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20),
+                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
 
                     x: Hosts.hostObject[currHost].position.x, //set x, y position
                     y: Hosts.hostObject[currHost].position.y,
@@ -131,7 +131,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
                         size: text_size
                     },
 
-                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings[0].scaling) + 20),
+                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
 
                 });
             }
