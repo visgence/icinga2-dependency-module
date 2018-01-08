@@ -477,7 +477,7 @@ class ModuleController extends Controller{
 
         try {
 
-            $expectedNumberOfSettings = 8; //Number of settings expected out of database
+            $expectedNumberOfSettings = 9; //Number of settings expected out of database
 
             $resource = $this->getResource();
 

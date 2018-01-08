@@ -48,103 +48,105 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         currHost = Object.keys(Hosts.hostObject)[i]; //gets name of current host based on key iter
 
-        if (Hosts.hostObject[currHost].hasDependencies) {
+        if (parseInt(settings.display_only_dependencies) === 1 && !Hosts.hostObject[currHost].hasDependencies) { //skip adding node 
 
-            //colors based on host state
+            continue;
 
-            if (Hosts.hostObject[currHost].status === 'DOWN') {
-                color_border = 'red';
+        }
 
-                if (parseInt(settings.display_down) === 1) {
-                    text_size = parseInt(settings.text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
-                } else {
-                    text_size = 0;
-                }
+        //colors based on host state
+
+        if (Hosts.hostObject[currHost].status === 'DOWN') {
+            color_border = 'red';
+
+            if (parseInt(settings.display_down) === 1) {
+                text_size = parseInt(settings.text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
+            } else {
+                text_size = 0;
             }
+        }
 
-            if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
-                color_border = 'purple';
+        if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
+            color_border = 'purple';
 
-                if (parseInt(settings.display_unreachable) === 1) {
-                    text_size = parseInt(settings.text_size) / 2;
-                } else {
-                    text_size = 0;
-                }
-            }
-
-            if (Hosts.hostObject[currHost].status === 'UP') {
-                color_border = 'green';
-
-                if (parseInt(settings.display_up) === 1) {
-                    text_size = parseInt(settings.text_size) / 2;
-                } else {
-                    text_size = 0;
-                }
-
-            }
-
-
-            if (parseInt(settings.always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
+            if (parseInt(settings.display_unreachable) === 1) {
                 text_size = parseInt(settings.text_size) / 2;
-            }
-
-            if (parseInt(settings.alias_only)) {
-                hostLabel = Hosts.hostObject[currHost].description;
             } else {
-                hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
+                text_size = 0;
             }
+        }
 
-            if (Hosts.hostObject[currHost].hasPositionData) {
+        if (Hosts.hostObject[currHost].status === 'UP') {
+            color_border = 'green';
 
-                nodes.update({ //vis.js function
-                    id: currHost,
-                    label: hostLabel,
-                    mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
-                    color: {
-                        border: color_border,
-                        background: color_background
-                    },
-
-                    font: {
-                        size: text_size
-                    },
-
-                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
-
-                    x: Hosts.hostObject[currHost].position.x, //set x, y position
-                    y: Hosts.hostObject[currHost].position.y,
-                });
-
+            if (parseInt(settings.display_up) === 1) {
+                text_size = parseInt(settings.text_size) / 2;
             } else {
-                newHost = true; //has no position data, newly added
-
-                nodes.update({
-                    id: currHost,
-                    label: hostLabel,
-                    mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
-                    color: {
-                        border: color_border,
-                        background: color_background
-                    },
-
-                    font: {
-                        size: text_size
-                    },
-
-                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
-
-                });
+                text_size = 0;
             }
 
+        }
 
-            for (y = 0; y < Hosts.hostObject[currHost].parents.length; y++) {
 
-                edges.update({
-                    from: Hosts.hostObject[currHost].parents[y],
-                    to: currHost
-                });
+        if (parseInt(settings.always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
+            text_size = parseInt(settings.text_size) / 2;
+        }
 
-            }
+        if (parseInt(settings.alias_only)) {
+            hostLabel = Hosts.hostObject[currHost].description;
+        } else {
+            hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
+        }
+
+        if (Hosts.hostObject[currHost].hasPositionData) {
+
+            nodes.update({ //vis.js function
+                id: currHost,
+                label: hostLabel,
+                mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
+                color: {
+                    border: color_border,
+                    background: color_background
+                },
+
+                font: {
+                    size: text_size
+                },
+
+                size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
+
+                x: Hosts.hostObject[currHost].position.x, //set x, y position
+                y: Hosts.hostObject[currHost].position.y,
+            });
+
+        } else {
+            newHost = true; //has no position data, newly added
+
+            nodes.update({
+                id: currHost,
+                label: hostLabel,
+                mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
+                color: {
+                    border: color_border,
+                    background: color_background
+                },
+
+                font: {
+                    size: text_size
+                },
+
+                size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
+
+            });
+        }
+
+
+        for (y = 0; y < Hosts.hostObject[currHost].parents.length; y++) {
+
+            edges.update({
+                from: Hosts.hostObject[currHost].parents[y],
+                to: currHost
+            });
 
         }
 
@@ -309,7 +311,7 @@ function simulateNewNetwork(network, nodes) {
 
         network.setOptions({
             nodes: {
-                fixed: true 
+                fixed: true
             }
 
         });
@@ -471,8 +473,7 @@ function Host(hostData) {
 
         if (state === 0) {
             return 'UP';
-        }
-        else if (state === 1 && !wasReachable) {
+        } else if (state === 1 && !wasReachable) {
 
             return 'UNREACHABLE'
 
