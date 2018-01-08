@@ -174,7 +174,7 @@ class ModuleController extends Controller{
 
     }
 
-    public function storeettingsAction(){
+    public function storesettingsAction(){
 
     //  this function uses a built-in icinga web function saveIni(); which automatically saves any passed data to 
     //  /etc/icingaweb2/modules/name-of-moudle/config.ini 
