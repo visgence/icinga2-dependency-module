@@ -16,6 +16,7 @@ function getRequests(isHierarchical) {
                     window.location.replace("./welcome");
                 } else {
                     hosts = (JSON.parse(hostData));
+                    console.log(hosts);
                 }
             },
             error: function (data) {
@@ -35,6 +36,8 @@ function getRequests(isHierarchical) {
             success: function (dependencyData) {
 
                 dependencies = (JSON.parse(dependencyData));
+
+                console.log(dependencies);
 
             },
             error: function (data) {

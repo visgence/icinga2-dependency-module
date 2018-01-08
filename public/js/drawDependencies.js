@@ -48,105 +48,109 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         currHost = Object.keys(Hosts.hostObject)[i]; //gets name of current host based on key iter
 
-        if (Hosts.hostObject[currHost].hasDependencies) {
+        if (parseInt(settings.display_only_dependencies) === 1 && !Hosts.hostObject[currHost].hasDependencies) { //skip adding node 
 
-            //colors based on host state
+            continue;
 
-            if (Hosts.hostObject[currHost].status === 'DOWN') {
-                color_border = 'red';
+        }
 
-                if (parseInt(settings.display_down) === 1) {
-                    text_size = parseInt(settings.text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
-                } else {
-                    text_size = 0;
-                }
+        //colors based on host state
+
+        if (Hosts.hostObject[currHost].status === 'DOWN') {
+            color_border = 'red';
+
+            if (parseInt(settings.display_down) === 1) {
+                text_size = parseInt(settings.text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
+            } else {
+                text_size = 0;
             }
+        }
 
-            if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
-                color_border = 'purple';
+        if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
+            color_border = 'purple';
 
-                if (parseInt(settings.display_unreachable) === 1) {
-                    text_size = parseInt(settings.text_size) / 2;
-                } else {
-                    text_size = 0;
-                }
-            }
-
-            if (Hosts.hostObject[currHost].status === 'UP') {
-                color_border = 'green';
-
-                if (parseInt(settings.display_up) === 1) {
-                    text_size = parseInt(settings.text_size) / 2;
-                } else {
-                    text_size = 0;
-                }
-
-            }
-
-
-            if (parseInt(settings.always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
+            if (parseInt(settings.display_unreachable) === 1) {
                 text_size = parseInt(settings.text_size) / 2;
-            }
-
-            if (parseInt(settings.alias_only)) {
-                hostLabel = Hosts.hostObject[currHost].description;
             } else {
-                hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
+                text_size = 0;
             }
+        }
 
-            if (Hosts.hostObject[currHost].hasPositionData) {
+        if (Hosts.hostObject[currHost].status === 'UP') {
+            color_border = 'green';
 
-                nodes.update({ //vis.js function
-                    id: currHost,
-                    label: hostLabel,
-                    mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
-                    color: {
-                        border: color_border,
-                        background: color_background
-                    },
-
-                    font: {
-                        size: text_size
-                    },
-
-                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
-
-                    x: Hosts.hostObject[currHost].position.x, //set x, y position
-                    y: Hosts.hostObject[currHost].position.y,
-                });
-
+            if (parseInt(settings.display_up) === 1) {
+                text_size = parseInt(settings.text_size) / 2;
             } else {
-                newHost = true; //has no position data, newly added
-
-                nodes.update({
-                    id: currHost,
-                    label: hostLabel,
-                    mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
-                    color: {
-                        border: color_border,
-                        background: color_background
-                    },
-
-                    font: {
-                        size: text_size
-                    },
-
-                    size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
-
-                });
-            }
-
-
-            for (y = 0; y < Hosts.hostObject[currHost].parents.length; y++) {
-
-                edges.update({
-                    from: Hosts.hostObject[currHost].parents[y],
-                    to: currHost
-                });
-
+                text_size = 0;
             }
 
         }
+
+
+        if (parseInt(settings.always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
+            text_size = parseInt(settings.text_size) / 2;
+        }
+
+        if (parseInt(settings.alias_only)) {
+            hostLabel = Hosts.hostObject[currHost].description;
+        } else {
+            hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
+        }
+
+        if (Hosts.hostObject[currHost].hasPositionData) {
+
+            nodes.update({ //vis.js function
+                id: currHost,
+                label: hostLabel,
+                mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
+                color: {
+                    border: color_border,
+                    background: color_background
+                },
+
+                font: {
+                    size: text_size
+                },
+
+                size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
+
+                x: Hosts.hostObject[currHost].position.x, //set x, y position
+                y: Hosts.hostObject[currHost].position.y,
+            });
+
+        } else {
+            newHost = true; //has no position data, newly added
+
+            nodes.update({
+                id: currHost,
+                label: hostLabel,
+                mass: (Hosts.hostObject[currHost].children.length / 4) + 1,
+                color: {
+                    border: color_border,
+                    background: color_background
+                },
+
+                font: {
+                    size: text_size
+                },
+
+                size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
+
+            });
+        }
+
+
+        for (y = 0; y < Hosts.hostObject[currHost].parents.length; y++) {
+
+            edges.update({
+                from: Hosts.hostObject[currHost].parents[y],
+                to: currHost
+            });
+
+        }
+
+
 
     }
 
@@ -243,7 +247,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         }
 
-        startEventListeners(network, nodes);
+        startEventListeners(network, nodes, networkData, networkOptions, Hosts);
 
     }
 }
@@ -309,7 +313,7 @@ function simulateNewNetwork(network, nodes) {
 
         network.setOptions({
             nodes: {
-                fixed: true 
+                fixed: true
             }
 
         });
@@ -352,7 +356,6 @@ function simulateChangedNetwork(network, nodes) {
                 }).delay(5000).fadeOut();
             },
             error: function (data) {
-                console.log(data);
                 alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
             }
         });
@@ -360,7 +363,7 @@ function simulateChangedNetwork(network, nodes) {
     });
 }
 
-function startEventListeners(network, nodes) {
+function startEventListeners(network, nodes, networkData, networkOptions, Hosts) {
 
     //function launches all event listeners for the network, and buttons.
 
@@ -460,7 +463,158 @@ function startEventListeners(network, nodes) {
         });
     });
 
+    $('.fab-btn-dependency').click(() => {
+
+        $("#notification").html(
+            "<div class = notification-content><h3>Editing Dependencies</h3>"
+        ).css({
+            "display": "block",
+        })
+
+        network.setOptions({
+            edges: {
+                arrows: {
+                    to: true
+                }
+            }
+        });
+
+        $('.fab-btn-save').off('click');
+
+        network.off('doubleClick');
+
+        network.off('selectNode');
+
+        network.off('deselectNode');
+
+        buildDependencies(networkData, networkOptions, network, Hosts);
+
+
+    });
+
 }
+
+function buildDependencies(networkData, networkOptions, network, Hosts) {
+
+
+
+    var dependencies = [];
+
+    var dependency = [];
+
+    var updatedNodes = [];
+
+    var container = document.getElementById('dependency-network');
+
+
+    network.on("selectNode", function (params) { //on selecting node, background of label is made solid white for readabillity. 
+        var selectedNode = network.body.nodes[params.nodes[0]];
+
+        dependency.push(selectedNode.id);
+
+
+
+        if (dependency.length === 2) {
+
+            networkData.edges.update({
+                from: dependency[0],
+                to: dependency[1]
+            });
+
+
+
+            Hosts.hostObject[dependency[0]].addParent(dependency[1])
+
+            updatedNodes.push(dependency[0]);
+
+            dependency = [];
+
+        }
+
+
+    });
+
+
+
+    $('.fab-btn-save').click(function () { //on save
+
+        for (i = 0; i < updatedNodes.length; i++) {
+            addDependency(updatedNodes[i], Hosts);
+        }
+
+
+
+        network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
+
+        $.ajax({ //ajax request to store into DB
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(networkData.nodes._data)
+            },
+            success: function () {
+                $("#notification").html(
+                    "<div class = notification-content><h3>Changes Saved Successfully</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            }
+        });
+
+    });
+
+}
+
+function addDependency(updatedNode, Hosts) {
+
+    console.log(Hosts.hostObject);
+
+
+    payload = {
+        'vars.parents': Hosts.hostObject[updatedNode].parents
+    }
+
+
+    // payload = '\'{"vars.parents" : ["wat3"]}\''
+
+    console.log(JSON.stringify(payload));
+
+    $.ajax({
+        url: "/icingaweb2/director/host?name=" + updatedNode, //get host states
+        type: 'POST',
+        headers: {
+            'Accept': 'application/json'
+        },
+        data: JSON.stringify(payload),
+        error: function (data) {
+            console.log(data);
+            alert('Adding dependency Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
+        }
+
+    }).then(() => {
+
+
+        $.ajax({
+            url: "/icingaweb2/director/config/deploy",
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (data) {
+                console.log(data);
+                $("#notification").html(
+                    "<div class = notification-content><h3>Dependency Saved Successfully</h3>"
+                ).css({
+                    "display": "block",
+                }).delay(5000).fadeOut();
+            },
+        });
+    });
+}
+
+
+
+
 
 function Host(hostData) {
 
@@ -471,8 +625,7 @@ function Host(hostData) {
 
         if (state === 0) {
             return 'UP';
-        }
-        else if (state === 1 && !wasReachable) {
+        } else if (state === 1 && !wasReachable) {
 
             return 'UNREACHABLE'
 

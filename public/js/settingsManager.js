@@ -50,7 +50,7 @@ function loadSettings() {
     return moduleSettings;
 }
 
-function drawPreviewNetwork(moduleSettings) {
+function drawPreviewNetwork() {
     
     var moduleSettings = loadSettings();
 
@@ -507,7 +507,7 @@ function drawPreviewNetwork(moduleSettings) {
 
 }
 
-function saveSettings(moduleSettings){
+function saveSettings(){
 
     var moduleSettings = loadSettings();
 

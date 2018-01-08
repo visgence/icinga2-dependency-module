@@ -1,5 +1,5 @@
 <div class="controls">
-<?= $this->tabs ?>
+    <?= $this->tabs ?>
 </div>
 
 <head>
@@ -12,10 +12,10 @@
     <!-- </ul> -->
 
     <div id="hud">
-        <div class = 'hud-box' id = 'hud-title'></div>
-        <div class='hud-box' id = 'hud-down'></div>
-        <div class='hud-box' id = 'hud-unreachable'></div>
-        <div class='hud-box' id = 'hud-up'></div>
+        <div class='hud-box' id='hud-title'></div>
+        <div class='hud-box' id='hud-down'></div>
+        <div class='hud-box' id='hud-unreachable'></div>
+        <div class='hud-box' id='hud-up'></div>
     </div>
     <div class="column" id="dependency-network">
     </div>
@@ -45,6 +45,12 @@
             <li>
                 <a class="zoom-fab fab-btn-sm fab-btn-save scale-transition scale-out">
                     <i class="material-icons">save</i>
+                </a>
+            </li>
+
+            <li>
+                <a class="zoom-fab fab-btn-sm fab-btn-dependency scale-transition scale-out">
+                    <i class="material-icons">timeline</i>
                 </a>
             </li>
 
