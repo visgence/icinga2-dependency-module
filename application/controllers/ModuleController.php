@@ -477,7 +477,7 @@ class ModuleController extends Controller{
 
         try {
 
-            $expectedNumberOfSettings = 9; //Number of settings expected out of database
+            $expectedNumberOfSettings = 8; //Number of settings expected out of database
 
             $resource = $this->getResource();
 
@@ -492,7 +492,7 @@ class ModuleController extends Controller{
                    
                    $db->exec("TRUNCATE TABLE graph_settings;");
 
-                   $db->insert('graph_settings', array('setting_name' => 'is_hierarchical', 'setting_value' => 1));
+                //    $db->insert('graph_settings', array('setting_name' => 'is_hierarchical', 'setting_value' => 1));
                    $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 1));
                    $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 1)); 
                    $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 1));

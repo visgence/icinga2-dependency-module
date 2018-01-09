@@ -6,6 +6,7 @@ function getRequests(isHierarchical) {
     }
 
     $.when(
+
         $.ajax({
             url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
             type: 'GET',
@@ -69,22 +70,11 @@ function getRequests(isHierarchical) {
 
                 settings = JSON.parse(data);
 
-
                 parsedSettings = {}
 
-                for(i=0; i < settings.length; i++){
+                for (i = 0; i < settings.length; i++) {
                     parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value']
                 }
-
-                if(window.location.href.indexOf('home') > -1){
-
-                if(parseInt(settings[0].default_network) === 1){
-                    isHierarchical = true;
-                    $('.fabs').hide();
-                }else{
-                    isHierarchical = false;
-                }
-            }
 
             },
             error: function (data) {
@@ -93,7 +83,10 @@ function getRequests(isHierarchical) {
 
             }
 
-        })
+        }),
+
+       
+        
 
     ).then(function () {
         formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen, parsedSettings);

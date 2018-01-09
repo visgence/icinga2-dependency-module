@@ -25,7 +25,7 @@ function loadSettings() {
 
         'display_only_dependencies': false,
 
-        'is_hierarchical': false,
+        // 'is_hierarchical': false,
 
         'scaling': true,
 
@@ -37,7 +37,7 @@ function loadSettings() {
     }
 
 
-    moduleSettings.is_hierarchical = $('#hierarchy-radio').prop('checked');
+    // moduleSettings.is_hierarchical = $('#hierarchy-radio').prop('checked');
     moduleSettings.display_only_dependencies = $("#host-mode-checkbox").prop('checked');
     moduleSettings.display_up = $("#node-text-up-checkbox").prop('checked');
     moduleSettings.display_down  = $("#node-text-down-checkbox").prop('checked');
@@ -350,7 +350,7 @@ function drawPreviewNetwork(moduleSettings) {
         }
     ]);
 
-    if (moduleSettings.displayOnlyDependencies) {
+    if (moduleSettings.display_only_dependencies) {
         nodes.remove(12);
     }
 
@@ -553,8 +553,8 @@ function loadSaved(){
                 parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value']
             }
 
-            $('#hierarchy-radio').prop('checked', (parseInt(parsedSettings.is_hierarchical) === 1));
-            $('#network-radio').prop('checked', (parseInt(parsedSettings.is_hierarchical) === 0));
+            // $('#hierarchy-radio').prop('checked', (parseInt(parsedSettings.is_hierarchical) === 1));
+            // $('#network-radio').prop('checked', (parseInt(parsedSettings.is_hierarchical) === 0));
             $("#host-mode-checkbox").prop('checked', (parseInt(parsedSettings.display_only_dependencies) === 1));
             $("#node-text-up-checkbox").prop('checked', (parseInt(parsedSettings.display_up) === 1));
             $("#node-text-down-checkbox").prop('checked', (parseInt(parsedSettings.display_down) === 1));
