@@ -509,6 +509,8 @@ function buildDependencies(networkData, networkOptions, network, Hosts) {
 
 
     network.on("selectNode", function (params) { //on selecting node, background of label is made solid white for readabillity. 
+
+
         var selectedNode = network.body.nodes[params.nodes[0]];
 
         dependency.push(selectedNode.id);
@@ -522,27 +524,36 @@ function buildDependencies(networkData, networkOptions, network, Hosts) {
                 to: dependency[1]
             });
 
+            drawnDependency = {
+                "object_name": dependency[0] + "->" + dependency[1],
+                "object_type": "apply",
+                "assign_filter": "host.name=%22" + dependency[0] + "%22",
+                "imports": ["generic-dependency"],
+                "apply_to": "host",
+                "parent_host": dependency[1],
+            }
 
-
-            Hosts.hostObject[dependency[0]].addParent(dependency[1])
-
-            updatedNodes.push(dependency[0]);
+            dependencies.push(drawnDependency);
 
             dependency = [];
 
         }
 
+    });
 
+    network.on("click", function (params) { //double click on node listener
+        if (params.nodes[0] === undefined) {
+            dependency = [];
+        }
     });
 
 
 
     $('.fab-btn-save').click(function () { //on save
 
-        for (i = 0; i < updatedNodes.length; i++) {
-            addDependency(updatedNodes[i], Hosts);
-        }
+        console.log(JSON.stringify(dependencies[0]));
 
+        importDependencies(dependencies);
 
 
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
@@ -553,64 +564,56 @@ function buildDependencies(networkData, networkOptions, network, Hosts) {
             data: {
                 json: JSON.stringify(networkData.nodes._data)
             },
-            success: function () {
-                $("#notification").html(
-                    "<div class = notification-content><h3>Changes Saved Successfully</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
-            }
         });
 
     });
 
 }
 
-function addDependency(updatedNode, Hosts) {
-
-    console.log(Hosts.hostObject);
+function importDependencies(dependencies) {
 
 
-    payload = {
-        'vars.parents': Hosts.hostObject[updatedNode].parents
-    }
 
-
-    // payload = '\'{"vars.parents" : ["wat3"]}\''
-
-    console.log(JSON.stringify(payload));
-
-    $.ajax({
-        url: "/icingaweb2/director/host?name=" + updatedNode, //get host states
-        type: 'POST',
-        headers: {
-            'Accept': 'application/json'
-        },
-        data: JSON.stringify(payload),
-        error: function (data) {
-            console.log(data);
-            alert('Adding dependency Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
-        }
-
-    }).then(() => {
-
+    for (i = 0; i < dependencies.length; i++) {
 
         $.ajax({
-            url: "/icingaweb2/director/config/deploy",
+            url: "/icingaweb2/director/dependency",
             type: 'POST',
             headers: {
                 'Accept': 'application/json'
             },
-            success: function (data) {
+            data: JSON.stringify(dependencies[i]),
+            error: function (data) {
                 console.log(data);
-                $("#notification").html(
-                    "<div class = notification-content><h3>Dependency Saved Successfully</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
-            },
+                alert('Adding dependency Unsuccessful:\n\n' + data.responseJSON['message']);
+                return;
+            }
         });
+
+    }
+
+    deployChanges();
+
+
+}
+
+function deployChanges() {
+
+    $.ajax({
+        url: "/icingaweb2/director/config/deploy",
+        type: 'POST',
+        headers: {
+            'Accept': 'application/json'
+        },
+        success: function (data) {
+            $("#notification").html(
+                "<div class = notification-content><h3>Dependencies Saved Successfully</h3>"
+            ).css({
+                "display": "block",
+            }).delay(5000).fadeOut();
+        },
     });
+
 }
 
 
