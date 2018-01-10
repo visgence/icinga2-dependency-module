@@ -112,6 +112,6 @@ function fullscreenMode(container, networkData) {
 
         getRequests(false);
 
-    }, 300000);
+    }, 60000);
 
 }

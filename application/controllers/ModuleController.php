@@ -174,7 +174,7 @@ class ModuleController extends Controller{
 
     }
 
-    public function storeettingsAction(){
+    public function storesettingsAction(){
 
     //  this function uses a built-in icinga web function saveIni(); which automatically saves any passed data to 
     //  /etc/icingaweb2/modules/name-of-moudle/config.ini 
@@ -492,7 +492,7 @@ class ModuleController extends Controller{
                    
                    $db->exec("TRUNCATE TABLE graph_settings;");
 
-                   $db->insert('graph_settings', array('setting_name' => 'is_hierarchical', 'setting_value' => 1));
+                //    $db->insert('graph_settings', array('setting_name' => 'is_hierarchical', 'setting_value' => 1));
                    $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 1));
                    $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 1)); 
                    $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 1));

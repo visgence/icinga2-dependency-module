@@ -2,6 +2,7 @@ function formatDependencies(hostData, dependencyData, isHierarchical, positionDa
     //Function takes host state data, dependency data, and position data and builds a vis.js usable object using 
     //the HostArray and Host objects. Neccesary due to needing match hosts with passed dependencies.
 
+
     var Hosts = new HostArray();
 
     for (i = 0; i < hostData.results.length; i++) {
@@ -332,7 +333,7 @@ function simulateChangedNetwork(network, nodes) {
     });
 
     network.startSimulation(); //start new physics sim
-    network.stabilize(200); //on sim for 200 iters, usually enough for the node to place itself automatically.
+    network.stabilize(800); //on sim for 200 iters, usually enough for the node to place itself automatically.
 
     network.once("stabilizationIterationsDone", function () {
         network.stopSimulation();
