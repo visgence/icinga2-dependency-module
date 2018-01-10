@@ -248,7 +248,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         }
 
-        startEventListeners(network, nodes, networkData, networkOptions, Hosts);
+        startEventListeners(network, networkData);
 
     }
 }
@@ -364,7 +364,9 @@ function simulateChangedNetwork(network, nodes) {
     });
 }
 
-function startEventListeners(network, nodes, networkData, networkOptions, Hosts) {
+function startEventListeners(network,  networkData) {
+
+    var font_size = 0;
 
     //function launches all event listeners for the network, and buttons.
 
@@ -398,7 +400,7 @@ function startEventListeners(network, nodes, networkData, networkOptions, Hosts)
 
     });
 
-    $('#editBtn').click(function () { //on edit
+    $('#edit-btn').click(function () { //on edit
 
         network.setOptions({ //unlock nodes for editing
             nodes: {
@@ -452,7 +454,7 @@ function startEventListeners(network, nodes, networkData, networkOptions, Hosts)
             url: "/icingaweb2/dependency_plugin/module/storeNodes",
             type: 'POST',
             data: {
-                json: JSON.stringify(nodes._data)
+                json: JSON.stringify(networkData.nodes._data)
             },
             success: function () {
                 $("#notification").html(
@@ -482,20 +484,33 @@ function startEventListeners(network, nodes, networkData, networkOptions, Hosts)
 
         $('.fab-btn-save').off('click');
 
+        $('.fab-btn-dependency').off('click');
+
+        $('.fab-btn-delete').off('click');
+
+        $('#edit-btn').off('click');
+
+        $('.fab-btn-delete').toggleClass('scale-out');
+    
+        setTimeout(() => {
+            $('.fab-btn-delete').html('<i class="material-icons">refresh</i>');
+            $('.fab-btn-delete').toggleClass('scale-out')
+        }, 500);
+
         network.off('doubleClick');
 
         network.off('selectNode');
 
         network.off('deselectNode');
 
-        buildDependencies(networkData, networkOptions, network, Hosts);
+        buildDependencies(networkData,  network);
 
 
     });
 
 }
 
-function buildDependencies(networkData, networkOptions, network, Hosts) {
+function buildDependencies(networkData,  network) {
 
 
 
@@ -519,19 +534,22 @@ function buildDependencies(networkData, networkOptions, network, Hosts) {
 
         if (dependency.length === 2) {
 
-            networkData.edges.update({
-                from: dependency[0],
-                to: dependency[1]
-            });
-
             drawnDependency = {
-                "object_name": dependency[0] + "->" + dependency[1],
+                "object_name": dependency[0] + " --> " + dependency[1],
                 "object_type": "apply",
                 "assign_filter": "host.name=%22" + dependency[0] + "%22",
                 "imports": ["generic-dependency"],
                 "apply_to": "host",
                 "parent_host": dependency[1],
             }
+
+            networkData.edges.update({
+                id: drawnDependency.object_name,
+                from: dependency[0],
+                to: dependency[1]
+            });
+
+
 
             dependencies.push(drawnDependency);
 
@@ -547,11 +565,104 @@ function buildDependencies(networkData, networkOptions, network, Hosts) {
         }
     });
 
+    $('.fab-btn-dependency').click(() => {
+
+        $("#notification").css({
+            "display": "none",
+        });
+
+        network.setOptions({
+            edges: {
+                arrows: {
+                    to: false
+                }
+            }
+        });
+
+        $('.fab-btn-save').off('click');
+
+        $('.fab-btn-dependency').off('click');
+
+        $('#edit-btn').off('click');
+
+        $('.fab-btn-delete').toggleClass('scale-out');
+
+        setTimeout(() => {
+            $('.fab-btn-delete').html('<i class="material-icons">delete_forever</i>');
+            $('.fab-btn-delete').toggleClass('scale-out')
+        }, 500);
+
+
+        network.off('doubleClick');
+
+        network.off('selectNode');
+
+        network.off('deselectNode');
+
+
+        startEventListeners(network, networkData);
+
+
+        
+
+
+    })
+
+    $('#edit-btn').click(() => {
+
+        $("#notification").css({
+            "display": "none",
+        });
+
+        network.setOptions({
+            edges: {
+                arrows: {
+                    to: false
+                }
+            }
+        });
+
+        $('.fab-btn-save').off('click').toggleClass('scale-out');
+
+        $('.fab-btn-dependency').off('click').toggleClass('scale-out');
+
+        $('#edit-btn').off('click');
+
+        $('.fab-btn-delete').toggleClass('scale-out').html('<i class="material-icons">delete_forever</i>');
+            
+        
+        network.off('doubleClick');
+
+        network.off('selectNode');
+
+        network.off('deselectNode');
+
+
+        startEventListeners(network, networkData);
+
+
+    });
+
+    $('.fab-btn-delete').click(() =>{
+
+        if(dependencies.length === 0){
+            alert("Nothing to Undo");
+            return;
+        }
+
+        removedDependency = dependencies.pop();
+
+
+        networkData.edges.remove({
+            id: removedDependency.object_name
+        });
+
+    });
+
 
 
     $('.fab-btn-save').click(function () { //on save
 
-        console.log(JSON.stringify(dependencies[0]));
 
         importDependencies(dependencies);
 

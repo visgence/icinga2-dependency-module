@@ -1,7 +1,7 @@
 <?php
 $section = $this->menuSection(
     N_('Dependencies')
-)->setUrl('dependency_plugin/module/home')->setIcon('plus'
+)->setUrl('dependency_plugin/module/network')->setIcon('plus'
 )->setRenderer(array(
     'SummaryNavigationItemRenderer',
     'state' => 'critical'
