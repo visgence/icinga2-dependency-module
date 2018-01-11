@@ -487,31 +487,7 @@ class ModuleController extends Controller{
             $query = 'SELECT * from graph_settings';
 
             $vals = $db->fetchAll($query);
-
-            if(count((array)$vals[0]) < 3){ //if unexpected number of columns
-
-                $migrate = 'ALTER TABLE graph_settings ADD COLUMN setting_type TEXT';
-
-                $db->exec($migrate);
-
-                $db->exec("TRUNCATE TABLE graph_settings;");
-
-                $db->insert('graph_settings', array('setting_name' => 'default_dependency_template', 'setting_value' => '', 'setting_type' => 'string'));
-                $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'display_only_dependencies', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'scaling', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'always_display_large_labels', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'alias_only', 'setting_value' => 'true', 'setting_type' => 'bool'));
-                $db->insert('graph_settings', array('setting_name' => 'text_size', 'setting_value' => '25', 'setting_type' => 'int'));
-
-                $query = 'SELECT * from graph_settings';
-
-                $vals = $db->fetchAll($query);
-
-            }
-
+            
             $vals = (array_values($vals));
 
             if(!$vals || count($vals) != $expectedNumberOfSettings){ //catch empty or incomplete settings table, provide default
