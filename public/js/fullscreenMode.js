@@ -1,5 +1,6 @@
 function fullscreenMode(container, networkData) {
 
+    $('.controls').hide();
     $('#dependency-network').css("background-color", '#262626');
     $('#dependency-network').css("height", '90%')
     $('#main').css("width", '100%');

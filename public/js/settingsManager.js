@@ -1,10 +1,10 @@
 function settingsManager() {
 
     loadSaved();
-    
 
-     $("#settings-form").change(() => {
-         drawPreviewNetwork();
+
+    $("#settings-form").change(() => {
+        drawPreviewNetwork();
     });
 
     $('#submit-button').click(() => {
@@ -17,7 +17,9 @@ function loadSettings() {
 
     var moduleSettings = {
 
-        'display_up' : true,
+        'default_dependency_template': '',
+
+        'display_up': true,
 
         'display_down': true,
 
@@ -40,277 +42,277 @@ function loadSettings() {
     // moduleSettings.is_hierarchical = $('#hierarchy-radio').prop('checked');
     moduleSettings.display_only_dependencies = $("#host-mode-checkbox").prop('checked');
     moduleSettings.display_up = $("#node-text-up-checkbox").prop('checked');
-    moduleSettings.display_down  = $("#node-text-down-checkbox").prop('checked');
-    moduleSettings.display_unreachable  = $("#node-text-unreachable-checkbox").prop('checked');
+    moduleSettings.display_down = $("#node-text-down-checkbox").prop('checked');
+    moduleSettings.display_unreachable = $("#node-text-unreachable-checkbox").prop('checked');
     moduleSettings.scaling = $("#scaling-mode-checkbox").prop('checked');
     moduleSettings.text_size = $("#text-size-range").val() / 2;
     moduleSettings.label_large_nodes = $('#label-mode-checkbox').prop('checked');
     moduleSettings.alias_only = $('#alias-label-checkbox').prop('checked');
+    moduleSettings.default_dependency_template = $("#dependency-template-field").val();
 
     return moduleSettings;
 }
 
 function drawPreviewNetwork() {
-    
+
     var moduleSettings = loadSettings();
 
-    if(moduleSettings.scaling === true){
+    if (moduleSettings.scaling === true) {
         scalingSize = 15;
-    } else{
+    } else {
         scalingSize = 0;
     }
 
-    if(moduleSettings.alias_only){
+    if (moduleSettings.alias_only) {
         var nodes = new vis.DataSet([{
-            id: 1,
-            size: 25 + (scalingSize * 1.5),
-            color: {
-                border: 'green',
-                background: 'white'
+                id: 1,
+                size: 25 + (scalingSize * 1.5),
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 1'
             },
-            group: 'up',
-            label: 'host 1'
-        },
-        {
-            id: 2,
-            size: 25 + scalingSize,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 2,
+                size: 25 + scalingSize,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 2'
             },
-            group: 'up',
-            label: 'host 2'
-        },
-        {
-            id: 3,
-            size: 25,
-            color: {
-                border: 'red',
-                background: 'white'
+            {
+                id: 3,
+                size: 25,
+                color: {
+                    border: 'red',
+                    background: 'white'
+                },
+                group: 'down',
+                label: 'host 3'
             },
-            group: 'down',
-            label: 'host 3'
-        },
-        {
-            id: 4,
-            size: 25,
-            color: {
-                border: 'purple',
-                background: 'white'
+            {
+                id: 4,
+                size: 25,
+                color: {
+                    border: 'purple',
+                    background: 'white'
+                },
+                group: 'unreachable',
+                label: 'host 4'
             },
-            group: 'unreachable',
-            label: 'host 4'
-        },
-        {
-            id: 5,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 5,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 5'
             },
-            group: 'up',
-            label: 'host 5'
-        },
-        {
-            id: 6,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 6,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 6'
             },
-            group: 'up',
-            label: 'host 6'
-        },
-        {
-            id: 7,
-            size: 25,
-            color: {
-                border: 'red',
-                background: 'white'
+            {
+                id: 7,
+                size: 25,
+                color: {
+                    border: 'red',
+                    background: 'white'
+                },
+                group: 'down',
+                label: 'host 7'
             },
-            group: 'down',
-            label: 'host 7'
-        },
-        {
-            id: 8,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 8,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 8'
             },
-            group: 'up',
-            label: 'host 8'
-        },
-        {
-            id: 9,
-            size: 25,
-            color: {
-                border: 'red',
-                background: 'white'
+            {
+                id: 9,
+                size: 25,
+                color: {
+                    border: 'red',
+                    background: 'white'
+                },
+                group: 'down',
+                label: 'host 9'
             },
-            group: 'down',
-            label: 'host 9'
-        },
-        {
-            id: 10,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 10,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 10'
             },
-            group: 'up',
-            label: 'host 10'
-        },
-        {
-            id: 11,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 11,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 11'
             },
-            group: 'up',
-            label: 'host 11'
-        },
-        {
-            id: 12,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
-            },
-            group: 'up',
-            label: 'host 12'
-        }
+            {
+                id: 12,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 12'
+            }
 
 
         ]);
 
-    } 
-    else {
+    } else {
         var nodes = new vis.DataSet([{
-            id: 1,
-            size: 25 + (scalingSize * 1.5),
-            color: {
-                border: 'green',
-                background: 'white'
+                id: 1,
+                size: 25 + (scalingSize * 1.5),
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 1' + '\n(host-1)'
             },
-            group: 'up',
-            label: 'host 1' + '\n(host-1)'
-        },
-        {
-            id: 2,
-            size: 25 + scalingSize,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 2,
+                size: 25 + scalingSize,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 2' + '\n(host-2)'
             },
-            group: 'up',
-            label: 'host 2' + '\n(host-2)'
-        },
-        {
-            id: 3,
-            size: 25,
-            color: {
-                border: 'red',
-                background: 'white'
+            {
+                id: 3,
+                size: 25,
+                color: {
+                    border: 'red',
+                    background: 'white'
+                },
+                group: 'down',
+                label: 'host 3' + '\n(host-3)'
             },
-            group: 'down',
-            label: 'host 3' + '\n(host-3)'
-        },
-        {
-            id: 4,
-            size: 25,
-            color: {
-                border: 'purple',
-                background: 'white'
+            {
+                id: 4,
+                size: 25,
+                color: {
+                    border: 'purple',
+                    background: 'white'
+                },
+                group: 'unreachable',
+                label: 'host 4' + '\n(host-4)'
             },
-            group: 'unreachable',
-            label: 'host 4' + '\n(host-4)'
-        },
-        {
-            id: 5,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 5,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 5' + '\n(host-5)'
             },
-            group: 'up',
-            label: 'host 5' + '\n(host-5)'
-        },
-        {
-            id: 6,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 6,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 6' + '\n(host-6)'
             },
-            group: 'up',
-            label: 'host 6' + '\n(host-6)'
-        },
-        {
-            id: 7,
-            size: 25,
-            color: {
-                border: 'red',
-                background: 'white'
+            {
+                id: 7,
+                size: 25,
+                color: {
+                    border: 'red',
+                    background: 'white'
+                },
+                group: 'down',
+                label: 'host 7' + '\n(host-7)'
             },
-            group: 'down',
-            label: 'host 7' + '\n(host-7)'
-        },
-        {
-            id: 8,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 8,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 8' + '\n(host-8)'
             },
-            group: 'up',
-            label: 'host 8' + '\n(host-8)'
-        },
-        {
-            id: 9,
-            size: 25,
-            color: {
-                border: 'red',
-                background: 'white'
+            {
+                id: 9,
+                size: 25,
+                color: {
+                    border: 'red',
+                    background: 'white'
+                },
+                group: 'down',
+                label: 'host 9' + '\n(host-9)'
             },
-            group: 'down',
-            label: 'host 9' + '\n(host-9)'
-        },
-        {
-            id: 10,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 10,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 10' + '\n(host-10)'
             },
-            group: 'up',
-            label: 'host 10' + '\n(host-10)'
-        },
-        {
-            id: 11,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
+            {
+                id: 11,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 11' + '\n(host-11)'
             },
-            group: 'up',
-            label: 'host 11' + '\n(host-11)'
-        },
-        {
-            id: 12,
-            size: 25,
-            color: {
-                border: 'green',
-                background: 'white'
-            },
-            group: 'up',
-            label: 'host 12' + '\n(host-12)'
-        }
+            {
+                id: 12,
+                size: 25,
+                color: {
+                    border: 'green',
+                    background: 'white'
+                },
+                group: 'up',
+                label: 'host 12' + '\n(host-12)'
+            }
 
 
         ]);
-}
+    }
 
 
     var edges = new vis.DataSet([{
@@ -372,14 +374,14 @@ function drawPreviewNetwork() {
         var unreachableSize = 0;
     }
 
-    if (moduleSettings.label_large_nodes){
+    if (moduleSettings.label_large_nodes) {
 
         nodes.update({
             id: 1,
             font: {
                 size: moduleSettings.text_size
             },
-            group:  ''
+            group: ''
         });
 
         nodes.update({
@@ -507,19 +509,65 @@ function drawPreviewNetwork() {
 
 }
 
-function saveSettings(){
+function saveSettings() {
 
     var moduleSettings = loadSettings();
 
-    console.log(moduleSettings);
+    payload = { //convert to strings for db on frontend due t o PHP's handling of booleans->strings
 
+        'display_up': {
+            'value' : (String(moduleSettings['display_up'])),
+            'type'  : 'bool'
+        },
+
+        'display_down': {
+            'value' : (String(moduleSettings['display_down'])),
+            'type'  : 'bool'
+        },
+
+        'display_unreachable': {
+            'value' : (String(moduleSettings['display_unreachable'])), 
+            'type'  : 'bool'
+        },
+
+        'display_only_dependencies': {
+            'value' : (String(moduleSettings['display_only_dependencies'])), 
+            'type'  : 'bool'
+        },
+
+        'scaling': {
+            'value' : (String(moduleSettings['scaling'])),
+            'type'  : 'bool'
+        },
+
+        'alias_only': { 
+            'value' : (String(moduleSettings['alias_only'])),
+            'type'  : 'bool'
+        },
+
+        'label_large_nodes': {
+            'value' : (String(moduleSettings['label_large_nodes'])),
+            'type'  : 'bool'
+        },
+
+        'text_size': {
+            'value' : (String(moduleSettings['text_size'])),
+            'type'  : 'int'
+        },
+
+        'default_dependency_template': {
+            'value' : moduleSettings['default_dependency_template'],
+            'type'  : 'string'
+        }
+    
+    };
 
     $.ajax({
 
         url: "/icingaweb2/dependency_plugin/module/storeGraphSettings", //get host states
         type: 'POST',
         data: {
-            json: JSON.stringify(moduleSettings)
+            json: JSON.stringify(payload)
         },
         success: function () {
             $("#notification").html(
@@ -538,7 +586,7 @@ function saveSettings(){
 
 }
 
-function loadSaved(){
+function loadSaved() {
 
     $.ajax({
         url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
@@ -550,26 +598,39 @@ function loadSaved(){
             parsedSettings = {};
 
             for (i = 0; i < settings.length; i++) {
-                parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value']
+
+                if(settings[i]['setting_type'] === 'bool'){
+                    parsedSettings[settings[i]['setting_name']] = (settings[i]['setting_value'] === 'true');
+                } else if (settings[i]['setting_type'] === 'int'){
+
+                    parsedSettings[settings[i]['setting_name']] = (parseInt(settings[i]['setting_value']));
+
+                }else {
+
+                    parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value'];
+
+                }
+
             }
 
-            // $('#hierarchy-radio').prop('checked', (parseInt(parsedSettings.is_hierarchical) === 1));
-            // $('#network-radio').prop('checked', (parseInt(parsedSettings.is_hierarchical) === 0));
-            $("#host-mode-checkbox").prop('checked', (parseInt(parsedSettings.display_only_dependencies) === 1));
-            $("#node-text-up-checkbox").prop('checked', (parseInt(parsedSettings.display_up) === 1));
-            $("#node-text-down-checkbox").prop('checked', (parseInt(parsedSettings.display_down) === 1));
-            $("#node-text-unreachable-checkbox").prop('checked', (parseInt(parsedSettings.display_unreachable) === 1));
-            $("#scaling-mode-checkbox").prop('checked', (parseInt(parsedSettings.scaling) === 1));
-            $("#text-size-range").val(parseInt(parsedSettings.text_size)*2);
-            $('#label-mode-checkbox').prop('checked', (parseInt(parsedSettings.label_large_nodes)));
-            $('#alias-label-checkbox').prop('checked', (parseInt(parsedSettings.alias_only)));
+            
+
+            $("#host-mode-checkbox").prop('checked', parsedSettings.display_only_dependencies);
+            $("#node-text-up-checkbox").prop('checked', parsedSettings.display_up);
+            $("#node-text-down-checkbox").prop('checked', parsedSettings.display_down);
+            $("#node-text-unreachable-checkbox").prop('checked', parsedSettings.display_unreachable);
+            $("#scaling-mode-checkbox").prop('checked', parsedSettings.scaling);
+            $("#text-size-range").val((parsedSettings.text_size) * 2);
+            $('#label-mode-checkbox').prop('checked', parsedSettings.label_large_nodes);
+            $('#alias-label-checkbox').prop('checked', parsedSettings.alias_only);
+            
+
+            getTemplates(parsedSettings.default_dependency_template);
 
             drawPreviewNetwork();
 
-
         },
         error: function (data) {
-
 
             alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
 
@@ -577,7 +638,42 @@ function loadSaved(){
 
     });
 
-    
+
 }
 
+function getTemplates(defaultTemplate) {
+    templateNames = [];
 
+    $.ajax({
+        url: "/icingaweb2/director/dependencies/templates",
+        type: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        },
+        // dataType: 'json',
+        success: function (data) {
+
+            var templateDropdown = $("#dependency-template-field");
+
+
+            for (i = 0; i < data['objects'].length; i++) {
+
+                templateDropdown.append("<option value=" + data['objects'][i]["object_name"] + ">" + data['objects'][i]["object_name"] + "</option>");
+
+
+            }
+
+            $("#dependency-template-field").val(parsedSettings.default_dependency_template);
+
+            
+
+        },
+        error: function (data) {
+
+            alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+
+        }
+
+    });
+
+}

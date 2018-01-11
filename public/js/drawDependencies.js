@@ -49,7 +49,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         currHost = Object.keys(Hosts.hostObject)[i]; //gets name of current host based on key iter
 
-        if (parseInt(settings.display_only_dependencies) === 1 && !Hosts.hostObject[currHost].hasDependencies) { //skip adding node 
+        if (settings.display_only_dependencies && !Hosts.hostObject[currHost].hasDependencies) { //skip adding node 
 
             continue;
 
@@ -60,8 +60,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
         if (Hosts.hostObject[currHost].status === 'DOWN') {
             color_border = 'red';
 
-            if (parseInt(settings.display_down) === 1) {
-                text_size = parseInt(settings.text_size) / 2; //parse int because an int is returned for MySql, a string for Postgres.
+            if (settings.display_down) {
+                text_size = settings.text_size / 2; //parse int because an int is returned for MySql, a string for Postgres.
             } else {
                 text_size = 0;
             }
@@ -70,8 +70,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
         if (Hosts.hostObject[currHost].status === 'UNREACHABLE') {
             color_border = 'purple';
 
-            if (parseInt(settings.display_unreachable) === 1) {
-                text_size = parseInt(settings.text_size) / 2;
+            if (settings.display_unreachable) {
+                text_size = settings.text_size / 2;
             } else {
                 text_size = 0;
             }
@@ -80,8 +80,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
         if (Hosts.hostObject[currHost].status === 'UP') {
             color_border = 'green';
 
-            if (parseInt(settings.display_up) === 1) {
-                text_size = parseInt(settings.text_size) / 2;
+            if (settings.display_up) {
+                text_size = settings.text_size / 2;
             } else {
                 text_size = 0;
             }
@@ -89,11 +89,11 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
         }
 
 
-        if (parseInt(settings.always_display_large_labels) && Hosts.hostObject[currHost].isLargeNode > 3) {
-            text_size = parseInt(settings.text_size) / 2;
+        if (settings.always_display_large_labels && Hosts.hostObject[currHost].isLargeNode > 3) {
+            text_size = settings.text_size / 2;
         }
 
-        if (parseInt(settings.alias_only)) {
+        if (settings.alias_only) {
             hostLabel = Hosts.hostObject[currHost].description;
         } else {
             hostLabel = (Hosts.hostObject[currHost].description + "\n(" + currHost + ")");
@@ -114,7 +114,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
                     size: text_size
                 },
 
-                size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
+                size: (Hosts.hostObject[currHost].children.length * 3 * settings.scaling + 20),
 
                 x: Hosts.hostObject[currHost].position.x, //set x, y position
                 y: Hosts.hostObject[currHost].position.y,
@@ -136,7 +136,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
                     size: text_size
                 },
 
-                size: (Hosts.hostObject[currHost].children.length * 3 * parseInt(settings.scaling) + 20),
+                size: (Hosts.hostObject[currHost].children.length * 3 * settings.scaling + 20),
 
             });
         }
@@ -248,7 +248,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         }
 
-        startEventListeners(network, networkData);
+        startEventListeners(network, networkData, settings);
 
     }
 }
@@ -364,7 +364,7 @@ function simulateChangedNetwork(network, nodes) {
     });
 }
 
-function startEventListeners(network,  networkData) {
+function startEventListeners(network,  networkData, settings) {
 
     var font_size = 0;
 
@@ -466,10 +466,21 @@ function startEventListeners(network,  networkData) {
         });
     });
 
+    $('.fab-btn-fullscreen').click(() => {
+
+        window.location.replace("./network?showFullscreen");
+
+    });
+
     $('.fab-btn-dependency').click(() => {
 
+        if(!settings.default_dependency_template){
+            alert('No Default Director Dependency Template Selected, Please Create or Select One.');
+            // window.location.replace("./settings");
+        }
+
         $("#notification").html(
-            "<div class = notification-content><h3>Editing Dependencies</h3>"
+            "<div class = notification-content><h3>Editing Dependencies (Child -----> Parent)</h3>"
         ).css({
             "display": "block",
         })
@@ -477,7 +488,7 @@ function startEventListeners(network,  networkData) {
         network.setOptions({
             edges: {
                 arrows: {
-                    to: true
+                    from: true
                 }
             }
         });
@@ -503,14 +514,13 @@ function startEventListeners(network,  networkData) {
 
         network.off('deselectNode');
 
-        buildDependencies(networkData,  network);
-
+        buildDependencies(networkData,  network, settings);
 
     });
 
 }
 
-function buildDependencies(networkData,  network) {
+function buildDependencies(networkData,  network, settings) {
 
 
 
@@ -535,18 +545,18 @@ function buildDependencies(networkData,  network) {
         if (dependency.length === 2) {
 
             drawnDependency = {
-                "object_name": dependency[0] + " --> " + dependency[1],
+                "object_name": dependency[0] + " __to__ " + dependency[1],
                 "object_type": "apply",
                 "assign_filter": "host.name=%22" + dependency[0] + "%22",
-                "imports": ["generic-dependency"],
+                "imports": [settings.default_dependency_template],
                 "apply_to": "host",
                 "parent_host": dependency[1],
             }
 
             networkData.edges.update({
                 id: drawnDependency.object_name,
-                from: dependency[0],
-                to: dependency[1]
+                from: dependency[1],
+                to: dependency[0]
             });
 
 
@@ -574,7 +584,7 @@ function buildDependencies(networkData,  network) {
         network.setOptions({
             edges: {
                 arrows: {
-                    to: false
+                    from: false
                 }
             }
         });
@@ -603,9 +613,6 @@ function buildDependencies(networkData,  network) {
         startEventListeners(network, networkData);
 
 
-        
-
-
     })
 
     $('#edit-btn').click(() => {
@@ -617,7 +624,7 @@ function buildDependencies(networkData,  network) {
         network.setOptions({
             edges: {
                 arrows: {
-                    to: false
+                    from: false
                 }
             }
         });
@@ -638,7 +645,7 @@ function buildDependencies(networkData,  network) {
         network.off('deselectNode');
 
 
-        startEventListeners(network, networkData);
+        startEventListeners(network, networkData, settings);
 
 
     });

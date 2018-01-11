@@ -12,9 +12,8 @@ CREATE TABLE plugin_settings (
 );
 
 CREATE TABLE graph_settings (
-
     setting_name TEXT,
-    setting_value INTEGER
-
+    setting_value TEXT,
+    setting_type TEXT
 );
 

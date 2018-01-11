@@ -38,6 +38,7 @@ class ModuleController extends Controller{
             'label'     => $this->translate('Hierarchy Map'),
             'url'       => 'dependency_plugin/module/hierarchy'
         ));
+
     }
     
     public function networkAction() {
@@ -451,15 +452,15 @@ class ModuleController extends Controller{
 
                 $db->exec("TRUNCATE TABLE graph_settings;");
 
-                // echo $json;
-
                 foreach($data as $name => $setting){
 
-                    $res = $db->insert('graph_settings', array(
-                        'setting_name' => $name, 
-                        'setting_value' => (int)$setting
-                    )); 
-                }
+                        $res = $db->insert('graph_settings', array( //due to Zend reading bools as strings, converts true->1 false->""
+                            'setting_name' => $name, 
+                            'setting_value' => $setting["value"],
+                            'setting_type' =>  $setting["type"]
+                        )); 
+                    }
+                
             
            exit;
         }
@@ -477,14 +478,39 @@ class ModuleController extends Controller{
 
         try {
 
-            $expectedNumberOfSettings = 8; //Number of settings expected out of database, change if setting added/removed
+            $expectedNumberOfSettings = 9; //Number of settings expected out of database, change if setting added/removed
 
             $resource = $this->getResource();
 
             $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
-            $query = 'SELECT setting_name, setting_value from graph_settings';
+            $query = 'SELECT * from graph_settings';
+
             $vals = $db->fetchAll($query);
+
+            if(count((array)$vals[0]) < 3){ //if unexpected number of columns
+
+                $migrate = 'ALTER TABLE graph_settings ADD COLUMN setting_type TEXT';
+
+                $db->exec($migrate);
+
+                $db->exec("TRUNCATE TABLE graph_settings;");
+
+                $db->insert('graph_settings', array('setting_name' => 'default_dependency_template', 'setting_value' => '', 'setting_type' => 'string'));
+                $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'display_only_dependencies', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'scaling', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'always_display_large_labels', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'alias_only', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                $db->insert('graph_settings', array('setting_name' => 'text_size', 'setting_value' => '25', 'setting_type' => 'int'));
+
+                $query = 'SELECT * from graph_settings';
+
+                $vals = $db->fetchAll($query);
+
+            }
 
             $vals = (array_values($vals));
 
@@ -492,15 +518,16 @@ class ModuleController extends Controller{
                    
                    $db->exec("TRUNCATE TABLE graph_settings;");
 
-                //    $db->insert('graph_settings', array('setting_name' => 'is_hierarchical', 'setting_value' => 1));
-                   $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 1));
-                   $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 1)); 
-                   $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 1));
-                   $db->insert('graph_settings', array('setting_name' => 'display_only_dependencies', 'setting_value' => 1)); 
-                   $db->insert('graph_settings', array('setting_name' => 'scaling', 'setting_value' => 1)); 
-                   $db->insert('graph_settings', array('setting_name' => 'always_display_large_labels', 'setting_value' => 1));
-                   $db->insert('graph_settings', array('setting_name' => 'alias_only', 'setting_value' => 1));
-                   $db->insert('graph_settings', array('setting_name' => 'text_size', 'setting_value' => 25));
+                   $db->insert('graph_settings', array('setting_name' => 'default_dependency_template', 'setting_value' => '', 'setting_type' => 'string'));
+                   $db->insert('graph_settings', array('setting_name' => 'display_up', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'display_down', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'display_unreachable', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'display_only_dependencies', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'scaling', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'always_display_large_labels', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'alias_only', 'setting_value' => 'true', 'setting_type' => 'bool'));
+                   $db->insert('graph_settings', array('setting_name' => 'text_size', 'setting_value' => '25', 'setting_type' => 'int'));
+
                $vals = $db->fetchAll($query);
 
 
@@ -510,7 +537,9 @@ class ModuleController extends Controller{
                 header('HTTP/1.1 500 Internal Server Error');
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
-            }
+
+            exit;
+         }
         
 
             $json = json_encode($vals);

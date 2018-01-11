@@ -73,7 +73,19 @@ function getRequests(isHierarchical) {
                 parsedSettings = {}
 
                 for (i = 0; i < settings.length; i++) {
-                    parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value']
+
+                    if (settings[i]['setting_type'] === 'bool') {
+                        parsedSettings[settings[i]['setting_name']] = (settings[i]['setting_value'] === 'true');
+                    } else if (settings[i]['setting_type'] === 'int') {
+
+                        parsedSettings[settings[i]['setting_name']] = (parseInt(settings[i]['setting_value']));
+
+                    } else {
+
+                        parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value'];
+
+                    }
+
                 }
 
             },
