@@ -476,7 +476,7 @@ function startEventListeners(network,  networkData, settings) {
 
         if(!settings.default_dependency_template){
             alert('No Default Director Dependency Template Selected, Please Create or Select One.');
-            // window.location.replace("./settings");
+            window.location.replace("./settings");
         }
 
         $("#notification").html(
