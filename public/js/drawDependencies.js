@@ -364,7 +364,7 @@ function simulateChangedNetwork(network, nodes) {
     });
 }
 
-function startEventListeners(network,  networkData, settings) {
+function startEventListeners(network, networkData, settings) {
 
     var font_size = 0;
 
@@ -419,27 +419,31 @@ function startEventListeners(network,  networkData, settings) {
     });
 
     $('.fab-btn-delete').click(function () {
-        $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify('RESET')
-            },
-            success: function () {
-                setTimeout(function () {
 
-                    window.location.replace("./network"); //on succes redirect to network.
+        if (confirm("Reset All Network Positions?")) {
 
-                }, 2000);
-                $("#notification").html(
-                    "<div class = notification-content><h3>Network Reset</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
-            }
-        });
+            $.ajax({ //ajax request to store into DB
+                url: "/icingaweb2/dependency_plugin/module/storeNodes",
+                type: 'POST',
+                data: {
+                    json: JSON.stringify('RESET')
+                },
+                success: function () {
+                    setTimeout(function () {
+
+                        window.location.replace("./network"); //on succes redirect to network.
+
+                    }, 2000);
+                    $("#notification").html(
+                        "<div class = notification-content><h3>Network Reset</h3>"
+                    ).css({
+                        "display": "block",
+                    }).delay(5000).fadeOut();
+                }
+            });
+
+        }
     });
-
 
     $('.fab-btn-save').click(function () { //on save
         network.setOptions({
@@ -474,7 +478,7 @@ function startEventListeners(network,  networkData, settings) {
 
     $('.fab-btn-dependency').click(() => {
 
-        if(!settings.default_dependency_template){
+        if (!settings.default_dependency_template) {
             alert('No Default Director Dependency Template Selected, Please Create or Select One.');
             window.location.replace("./settings");
         }
@@ -502,7 +506,7 @@ function startEventListeners(network,  networkData, settings) {
         $('#edit-btn').off('click');
 
         $('.fab-btn-delete').toggleClass('scale-out');
-    
+
         setTimeout(() => {
             $('.fab-btn-delete').html('<i class="material-icons">refresh</i>');
             $('.fab-btn-delete').toggleClass('scale-out')
@@ -514,13 +518,13 @@ function startEventListeners(network,  networkData, settings) {
 
         network.off('deselectNode');
 
-        buildDependencies(networkData,  network, settings);
+        buildDependencies(networkData, network, settings);
 
     });
 
 }
 
-function buildDependencies(networkData,  network, settings) {
+function buildDependencies(networkData, network, settings) {
 
 
 
@@ -569,7 +573,7 @@ function buildDependencies(networkData,  network, settings) {
 
     });
 
-    network.on("click", function (params) { //double click on node listener
+    network.on("click", function (params) {
         if (params.nodes[0] === undefined) {
             dependency = [];
         }
@@ -595,6 +599,8 @@ function buildDependencies(networkData,  network, settings) {
 
         $('#edit-btn').off('click');
 
+        $('.fab-btn-delete').off('click');
+
         $('.fab-btn-delete').toggleClass('scale-out');
 
         setTimeout(() => {
@@ -610,7 +616,7 @@ function buildDependencies(networkData,  network, settings) {
         network.off('deselectNode');
 
 
-        startEventListeners(network, networkData);
+        startEventListeners(network, networkData, settings);
 
 
     })
@@ -636,8 +642,8 @@ function buildDependencies(networkData,  network, settings) {
         $('#edit-btn').off('click');
 
         $('.fab-btn-delete').toggleClass('scale-out').html('<i class="material-icons">delete_forever</i>');
-            
-        
+
+
         network.off('doubleClick');
 
         network.off('selectNode');
@@ -650,9 +656,9 @@ function buildDependencies(networkData,  network, settings) {
 
     });
 
-    $('.fab-btn-delete').click(() =>{
+    $('.fab-btn-delete').click(() => {
 
-        if(dependencies.length === 0){
+        if (dependencies.length === 0) {
             alert("Nothing to Undo");
             return;
         }
