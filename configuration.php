@@ -7,10 +7,6 @@ $section = $this->menuSection(
     'state' => 'critical'
 ));
 
-// $section->add(N_('Hierarchy Map'))
-//     ->setUrl('dependency_plugin/module/hierarchy');
-// $section->add(N_('Network Map'))
-//     ->setUrl('dependency_plugin/module/network');
 $section->add(N_('Settings'))
     ->setUrl('dependency_plugin/module/settings');
 
@@ -21,6 +17,6 @@ $this->provideJsFile('drawDependencies.js');
 $this->provideJsFile('getRequests.js');
 $this->provideJsFile('kickstartManager.js');
 $this->provideJsFile('settingsManager.js');
-// $this->provideCssFile('vendor/network.css');
+
 
 ?>
