@@ -569,13 +569,6 @@ function saveSettings() {
         data: {
             json: JSON.stringify(payload)
         },
-        success: function () {
-            $("#notification").html(
-                "<div class = notification-content><h3>Settings Saved Succesfully</h3>"
-            ).css({
-                "display": "block",
-            }).delay(5000).fadeOut();
-        },
         error: function (data) {
             console.log(data);
             alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);

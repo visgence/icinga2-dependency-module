@@ -265,12 +265,6 @@ function simulateNewNetwork(network, nodes) {
 
     });
 
-    //animate notification, loading bar
-    $("#notification").html(
-        "<div class = notification-content><h3>Generating New Network</h3>"
-    ).css({
-        "display": "block",
-    }).delay(5000).fadeOut();
 
     $('.fabs').hide();
 
@@ -302,13 +296,6 @@ function simulateNewNetwork(network, nodes) {
             type: 'POST',
             data: {
                 json: JSON.stringify(nodes._data)
-            },
-            success: function () {
-                $("#notification").html(
-                    "<div class = notification-content><h3>New Network Saved</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
             }
         });
 
@@ -434,11 +421,6 @@ function startEventListeners(network, networkData, settings) {
                         window.location.replace("./network"); //on succes redirect to network.
 
                     }, 2000);
-                    $("#notification").html(
-                        "<div class = notification-content><h3>Network Reset</h3>"
-                    ).css({
-                        "display": "block",
-                    }).delay(5000).fadeOut();
                 }
             });
 
@@ -459,14 +441,8 @@ function startEventListeners(network, networkData, settings) {
             type: 'POST',
             data: {
                 json: JSON.stringify(networkData.nodes._data)
-            },
-            success: function () {
-                $("#notification").html(
-                    "<div class = notification-content><h3>Changes Saved Successfully</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
             }
+    
         });
     });
 

@@ -6,6 +6,8 @@ function fullscreenMode(container, networkData) {
     $('#main').css("width", '100%');
     $('#main').css("height", '100%');
     $('#hud').css('display', 'block');
+    $('#layout').toggleClass('fullscreen-layout')
+
 
     const fullscreenOptions = {
 

@@ -40,11 +40,6 @@ function kickstartManager() {
                                 window.location.replace("./network"); //on succes redirect to network.
 
                             }, 1000);
-                            $("#notification").html(
-                                "<div class = notification-content><h3>Settings Saved Succesfully</h3>"
-                            ).css({
-                                "display": "block",
-                            }).delay(5000).fadeOut();
                         },
                         error: function (data) { 
                             console.log(data);

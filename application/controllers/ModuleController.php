@@ -19,9 +19,12 @@ namespace Icinga\Module\dependency_plugin\Controllers;
 use Icinga\Web\Controller;
 use Icinga\Application\Config;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
+use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 use Icinga\Data\ResourceFactory;
 use Exception;
+
 
 class ModuleController extends Controller{
 
@@ -186,41 +189,39 @@ class ModuleController extends Controller{
         
         if($data != null){
 
-                $resource = $data[0]['value'];
-                $port = $data[1]['value'];
-                $username = $data[2]['value'];
-                $password = $data[3]['value'];
+            $resource = $data[0]['value'];
+            $port = $data[1]['value'];
+            $username = $data[2]['value'];
+            $password = $data[3]['value'];
 
-                $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
-                $db->exec("TRUNCATE TABLE plugin_settings;"); //delete to only store latest settings 
+            $db->exec("TRUNCATE TABLE plugin_settings;"); //delete to only store latest settings 
 
-                $res = $db->insert('plugin_settings', array(
-                  'api_user' => $username, 
-                  'api_password' => $password
-                , 'api_endpoint' => $port
-                ));
+            $res = $db->insert('plugin_settings', array(
+                'api_user' => $username, 
+                'api_password' => $password
+            , 'api_endpoint' => $port
+            ));
 
-                $config = $this->config();
-                $config->setSection('db', array('resource' => $resource));
-
-
-                try {
-                      $config->saveIni();
-                    } catch (Exception $e) {
+            $config = $this->config();
+            $config->setSection('db', array('resource' => $resource));
 
 
-            echo $e->getMessage();
-            exit;
-        }
-
-                if(!$res){
-                echo "An error occured while attempting to store settings.\n";
+            try {
+                    $config->saveIni();
+            } catch (Exception $e) {
+                echo $e->getMessage();
                 exit;
             }
 
-                echo $res;
+        if(!$res){
+            echo "An error occured while attempting to store settings.\n";
+            exit;
+        }
 
+        Notification::success($this->translate('Settings Have Been Saved Successfully'));
+        echo $res;
         }
 
         exit;
@@ -345,7 +346,6 @@ class ModuleController extends Controller{
             echo $response;
             exit;
 
-
 }
 
     public function storenodesAction(){
@@ -382,12 +382,13 @@ class ModuleController extends Controller{
                 if(!$res){
                 echo "An error occured while attempting to store nodes.\n";
                 exit;
+                }
             }
 
-                echo $res;
-            }
+            Notification::success('Changes Have Been Saved Successfully');
 
         }
+
 
         exit;
     }
@@ -414,6 +415,8 @@ class ModuleController extends Controller{
                 $json = json_encode('EMPTY!');
 
                 echo $json;
+
+                // Notification::success('Node Positions Have Been Saved Successfully');
 
                 exit;
 
@@ -448,30 +451,27 @@ class ModuleController extends Controller{
         if($data != null){
 
 
-                $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
-                $db->exec("TRUNCATE TABLE graph_settings;");
+            $db->exec("TRUNCATE TABLE graph_settings;");
 
-                foreach($data as $name => $setting){
+            foreach($data as $name => $setting){
 
-                        $res = $db->insert('graph_settings', array( //due to Zend reading bools as strings, converts true->1 false->""
-                            'setting_name' => $name, 
-                            'setting_value' => $setting["value"],
-                            'setting_type' =>  $setting["type"]
-                        )); 
-                    }
-                
-            
-           exit;
+                $res = $db->insert('graph_settings', array( //due to Zend reading bools as strings, converts true->1 false->""
+                    'setting_name' => $name, 
+                    'setting_value' => $setting["value"],
+                    'setting_type' =>  $setting["type"]
+                )); 
+            }
         }
 
-                if(!$res){
-                echo "An error occured while attempting to store settings.\n";
-                exit;
-            }
+        if(!$res){
+            echo "An error occured while attempting to store settings.\n";
+            exit;
+        }
 
-        exit;
-
+       Notification::success($this->translate('Settings Have Been Saved Successfully'));
+       exit;
     }
 
     public function getgraphsettingsAction() {
