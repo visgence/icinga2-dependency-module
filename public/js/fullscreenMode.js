@@ -113,7 +113,7 @@ function fullscreenMode(container, networkData) {
 
     setTimeout(function () {
 
-        getRequests(false);
+        window.location.reload(true);
 
     }, 60000);
 
