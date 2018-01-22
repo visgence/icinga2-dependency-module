@@ -6,7 +6,8 @@ function fullscreenMode(container, networkData) {
     $('#main').css("width", '100%');
     $('#main').css("height", '100%');
     $('#hud').css('display', 'block');
-    $('#layout').toggleClass('fullscreen-layout')
+    $('#layout').addClass('fullscreen-layout');
+    
 
 
     const fullscreenOptions = {
@@ -46,6 +47,8 @@ function fullscreenMode(container, networkData) {
 
         }
     }).then(function () {
+
+        
 
         var hostsUp = 0; 
         var hostsDown = 0; 
@@ -109,11 +112,14 @@ function fullscreenMode(container, networkData) {
         $('#hud-unreachable').html('<h1>'+ hostsUnreachable + ' Hosts UNREACHABLE' + '</h1>');
         $('#hud-up').html('<h1>' + hostsUp + ' Hosts UP' + '</h1>');
         $('#hud-title').html('<h1>' + timeUpdated + '</h1>');
+       
     });
 
     setTimeout(function () {
 
         window.location.reload(true);
+
+        // getRequests(false);
 
     }, 60000);
 
