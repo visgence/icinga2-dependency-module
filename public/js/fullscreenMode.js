@@ -7,7 +7,7 @@ function fullscreenMode(container, networkData) {
     $('#main').css("height", '100%');
     $('#hud').css('display', 'block');
     $('#layout').addClass('fullscreen-layout');
-    
+
 
     const fullscreenOptions = {
 
@@ -31,7 +31,7 @@ function fullscreenMode(container, networkData) {
             },
             font: {
                 color: 'white'
-        },
+            },
             fixed: true,
             shape: 'dot'
 
@@ -101,27 +101,49 @@ function fullscreenMode(container, networkData) {
 
         var network = new vis.Network(container, networkData, fullscreenOptions);
 
+        startRefreshTimeout(network);
+
         var date = new Date();
-        var time = ' ' + date.getHours() + ':' + date.getMinutes();
         var timeUpdated = date;
 
-        console.log(timeUpdated);
+        // console.log(timeUpdated);
 
         $('#hud-down').html("<h1>" + hostsDown + ' Hosts DOWN' + "</h1>");
-        $('#hud-unreachable').html('<h1>'+ hostsUnreachable + ' Hosts UNREACHABLE' + '</h1>');
+        $('#hud-unreachable').html('<h1>' + hostsUnreachable + ' Hosts UNREACHABLE' + '</h1>');
         $('#hud-up').html('<h1>' + hostsUp + ' Hosts UP' + '</h1>');
         $('#hud-title').html('<h1>' + timeUpdated + '</h1>');
-       
+
+        updateTime();
+
     });
 
-    setTimeout(function () {
+    function updateTime() {
 
-        network.destroy();
+        setTimeout(() => {
 
-        getRequests(false);
+            var date = new Date();
 
-        
+            console.log('wat');
 
-    }, 60000);
+            $('#hud-title').html('<h1>' + date + '</h1>')
+
+            updateTime();
+
+
+
+        }, 1000);
+    }
+
+    function startRefreshTimeout(network) {
+
+        setTimeout(function () {
+
+            network.destroy();
+
+
+            getRequests(false);
+
+        }, 60000);
+    }
 
 }
