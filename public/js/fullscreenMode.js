@@ -1,4 +1,4 @@
-function fullscreenMode(container, networkData) {
+function fullscreenMode(container, networkData, Icinga) {
 
     $('.controls').hide();
     $('#dependency-network').css("background-color", '#262626');
@@ -7,6 +7,8 @@ function fullscreenMode(container, networkData) {
     $('#main').css("height", '100%');
     $('#hud').css('display', 'block');
     $('#layout').addClass('fullscreen-layout');
+    // Icinga.ui.toggleFullscreen();
+
 
 
     const fullscreenOptions = {
@@ -19,7 +21,6 @@ function fullscreenMode(container, networkData) {
             smooth: {
                 "forceDirection": "none",
             },
-
 
             width: 5
         },
@@ -123,13 +124,9 @@ function fullscreenMode(container, networkData) {
 
             var date = new Date();
 
-            console.log('wat');
-
             $('#hud-title').html('<h1>' + date + '</h1>')
 
             updateTime();
-
-
 
         }, 1000);
     }

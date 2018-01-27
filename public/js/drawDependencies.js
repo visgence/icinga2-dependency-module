@@ -359,8 +359,8 @@ function startEventListeners(network, networkData, settings) {
 
     network.on("doubleClick", function (params) { //double click on node listener
         if (params.nodes[0] != undefined) {
-            href = location.href.split('/');
-            location.href = 'http://' + href[2] + '/icingaweb2/monitoring/list/hosts#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
+            $('.fabs').hide();
+            location.href = '/icingaweb2/dependency_plugin/module/network#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
         }
     });
 

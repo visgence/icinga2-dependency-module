@@ -58,12 +58,6 @@ class ModuleController extends Controller{
             'url'       => 'dependency_plugin/module/hierarchy'
         ));
 
-        // $this->getTabs()->add('Fullscreen', array(
-        //     'active'    => false,
-        //     'label'     => $this->translate('Fullscreen Mode'),
-        //     'url'       => 'dependency_plugin/module/network?showFullscreen'
-        // ));
-
     }
 
     public function kickstartAction() {
