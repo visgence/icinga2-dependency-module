@@ -9,7 +9,6 @@ function fullscreenMode(container, networkData) {
     $('#layout').addClass('fullscreen-layout');
     
 
-
     const fullscreenOptions = {
 
         layout: {
@@ -48,10 +47,10 @@ function fullscreenMode(container, networkData) {
         }
     }).then(function () {
 
-        
 
-        var hostsUp = 0; 
-        var hostsDown = 0; 
+
+        var hostsUp = 0;
+        var hostsDown = 0;
         var hostsUnreachable = 0;
 
         for (i = 0; i < hosts.results.length; i++) {
@@ -69,12 +68,12 @@ function fullscreenMode(container, networkData) {
                 if (hosts.results[i].attrs.last_reachable === false) {
                     color_border = 'purple';
                     font_size = 20;
-                    hostsUnreachable ++;
+                    hostsUnreachable++;
                     // problemHosts.push(hosts.results[i].name);
                 } else {
                     color_border = 'red';
                     font_size = 20;
-                    hostsDown ++;
+                    hostsDown++;
                     // problemHosts.push(hosts.results[i].name);
                 }
             }
@@ -117,9 +116,11 @@ function fullscreenMode(container, networkData) {
 
     setTimeout(function () {
 
-        window.location.reload(true);
+        network.destroy();
 
-        // getRequests(false);
+        getRequests(false);
+
+        
 
     }, 60000);
 

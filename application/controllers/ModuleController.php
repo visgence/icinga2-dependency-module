@@ -58,6 +58,12 @@ class ModuleController extends Controller{
             'url'       => 'dependency_plugin/module/hierarchy'
         ));
 
+        // $this->getTabs()->add('Fullscreen', array(
+        //     'active'    => false,
+        //     'label'     => $this->translate('Fullscreen Mode'),
+        //     'url'       => 'dependency_plugin/module/network?showFullscreen'
+        // ));
+
     }
 
     public function kickstartAction() {
@@ -89,21 +95,21 @@ class ModuleController extends Controller{
 
     }
         
-    public function homeAction() {
+    // public function homeAction() {
 
-        $this->getTabs()->add('Network', array(
-            'active'    => true,
-            'label'     => $this->translate('Network Map'),
-            'url'       => 'dependency_plugin/module/network'
-        ));
+    //     $this->getTabs()->add('Network', array(
+    //         'active'    => true,
+    //         'label'     => $this->translate('Network Map'),
+    //         'url'       => 'dependency_plugin/module/network'
+    //     ));
 
-        $this->getTabs()->add('Hierarchy', array(
-            'active'    => false,
-            'label'     => $this->translate('Hierarchy Map'),
-            'url'       => 'dependency_plugin/module/hierarchy'
-        ));
+    //     $this->getTabs()->add('Hierarchy', array(
+    //         'active'    => false,
+    //         'label'     => $this->translate('Hierarchy Map'),
+    //         'url'       => 'dependency_plugin/module/hierarchy'
+    //     ));
 
-    }
+    // }
 
     public function getresourcesAction(){
             
@@ -524,6 +530,43 @@ class ModuleController extends Controller{
 
             exit;
     }
+    
+
+    public function updateDependencies(){
+
+        $json = $_POST["json"];
+
+        $resource = $this->getResource();
+
+        $data = json_decode($json, true);
+        
+        if($data != null){
+
+
+            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
+
+            $db->exec("TRUNCATE TABLE dependencies;");
+
+            foreach($data as $child => $parent){
+
+                $res = $db->insert('dependencies', array( //due to Zend reading bools as strings, converts true->1 false->""
+                    'parent_name' => $parent, 
+                    'child_name' => $child,
+                )); 
+            }
+        }
+
+        if(!$res){
+            echo "An error occured while attempting to store settings.\n";
+            exit;
+        }
+        
+        
+
+       exit;
+    }
+        
+    
 
 
     

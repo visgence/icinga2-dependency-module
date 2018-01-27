@@ -37,6 +37,7 @@ function getRequests(isHierarchical) {
 
                 dependencies = (JSON.parse(dependencyData));
 
+
             },
             error: function (data) {
                 // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
@@ -101,6 +102,11 @@ function getRequests(isHierarchical) {
         
 
     ).then(function () {
+        if (!dependencies && !hosts.results) {
+            window.location = '/icingaweb2/dependency_plugin/module/welcome'
+        }
         formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen, parsedSettings);
+
+        hosts, dependencies, positionData, parsedSettings = {};
     });
 }
