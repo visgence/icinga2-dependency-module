@@ -270,6 +270,8 @@ function simulateNewNetwork(network, nodes) {
 
     $('#loadingBar').css('display', 'block');
 
+    $('#notifications').append().html('<li class="info fade-out">Simulating New Network</li>');
+
     network.on("stabilizationProgress", function (params) { //as network is simulating animate by percentage of physics iter complete
         var maxWidth = 496;
         var minWidth = 20;
@@ -312,6 +314,9 @@ function simulateNewNetwork(network, nodes) {
 function simulateChangedNetwork(network, nodes) {
     //function simulates the network for a limited number of physics iterations, 
     //usually enough to correctly place a newly added host/hosts.
+
+
+    $('#notifications').append().html('<li class="info">Network Change Detected</li>');
 
     network.setOptions({
         nodes: {
@@ -428,6 +433,7 @@ function startEventListeners(network, networkData, settings) {
     });
 
     $('.fab-btn-save').click(function () { //on save
+
         network.setOptions({
             nodes: {
                 fixed: true
@@ -441,8 +447,11 @@ function startEventListeners(network, networkData, settings) {
             type: 'POST',
             data: {
                 json: JSON.stringify(networkData.nodes._data)
-            }
+            },
+            success: () => {
+                $('#notifications').append().html('<li class="success fade-out">Nodes Positions Saved</li>');
 
+            }
         });
     });
 
@@ -457,6 +466,8 @@ function startEventListeners(network, networkData, settings) {
         $('.fab-btn-dependency').show();
 
         $('.fab-btn-dependency').click(() => {
+
+            $('#notifications').append().html('<li class="info">Editing Dependencies</li>');
 
             if (!settings.default_dependency_template) {
                 alert('No Default Director Dependency Template Selected, Please Create or Select One.');
@@ -501,7 +512,7 @@ function startEventListeners(network, networkData, settings) {
             buildDependencies(networkData, network, settings);
 
         });
-    }else{
+    } else {
 
         $('.fab-btn-dependency').hide();
     }
@@ -712,12 +723,10 @@ function deployChanges() {
             'Accept': 'application/json'
         },
         success: function (data) {
-            $("#notification").html(
-                "<div class = notification-content><h3>Dependencies Saved Successfully</h3>"
-            ).css({
-                "display": "block",
-            }).delay(5000).fadeOut();
-        },
+
+            $('#notifications').append().html('<li class="success fade-out">Dependencies Saved Successfully</li>');
+        }
+
     });
 
 }

@@ -589,8 +589,10 @@ function saveSettings() {
         error: function (data) {
             console.log(data);
             alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
+        },
+        success: () =>{
+            $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
         }
-
     });
 
 

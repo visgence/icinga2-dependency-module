@@ -225,7 +225,6 @@ class ModuleController extends Controller{
             exit;
         }
 
-        Notification::success($this->translate('Settings Have Been Saved Successfully'));
         echo $res;
         }
 
@@ -354,6 +353,7 @@ class ModuleController extends Controller{
 }
 
     public function storenodesAction(){
+        
 
         $resource = $this->getResource();
 
@@ -390,10 +390,8 @@ class ModuleController extends Controller{
                 }
             }
 
-            Notification::success('Changes Have Been Saved Successfully');
 
         }
-
 
         exit;
     }
@@ -420,8 +418,6 @@ class ModuleController extends Controller{
                 $json = json_encode('EMPTY!');
 
                 echo $json;
-
-                // Notification::success('Node Positions Have Been Saved Successfully');
 
                 exit;
 
@@ -476,7 +472,6 @@ class ModuleController extends Controller{
             exit;
         }
 
-       Notification::success($this->translate('Settings Have Been Saved Successfully'));
        exit;
     }
 
