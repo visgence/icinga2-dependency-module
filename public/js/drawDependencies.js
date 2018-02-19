@@ -442,7 +442,7 @@ function startEventListeners(network, networkData, settings) {
             data: {
                 json: JSON.stringify(networkData.nodes._data)
             }
-    
+
         });
     });
 
@@ -452,51 +452,59 @@ function startEventListeners(network, networkData, settings) {
 
     });
 
-    $('.fab-btn-dependency').click(() => {
+    if (settings['enable_director'] === true) {
 
-        if (!settings.default_dependency_template) {
-            alert('No Default Director Dependency Template Selected, Please Create or Select One.');
-            window.location.replace("./settings");
-        }
+        $('.fab-btn-dependency').show();
 
-        $("#notification").html(
-            "<div class = notification-content><h3>Editing Dependencies (Child -----> Parent)</h3>"
-        ).css({
-            "display": "block",
-        })
+        $('.fab-btn-dependency').click(() => {
 
-        network.setOptions({
-            edges: {
-                arrows: {
-                    from: true
-                }
+            if (!settings.default_dependency_template) {
+                alert('No Default Director Dependency Template Selected, Please Create or Select One.');
+                window.location.replace("./settings");
             }
+
+            $("#notification").html(
+                "<div class = notification-content><h3>Editing Dependencies (Child -----> Parent)</h3>"
+            ).css({
+                "display": "block",
+            })
+
+            network.setOptions({
+                edges: {
+                    arrows: {
+                        from: true
+                    }
+                }
+            });
+
+            $('.fab-btn-save').off('click');
+
+            $('.fab-btn-dependency').off('click');
+
+            $('.fab-btn-delete').off('click');
+
+            $('#edit-btn').off('click');
+
+            $('.fab-btn-delete').toggleClass('scale-out');
+
+            setTimeout(() => {
+                $('.fab-btn-delete').html('<i class="material-icons">refresh</i>');
+                $('.fab-btn-delete').toggleClass('scale-out')
+            }, 500);
+
+            network.off('doubleClick');
+
+            network.off('selectNode');
+
+            network.off('deselectNode');
+
+            buildDependencies(networkData, network, settings);
+
         });
+    }else{
 
-        $('.fab-btn-save').off('click');
-
-        $('.fab-btn-dependency').off('click');
-
-        $('.fab-btn-delete').off('click');
-
-        $('#edit-btn').off('click');
-
-        $('.fab-btn-delete').toggleClass('scale-out');
-
-        setTimeout(() => {
-            $('.fab-btn-delete').html('<i class="material-icons">refresh</i>');
-            $('.fab-btn-delete').toggleClass('scale-out')
-        }, 500);
-
-        network.off('doubleClick');
-
-        network.off('selectNode');
-
-        network.off('deselectNode');
-
-        buildDependencies(networkData, network, settings);
-
-    });
+        $('.fab-btn-dependency').hide();
+    }
 
 }
 
@@ -519,8 +527,6 @@ function buildDependencies(networkData, network, settings) {
         var selectedNode = network.body.nodes[params.nodes[0]];
 
         dependency.push(selectedNode.id);
-
-
 
         if (dependency.length === 2) {
 

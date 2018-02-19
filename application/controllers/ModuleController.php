@@ -186,6 +186,10 @@ class ModuleController extends Controller{
         $json = $_POST["json"];
 
         $data = json_decode($json, true);
+
+        // var_dump($data);
+
+        // die;
         
         if($data != null){
 
@@ -194,14 +198,15 @@ class ModuleController extends Controller{
             $username = $data[2]['value'];
             $password = $data[3]['value'];
 
+
             $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
             $db->exec("TRUNCATE TABLE plugin_settings;"); //delete to only store latest settings 
 
             $res = $db->insert('plugin_settings', array(
                 'api_user' => $username, 
-                'api_password' => $password
-            , 'api_endpoint' => $port
+                'api_password' => $password, 
+                'api_endpoint' => $port,
             ));
 
             $config = $this->config();
@@ -455,6 +460,7 @@ class ModuleController extends Controller{
 
             $db->exec("TRUNCATE TABLE graph_settings;");
 
+
             foreach($data as $name => $setting){
 
                 $res = $db->insert('graph_settings', array( //due to Zend reading bools as strings, converts true->1 false->""
@@ -478,7 +484,7 @@ class ModuleController extends Controller{
 
         try {
 
-            $expectedNumberOfSettings = 9; //Number of settings expected out of database, change if setting added/removed
+            $expectedNumberOfSettings = 10; //Number of settings expected out of database, change if setting added/removed
 
             $resource = $this->getResource();
 
@@ -526,44 +532,6 @@ class ModuleController extends Controller{
     }
     
 
-    public function updateDependencies(){
-
-        $json = $_POST["json"];
-
-        $resource = $this->getResource();
-
-        $data = json_decode($json, true);
-        
-        if($data != null){
-
-
-            $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
-
-            $db->exec("TRUNCATE TABLE dependencies;");
-
-            foreach($data as $child => $parent){
-
-                $res = $db->insert('dependencies', array( //due to Zend reading bools as strings, converts true->1 false->""
-                    'parent_name' => $parent, 
-                    'child_name' => $child,
-                )); 
-            }
-        }
-
-        if(!$res){
-            echo "An error occured while attempting to store settings.\n";
-            exit;
-        }
-        
-        
-
-       exit;
-    }
-        
-    
-
-
-    
 }
 
 ?>

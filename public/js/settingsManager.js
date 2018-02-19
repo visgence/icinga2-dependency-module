@@ -19,6 +19,8 @@ function loadSettings() {
 
         'default_dependency_template': '',
 
+        'enable_director' : false,
+
         'display_up': true,
 
         'display_down': true,
@@ -49,6 +51,7 @@ function loadSettings() {
     moduleSettings.label_large_nodes = $('#label-mode-checkbox').prop('checked');
     moduleSettings.alias_only = $('#alias-label-checkbox').prop('checked');
     moduleSettings.default_dependency_template = $("#dependency-template-field").val();
+    moduleSettings.enable_director = $("#director-checkbox").prop('checked');
 
     return moduleSettings;
 }
@@ -56,6 +59,12 @@ function loadSettings() {
 function drawPreviewNetwork() {
 
     var moduleSettings = loadSettings();
+
+    if(moduleSettings.enable_director === false){
+        $('#director-settings').hide();
+    }else{
+        $('#director-settings').show();
+    }
 
     if (moduleSettings.scaling === true) {
         scalingSize = 15;
@@ -555,12 +564,20 @@ function saveSettings() {
             'type'  : 'int'
         },
 
+        'enable_director':{
+            'value': (String(moduleSettings['enable_director'])),
+            'type' : 'bool'
+
+        },
+
         'default_dependency_template': {
             'value' : moduleSettings['default_dependency_template'],
             'type'  : 'string'
         }
     
     };
+
+    console.log(payload);
 
     $.ajax({
 
@@ -616,6 +633,7 @@ function loadSaved() {
             $("#text-size-range").val((parsedSettings.text_size) * 2);
             $('#label-mode-checkbox').prop('checked', parsedSettings.label_large_nodes);
             $('#alias-label-checkbox').prop('checked', parsedSettings.alias_only);
+            $('#director-checkbox').prop('checked', parsedSettings.enable_director);
             
 
             getTemplates(parsedSettings.default_dependency_template);
@@ -647,6 +665,8 @@ function getTemplates(defaultTemplate) {
         success: function (data) {
 
             var templateDropdown = $("#dependency-template-field");
+            
+            console.log(data);
 
 
             for (i = 0; i < data['objects'].length; i++) {

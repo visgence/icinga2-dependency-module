@@ -1,15 +1,15 @@
 <div class="controls">
-<?= $this->tabs ?>
+    <?= $this->tabs ?>
 </div>
 
 <body>
 
-<div id="network-preview"></div>
+    <div id="network-preview"></div>
     <div id='module-settings' class="dependency-module-settings">
         <h1>Dependency Module Settings</h1>
-        <form class='settings-form' id= 'settings-form'>
+        <form class='settings-form' id='settings-form'>
             <fieldset>
-    
+
                 <dl>
                     <!-- <dt id="layout-label">
                         <label for="layout">Default Layout</label>
@@ -23,13 +23,18 @@
                         <label for="node-text">Label Display Mode</label>
                     </dt>
                     <dd id="node-text-element">
-                        <input type="checkbox" name="node-text" value = "up" id='node-text-up-checkbox'>Up<br>
-                        <input type="checkbox" name="node-text" value = "down" id='node-text-down-checkbox'>Down<br>
-                        <input type="checkbox" name="node-text" value = "unreachable" id='node-text-unreachable-checkbox'>Unreachable<br>
-                        <input type="checkbox" name="Alias Label" id='alias-label-checkbox'>Display Only Host Alias<br>
-                        <input type="checkbox" name="Label Mode" id='label-mode-checkbox'>Always Label Large Nodes<br>
+                        <input type="checkbox" name="node-text" value="up" id='node-text-up-checkbox'>Up
+                        <br>
+                        <input type="checkbox" name="node-text" value="down" id='node-text-down-checkbox'>Down
+                        <br>
+                        <input type="checkbox" name="node-text" value="unreachable" id='node-text-unreachable-checkbox'>Unreachable
+                        <br>
+                        <input type="checkbox" name="Alias Label" id='alias-label-checkbox'>Display Only Host Alias
+                        <br>
+                        <input type="checkbox" name="Label Mode" id='label-mode-checkbox'>Always Label Large Nodes
+                        <br>
                     </dd>
-      
+
 
                     <dt id="host-mode-label">
                         <label for="host-mode">Host Display Mode</label>
@@ -42,7 +47,7 @@
                         <label for="scaling-mode">Scaling Mode</label>
                     </dt>
                     <dd id="scaling-mode-element">
-                        <input type="checkbox" name="Scaling Mode" id='scaling-mode-checkbox'>Scale Nodes Based On Number Of Children 
+                        <input type="checkbox" name="Scaling Mode" id='scaling-mode-checkbox'>Scale Nodes Based On Number Of Children
                     </dd>
 
 
@@ -53,36 +58,40 @@
                         <input type="range" name="Text Size" id='text-size-range'>
                     </dd>
 
-
-                     <dt id="dependency-template-label">
-                        <label for="dependency-template">Default Dependency Template</label>
-                    </dt>
-                    <dd id="dependency-element">
-                         <select name="dependency-template" id="dependency-template-field"></select>
+                    <dd id="enable-director-element">
+                        <input type="checkbox" name="enable-director" id='director-checkbox'> Enable Director Integration
                     </dd>
 
 
+                    <div id='director-settings'>
+
+                        <dt id="dependency-template-label">
+                            <label for="dependency-template">Default Dependency Template</label>
+                        </dt>
+                        <dd id="dependency-element">
+                            <select name="dependency-template" id="dependency-template-field"></select>
+                        </dd>
+                    </div>
+
                 </dl>
-                <button id = 'submit-button' type='button'>Submit</button>
+                <button id='submit-button' type='button'>Submit</button>
             </fieldset>
         </form>
     </div>
 </body>
 <script>
-if (document.readyState === "complete"){
+    if (document.readyState === "complete") {
 
+        settingsManager();
 
-       settingsManager();
+    } else {
+        window.onload = function () {
 
-} else {
-    window.onload = function () {
+            setTimeout(() => {
 
-        setTimeout(() => {
+                settingsManager();
+            }, );
 
-        
-          settingsManager();  
-        }, );
-
-}
-}
+        }
+    }
 </script>
