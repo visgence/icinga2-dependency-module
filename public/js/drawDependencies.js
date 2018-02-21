@@ -400,8 +400,8 @@ function startEventListeners(network, networkData, settings) {
             },
         });
 
-        $('.fab-btn-sm').toggleClass('scale-out'); // show secondary FABs
-        if ($('.fab-btn-sm').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
+        $('.edit-fab').toggleClass('scale-out'); // show secondary FABs
+        if ($('.edit-fab').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
             network.setOptions({
                 nodes: {
                     fixed: true
@@ -410,7 +410,8 @@ function startEventListeners(network, networkData, settings) {
         }
     });
 
-    $('.fab-btn-delete').click(function () {
+
+    $('#edit-btn-delete').click(function () {
 
         if (confirm("Reset All Network Positions?")) {
 
@@ -432,7 +433,7 @@ function startEventListeners(network, networkData, settings) {
         }
     });
 
-    $('.fab-btn-save').click(function () { //on save
+    $('#edit-btn-save').click(function () { //on save
 
         network.setOptions({
             nodes: {
@@ -455,7 +456,7 @@ function startEventListeners(network, networkData, settings) {
         });
     });
 
-    $('.fab-btn-fullscreen').click(() => {
+    $('#edit-btn-fullscreen').click(() => {
 
         window.location.replace("./network?showFullscreen");
 
@@ -463,9 +464,28 @@ function startEventListeners(network, networkData, settings) {
 
     if (settings['enable_director'] === true) {
 
-        $('.fab-btn-dependency').show();
+        $('#dependency-fabs').show();
 
-        $('.fab-btn-dependency').click(() => {
+        $('#dependency-btn').click(() => {
+
+            $('.dependency-fab').toggleClass('scale-out'); // show secondary FABs
+            if ($('.dependency-fab').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
+                network.setOptions({
+                    nodes: {
+                        fixed: true
+                    }
+                });
+            }
+
+            if (!$('.edit-fab').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
+                network.setOptions({
+                    nodes: {
+                        fixed: false
+                    }
+                });
+
+                $('.edit-fab').toggleClass('scale-out')
+            }
 
             $('#notifications').append().html('<li class="info">Editing Dependencies</li>');
 
@@ -488,33 +508,19 @@ function startEventListeners(network, networkData, settings) {
                 }
             });
 
-            $('.fab-btn-save').off('click');
-
-            $('.fab-btn-dependency').off('click');
-
-            $('.fab-btn-delete').off('click');
-
-            $('#edit-btn').off('click');
-
-            $('.fab-btn-delete').toggleClass('scale-out');
-
-            setTimeout(() => {
-                $('.fab-btn-delete').html('<i class="material-icons">refresh</i>');
-                $('.fab-btn-delete').toggleClass('scale-out')
-            }, 500);
-
             network.off('doubleClick');
 
             network.off('selectNode');
 
             network.off('deselectNode');
 
+            $('#dependency-btn').off();
+
+            $('#edit-btn').off();
+
             buildDependencies(networkData, network, settings);
 
         });
-    } else {
-
-        $('.fab-btn-dependency').hide();
     }
 
 }
@@ -572,35 +578,21 @@ function buildDependencies(networkData, network, settings) {
         }
     });
 
-    $('.fab-btn-dependency').click(() => {
+    $('#dependency-btn').click(() => {
 
-        $("#notification").css({
-            "display": "none",
-        });
-
-        network.setOptions({
-            edges: {
-                arrows: {
-                    from: false
+        $('.dependency-fab').toggleClass('scale-out'); // show secondary FABs
+        if ($('.dependency-fab').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
+            network.setOptions({
+                nodes: {
+                    fixed: true
+                },
+                edges: {
+                    arrows: {
+                        from: false
+                    }
                 }
-            }
-        });
-
-        $('.fab-btn-save').off('click');
-
-        $('.fab-btn-dependency').off('click');
-
-        $('#edit-btn').off('click');
-
-        $('.fab-btn-delete').off('click');
-
-        $('.fab-btn-delete').toggleClass('scale-out');
-
-        setTimeout(() => {
-            $('.fab-btn-delete').html('<i class="material-icons">delete_forever</i>');
-            $('.fab-btn-delete').toggleClass('scale-out')
-        }, 500);
-
+            });
+        }
 
         network.off('doubleClick');
 
@@ -608,48 +600,15 @@ function buildDependencies(networkData, network, settings) {
 
         network.off('deselectNode');
 
+        $('#dependency-btn').off();
 
         startEventListeners(network, networkData, settings);
 
 
     })
 
-    $('#edit-btn').click(() => {
 
-        $("#notification").css({
-            "display": "none",
-        });
-
-        network.setOptions({
-            edges: {
-                arrows: {
-                    from: false
-                }
-            }
-        });
-
-        $('.fab-btn-save').off('click').toggleClass('scale-out');
-
-        $('.fab-btn-dependency').off('click').toggleClass('scale-out');
-
-        $('#edit-btn').off('click');
-
-        $('.fab-btn-delete').toggleClass('scale-out').html('<i class="material-icons">delete_forever</i>');
-
-
-        network.off('doubleClick');
-
-        network.off('selectNode');
-
-        network.off('deselectNode');
-
-
-        startEventListeners(network, networkData, settings);
-
-
-    });
-
-    $('.fab-btn-delete').click(() => {
+    $('#dependency-btn-undo').click(() => {
 
         if (dependencies.length === 0) {
             alert("Nothing to Undo");
@@ -667,7 +626,7 @@ function buildDependencies(networkData, network, settings) {
 
 
 
-    $('.fab-btn-save').click(function () { //on save
+    $('#dependency-btn-save').click(function () { //on save
 
 
         importDependencies(dependencies);

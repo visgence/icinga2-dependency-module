@@ -29,32 +29,53 @@
         </div>
     </div>
 
-    <div class="fabs" id="edit-fabs">
-        <a class="zoom-fab fab-btn-large" id="edit-btn">
-            <i class="material-icons">mode_edit</i>
+    <div class="fabs" id="dependency-fabs">
+        <a class="zoom-fab fab-btn-large" id="dependency-btn">
+            <i class="material-icons">timeline</i>
         </a>
 
-        <ul class="fab-menu">
+        <ul class="fab-menu" id='dependency-fabs-menu'>
             <li>
-                <a class="zoom-fab fab-btn-sm fab-btn-dependency scale-transition scale-out">
-                    <i class="material-icons">timeline</i>
-                </a>
-
-            </li>
-
-            <li>
-                <a class="zoom-fab fab-btn-sm fab-btn-delete scale-transition scale-out">
-                    <i class="material-icons">delete_forever</i>
+                <a class="zoom-fab fab-btn-sm dependency-fab fab-btn-delete scale-transition scale-out" id = 'dependency-btn-undo'>
+                    <i class="material-icons">undo</i>
                 </a>
             </li>
             <li>
-                <a class="zoom-fab fab-btn-sm fab-btn-save scale-transition scale-out">
+                <a class="zoom-fab fab-btn-sm dependency-fab scale-transition scale-out" id='dependency-btn-save'>
                     <i class="material-icons">save</i>
                 </a>
             </li>
 
             <li>
-                <a class="zoom-fab fab-btn-sm fab-btn-fullscreen scale-transition scale-out">
+                <a class="zoom-fab fab-btn-sm dependency-fab scale-transition scale-out" id='dependency-btn-delete'>
+                    <i class="material-icons">clear</i>
+                </a>
+
+            </li>
+
+        </ul>
+    </div>
+
+    <div class="fabs" id="edit-fabs">
+        <a class="zoom-fab fab-btn-large" id="edit-btn">
+            <i class="material-icons">mode_edit</i>
+        </a>
+
+        <ul class="fab-menu" id='edit-fabs-menu'>
+
+            <li>
+                <a class="zoom-fab fab-btn-sm edit-fab scale-transition scale-out" id='edit-btn-delete'>
+                    <i class="material-icons">delete_forever</i>
+                </a>
+            </li>
+            <li>
+                <a class="zoom-fab fab-btn-sm edit-fab scale-transition scale-out" id = 'edit-btn-save'>
+                    <i class="material-icons">save</i>
+                </a>
+            </li>
+
+            <li>
+                <a class="zoom-fab fab-btn-sm edit-fab scale-transition scale-out" id = 'edit-btn-fullscreen'>
                     <i class="material-icons">fullscreen</i>
                 </a>
 
@@ -62,6 +83,8 @@
 
         </ul>
     </div>
+
+    
 
 
 </body>
