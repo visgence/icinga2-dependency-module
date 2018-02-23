@@ -315,7 +315,6 @@ function simulateChangedNetwork(network, nodes) {
     //function simulates the network for a limited number of physics iterations, 
     //usually enough to correctly place a newly added host/hosts.
 
-
     $('#notifications').append().html('<li class="info">Network Change Detected</li>');
 
     network.setOptions({
@@ -394,6 +393,8 @@ function startEventListeners(network, networkData, settings) {
 
     $('#edit-btn').click(function () { //on edit
 
+        $('#notifications').append().html('<li class="info">Editing Node Positions</li>');
+
         network.setOptions({ //unlock nodes for editing
             nodes: {
                 fixed: false
@@ -468,23 +469,17 @@ function startEventListeners(network, networkData, settings) {
 
         $('#dependency-btn').click(() => {
 
+            network.setOptions({
+                nodes: {
+                    fixed: false
+                }
+            });
+
             $('.dependency-fab').toggleClass('scale-out'); // show secondary FABs
-            if ($('.dependency-fab').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
-                network.setOptions({
-                    nodes: {
-                        fixed: true
-                    }
-                });
-            }
+
 
             if (!$('.edit-fab').hasClass('scale-out')) { //if already scaled out, second click hides secondary FABs and locks nodes
-                network.setOptions({
-                    nodes: {
-                        fixed: false
-                    }
-                });
-
-                $('.edit-fab').toggleClass('scale-out')
+                $('.edit-fab').toggleClass('scale-out');
             }
 
             $('#notifications').append().html('<li class="info">Editing Dependencies</li>');
@@ -518,16 +513,14 @@ function startEventListeners(network, networkData, settings) {
 
             $('#edit-btn').off();
 
-            buildDependencies(networkData, network, settings);
+            startDependencyModeListeners(networkData, network, settings);
 
         });
     }
 
 }
 
-function buildDependencies(networkData, network, settings) {
-
-
+function startDependencyModeListeners(networkData, network, settings) {
 
     var dependencies = [];
 
@@ -561,8 +554,6 @@ function buildDependencies(networkData, network, settings) {
                 from: dependency[1],
                 to: dependency[0]
             });
-
-
 
             dependencies.push(drawnDependency);
 
@@ -604,6 +595,37 @@ function buildDependencies(networkData, network, settings) {
 
         startEventListeners(network, networkData, settings);
 
+
+    });
+
+    $('#edit-btn').click(() => {
+
+        $('#notifications').append().html('<li class="info">Editing Node Positions</li>');
+
+        $('.dependency-fab').toggleClass('scale-out');
+        network.setOptions({
+            nodes: {
+                fixed: false
+            },
+            edges: {
+                arrows: {
+                    from: false
+                }
+            }
+        });
+
+        $('.edit-fab').toggleClass('scale-out')
+
+        network.off('doubleClick');
+
+        network.off('selectNode');
+
+        network.off('deselectNode');
+
+        $('#dependency-btn').off();
+        $('#edit-btn').off();
+
+        startEventListeners(network, networkData, settings);
 
     })
 
@@ -649,7 +671,6 @@ function buildDependencies(networkData, network, settings) {
 function importDependencies(dependencies) {
 
 
-
     for (i = 0; i < dependencies.length; i++) {
 
         $.ajax({
@@ -659,6 +680,9 @@ function importDependencies(dependencies) {
                 'Accept': 'application/json'
             },
             data: JSON.stringify(dependencies[i]),
+            success: () => {
+                deployChanges();
+            },
             error: function (data) {
                 console.log(data);
                 alert('Adding dependency Unsuccessful:\n\n' + data.responseJSON['message']);
@@ -668,7 +692,7 @@ function importDependencies(dependencies) {
 
     }
 
-    deployChanges();
+    
 
 
 }
@@ -689,10 +713,6 @@ function deployChanges() {
     });
 
 }
-
-
-
-
 
 function Host(hostData) {
 
