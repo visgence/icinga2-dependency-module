@@ -1,3 +1,31 @@
+function getData() {
+
+    const hostData = getHosts();
+
+    const dependencyData = getDependencies();
+
+    const positionData = getNodePositions();
+
+    const settings = getSettings();
+
+    if (window.location.href.indexOf('Fullscreen') > -1) {
+        const isFullscreen = true;
+        $('.fabs').hide();
+    } else {
+        const isFullscreen = false;
+    }
+
+    if (window.location.href.indexOf('heirarchy') > -1) {
+        const isHierarchical = true;
+        $('.fabs').hide();
+    } else {
+        const isHierarchical = false;
+    }
+    
+    formatDependencies(hostData, dependencyData, isHierarchical, positionData, isFullscreen, settings);
+
+}
+
 function formatDependencies(hostData, dependencyData, isHierarchical, positionData, isFullscreen, settings) {
     //Function takes host state data, dependency data, and position data and builds a vis.js usable object using 
     //the HostArray and Host objects. Neccesary due to needing match hosts with passed dependencies.
@@ -692,7 +720,7 @@ function importDependencies(dependencies) {
 
     }
 
-    
+
 
 
 }

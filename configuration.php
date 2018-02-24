@@ -11,10 +11,10 @@ $section->add(N_('Settings'))
     ->setUrl('dependency_plugin/module/settings');
 
 $this->provideJsFile('fullscreenMode.js');
-$this->provideJsFile('drawDependencies.js');
+$this->provideJsFile('graphManager.js');
 $this->provideJsFile('vendor/vis.min.js');
-$this->provideJsFile('drawDependencies.js');
-$this->provideJsFile('getRequests.js');
+$this->provideJsFile('graphManager.js');
+$this->provideJsFile('requestsManager.js');
 $this->provideJsFile('kickstartManager.js');
 $this->provideJsFile('settingsManager.js');
 
