@@ -9,179 +9,143 @@
 
 function getDependencies() {
 
-    $.ajax({
-        url: "/icingaweb2/dependency_plugin/module/getDependency", //get dependencies
-        type: 'GET',
-        success: function (dependencyData) {
+    var promise = new Promise((resolve, reject) => {
 
-            dependencies = (JSON.parse(dependencyData));
-            return dependencies;
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/getDependency", //get dependencies
+            type: 'GET',
+            success: function (dependencyData) {
 
+                dependencies = (JSON.parse(dependencyData));
+                resolve({
+                    type: 'dependencies',
+                    data: dependencies,
+                });
+            },
+            error: (data) => {
+                reject({
+                    'type': 'dependencies',
+                    'data': data['responseText']
+                });
 
-        },
-        error: function (data) {
-            // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-            // window.location.replace("./kickstart");
-            // return;
-        }
+            }
+
+        });
 
     });
+
+    return promise;
 
 }
 
 function getHosts() {
 
-    $.ajax({
-        url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
-        type: 'GET',
-        success: function (hostData) {
+    var promise = new Promise((resolve, reject) => {
 
-            if ((JSON.parse(hostData).results.length) === 0) {
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
+            type: 'GET',
+            success: function (hostData) {
 
-                window.location.replace("./welcome");
-            } else {
                 hosts = (JSON.parse(hostData));
-                return hosts;
+                resolve({
+                    type: 'hosts',
+                    data: hosts
+                });
+            },
+            error: (data) => {
+                reject({
+                    'type': 'hosts',
+                    'data': data['responseText']
+                });
             }
-        },
-        error: function (data) {
+        });
 
-            if (data.responseJSON['message'] === 'Setup') {
-                window.location.replace("./kickstart");
-                return;
-            }
-
-            alert('Cannot Load Host Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-        }
     });
+
+    return promise;
+
 }
 
 function getNodePositions() {
 
+    var promise = new Promise((resolve, reject) => {
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/getNodes", //get node positions
+            type: 'GET',
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response === "EMPTY!") {
+                    resolve({
+                        'type': 'positions',
+                        'data': null
+                    });
+                } else {
+                    resolve({
+                        'type': 'positions',
+                        'data': response
+                    });
+                }
 
-    $.ajax({
-        url: "/icingaweb2/dependency_plugin/module/getNodes", //get node positions
-        type: 'GET',
-        success: function (response) {
-            response = JSON.parse(response);
-            if (response === "EMPTY!") {
-                positionData = null;
-            } else {
-                positionData = response;
+            },
+            error: (data) => {
+                reject({
+                    'type': 'positions',
+                    'data': data['responseText']
+                });
             }
-            return positionData;
-        },
-        error: function (data) {
-
-        }
-
+        });
     });
+
+    return promise;
 
 }
 
 function getSettings() {
 
-    $.ajax({
-        url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
-        type: 'GET',
-        success: function (data) {
+    var promise = new Promise((resolve, reject) => {
 
-            settings = JSON.parse(data);
 
-            parsedSettings = {}
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
+            type: 'GET',
+            success: function (data) {
 
-            for (i = 0; i < settings.length; i++) {
+                settings = JSON.parse(data);
 
-                if (settings[i]['setting_type'] === 'bool') {
-                    parsedSettings[settings[i]['setting_name']] = (settings[i]['setting_value'] === 'true');
-                } else if (settings[i]['setting_type'] === 'int') {
+                parsedSettings = {}
 
-                    parsedSettings[settings[i]['setting_name']] = (parseInt(settings[i]['setting_value']));
+                for (i = 0; i < settings.length; i++) {
 
-                } else {
+                    if (settings[i]['setting_type'] === 'bool') {
+                        parsedSettings[settings[i]['setting_name']] = (settings[i]['setting_value'] === 'true');
+                    } else if (settings[i]['setting_type'] === 'int') {
 
-                    parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value'];
+                        parsedSettings[settings[i]['setting_name']] = (parseInt(settings[i]['setting_value']));
+
+                    } else {
+
+                        parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value'];
+
+                    }
 
                 }
-
+                resolve({
+                    'type': 'settings',
+                    'data': parsedSettings
+                });
+            },
+            error: (data) => {
+                reject({
+                    'type': 'settings',
+                    'data': data['responseText']
+                });
             }
 
-            return parsedSettings;
-
-        },
-        error: function (data) {
-
-            alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-
-        }
+        });
 
     });
 
+    return promise;
+
 }
-
-
-// $.ajax({
-//         url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
-//         type: 'GET',
-//         success: function (hostData) {
-
-//             if ((JSON.parse(hostData).results.length) === 0) {
-
-//                 window.location.replace("./welcome");
-//             } else {
-//                 hosts = (JSON.parse(hostData));
-//             }
-//         },
-//         error: function (data) {
-
-//             if (data.responseJSON['message'] === 'Setup') {
-//                 window.location.replace("./kickstart");
-//                 return;
-//             }
-
-//             alert('Cannot Load Host Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-//         }
-//     }),
-
-//     $.ajax({
-//         url: "/icingaweb2/dependency_plugin/module/getDependency", //get dependencies
-//         type: 'GET',
-//         success: function (dependencyData) {
-
-//             dependencies = (JSON.parse(dependencyData));
-
-
-//         },
-//         error: function (data) {
-//             // alert('Cannot Load Dependency Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-//             // window.location.replace("./kickstart");
-//             // return;
-//         }
-
-//     }),
-
-//     $.ajax({
-//         url: "/icingaweb2/dependency_plugin/module/getNodes", //get node positions
-//         type: 'GET',
-//         success: function (response) {
-//             response = JSON.parse(response);
-//             if (response === "EMPTY!") {
-//                 positionData = null;
-//             } else {
-//                 positionData = response;
-//             }
-//         },
-//         error: function (data) {
-
-//         }
-
-//     }),
-// ).then(function () {
-//     if (!dependencies && !hosts.results) {
-//         window.location = '/icingaweb2/dependency_plugin/module/welcome'
-//     }
-//     formatDependencies(hosts, dependencies, isHierarchical, positionData, isFullscreen, parsedSettings);
-
-//     hosts, dependencies, positionData, parsedSettings = {};
-// });
-// }

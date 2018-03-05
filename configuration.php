@@ -16,6 +16,7 @@ $this->provideJsFile('vendor/vis.min.js');
 $this->provideJsFile('graphManager.js');
 $this->provideJsFile('requestsManager.js');
 $this->provideJsFile('kickstartManager.js');
+$this->provideJsFile('errorManager.js');
 $this->provideJsFile('settingsManager.js');
 
 

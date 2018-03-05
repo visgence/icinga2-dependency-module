@@ -1,28 +1,48 @@
 function getData() {
 
-    const hostData = getHosts();
+    var graphData = {};
+    var errors = {};
+    var positionData;
 
-    const dependencyData = getDependencies();
+    processData = (response) => {
 
-    const positionData = getNodePositions();
+        graphData[response['type']] = response['data']
 
-    const settings = getSettings();
-
-    if (window.location.href.indexOf('Fullscreen') > -1) {
-        const isFullscreen = true;
-        $('.fabs').hide();
-    } else {
-        const isFullscreen = false;
+        // console.log(graphData)
     }
 
-    if (window.location.href.indexOf('heirarchy') > -1) {
-        const isHierarchical = true;
-        $('.fabs').hide();
-    } else {
-        const isHierarchical = false;
+    processError = (error) => {
+        errors[error['type']] = error['data']
+        throw error;
     }
-    
-    formatDependencies(hostData, dependencyData, isHierarchical, positionData, isFullscreen, settings);
+
+    var hostPromise = getHosts().then(processData, processError)
+    var dependencyPromise = getDependencies().then(processData, processError)
+    var positionPromise = getNodePositions().then(processData, processError)
+    var settingsPromise = getSettings().then(processData, processError)
+
+
+    Promise.all([hostPromise, dependencyPromise, positionPromise, settingsPromise]).then(() => {
+
+            if (window.location.href.indexOf('Fullscreen') > -1) {
+                var isFullscreen = true;
+                $('.fabs').hide();
+            } else {
+                var isFullscreen = false;
+            }
+
+            if (window.location.href.indexOf('hierarchy') > -1) {
+                var isHierarchical = true;
+                $('.fabs').hide();
+            } else {
+                var isHierarchical = false;
+            }
+
+            formatDependencies(graphData.hosts, graphData.dependencies, isHierarchical, graphData.positions, isFullscreen, graphData.settings)
+
+        }).catch((errors) => {
+            errorHandler(errors);
+        });
 
 }
 
