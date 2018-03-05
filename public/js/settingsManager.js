@@ -577,8 +577,6 @@ function saveSettings() {
     
     };
 
-    console.log(payload);
-
     $.ajax({
 
         url: "/icingaweb2/dependency_plugin/module/storeGraphSettings", //get host states
@@ -600,54 +598,38 @@ function saveSettings() {
 
 function loadSaved() {
 
-    $.ajax({
-        url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
-        type: 'GET',
-        success: function (data) {
+    var settings = {}
 
-            settings = JSON.parse(data)
+    success = (data) => {
+        settings = data['data']
+    }
 
-            parsedSettings = {};
+    error = (error) => {
 
-            for (i = 0; i < settings.length; i++) {
+        errorHandler(error);
 
-                if(settings[i]['setting_type'] === 'bool'){
-                    parsedSettings[settings[i]['setting_name']] = (settings[i]['setting_value'] === 'true');
-                } else if (settings[i]['setting_type'] === 'int'){
+        throw error;
+    }
 
-                    parsedSettings[settings[i]['setting_name']] = (parseInt(settings[i]['setting_value']));
+    var settingsPromise = getSettings().then(success, error);
 
-                }else {
+    Promise.all([settingsPromise]).then(() => {
+   
 
-                    parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value'];
-
-                }
-
-            }
-
+            $("#host-mode-checkbox").prop('checked', settings.display_only_dependencies);
+            $("#node-text-up-checkbox").prop('checked', settings.display_up);
+            $("#node-text-down-checkbox").prop('checked', settings.display_down);
+            $("#node-text-unreachable-checkbox").prop('checked', settings.display_unreachable);
+            $("#scaling-mode-checkbox").prop('checked', settings.scaling);
+            $("#text-size-range").val((settings.text_size) * 2);
+            $('#label-mode-checkbox').prop('checked', settings.label_large_nodes);
+            $('#alias-label-checkbox').prop('checked', settings.alias_only);
+            $('#director-checkbox').prop('checked', settings.enable_director);
             
 
-            $("#host-mode-checkbox").prop('checked', parsedSettings.display_only_dependencies);
-            $("#node-text-up-checkbox").prop('checked', parsedSettings.display_up);
-            $("#node-text-down-checkbox").prop('checked', parsedSettings.display_down);
-            $("#node-text-unreachable-checkbox").prop('checked', parsedSettings.display_unreachable);
-            $("#scaling-mode-checkbox").prop('checked', parsedSettings.scaling);
-            $("#text-size-range").val((parsedSettings.text_size) * 2);
-            $('#label-mode-checkbox').prop('checked', parsedSettings.label_large_nodes);
-            $('#alias-label-checkbox').prop('checked', parsedSettings.alias_only);
-            $('#director-checkbox').prop('checked', parsedSettings.enable_director);
-            
-
-            getTemplates(parsedSettings.default_dependency_template);
+            getTemplates(settings.default_dependency_template);
 
             drawPreviewNetwork();
-
-        },
-        error: function (data) {
-
-            alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
-
-        }
 
     });
 
@@ -668,9 +650,6 @@ function getTemplates(defaultTemplate) {
 
             var templateDropdown = $("#dependency-template-field");
             
-            console.log(data);
-
-
             for (i = 0; i < data['objects'].length; i++) {
 
                 templateDropdown.append("<option value=" + data['objects'][i]["object_name"] + ">" + data['objects'][i]["object_name"] + "</option>");
@@ -678,7 +657,7 @@ function getTemplates(defaultTemplate) {
 
             }
 
-            $("#dependency-template-field").val(parsedSettings.default_dependency_template);
+            $("#dependency-template-field").val(settings.default_dependency_template);
 
             
 

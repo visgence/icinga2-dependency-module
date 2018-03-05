@@ -10,7 +10,7 @@ $section = $this->menuSection(
 $section->add(N_('Settings'))
     ->setUrl('dependency_plugin/module/settings');
 
-$this->provideJsFile('fullscreenMode.js');
+$this->provideJsFile('fullscreenManager.js');
 $this->provideJsFile('graphManager.js');
 $this->provideJsFile('vendor/vis.min.js');
 $this->provideJsFile('graphManager.js');

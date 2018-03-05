@@ -14,6 +14,12 @@ function kickstartManager() {
                 $dropdown.append("<option value=" + resources['databases'][i] + ">" + resources['databases'][i] + "</option>");
             }
 
+        },
+        error: (error) =>{
+            errorHandler(error);
+
+            throw error
+
         }
         
 
@@ -34,22 +40,24 @@ function kickstartManager() {
                     $.ajax({
                         url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
                         type: 'GET',
-                        success: function (data) {
+                        error: function (data) { 
+                           errorHandler(data);
+                        },
+                        success: () => {
+                            $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
                             setTimeout(function () {
 
                                 window.location.replace("./network"); //on succes redirect to network.
 
-                            }, 1000);
-                        },
-                        error: function (data) { 
-                            console.log(data);
-                            alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
-                        },
-                        success: () => {
-                            $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
+                            }, 1000)
                         }
 
                     })
+                },
+                error: (error) => {
+                    errorHandler(error);
+
+                    throw error;
                 }
 
             });

@@ -199,6 +199,7 @@ class ModuleController extends Controller{
             $password = $data[3]['value'];
 
 
+            try {
             $db = IcingaDbConnection::fromResourceName($resource)->getDbAdapter();
 
             $db->exec("TRUNCATE TABLE plugin_settings;"); //delete to only store latest settings 
@@ -212,18 +213,14 @@ class ModuleController extends Controller{
             $config = $this->config();
             $config->setSection('db', array('resource' => $resource));
 
-
-            try {
-                    $config->saveIni();
+            $config->saveIni();
             } catch (Exception $e) {
-                echo $e->getMessage();
-                exit;
-            }
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
 
-        if(!$res){
-            echo "An error occured while attempting to store settings.\n";
-            exit;
-        }
+                die(json_encode(array('message' => "Error Saving To Database, Make sure correct database is created and selected", 'code' => '500')));
+
+            }
 
         echo $res;
         }

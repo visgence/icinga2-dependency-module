@@ -1,5 +1,6 @@
 function fullscreenMode(container, networkData, Icinga) {
 
+    hosts = [];
     $('.controls').hide();
     $('#dependency-network').css("background-color", '#262626');
     $('#dependency-network').css("height", '90%')
@@ -8,8 +9,6 @@ function fullscreenMode(container, networkData, Icinga) {
     $('#hud').css('display', 'block');
     $('#layout').addClass('fullscreen-layout');
     // Icinga.ui.toggleFullscreen();
-
-
 
     const fullscreenOptions = {
 
@@ -39,16 +38,17 @@ function fullscreenMode(container, networkData, Icinga) {
         }
     };
 
-    $.ajax({
-        url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
-        type: 'GET',
-        success: function (hostData) {
-            hosts = (JSON.parse(hostData));
+    function success(data){
+        hosts = JSON.parse(data['data'])
+    }
 
-        }
-    }).then(function () {
+    function error(error){
+        errorHandler(error)
 
+        throw error;
+    }
 
+    var hostPromise = getHosts(success, error).then(function () {
 
         var hostsUp = 0;
         var hostsDown = 0;

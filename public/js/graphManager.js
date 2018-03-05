@@ -24,25 +24,25 @@ function getData() {
 
     Promise.all([hostPromise, dependencyPromise, positionPromise, settingsPromise]).then(() => {
 
-            if (window.location.href.indexOf('Fullscreen') > -1) {
-                var isFullscreen = true;
-                $('.fabs').hide();
-            } else {
-                var isFullscreen = false;
-            }
+        if (window.location.href.indexOf('Fullscreen') > -1) {
+            var isFullscreen = true;
+            $('.fabs').hide();
+        } else {
+            var isFullscreen = false;
+        }
 
-            if (window.location.href.indexOf('hierarchy') > -1) {
-                var isHierarchical = true;
-                $('.fabs').hide();
-            } else {
-                var isHierarchical = false;
-            }
+        if (window.location.href.indexOf('hierarchy') > -1) {
+            var isHierarchical = true;
+            $('.fabs').hide();
+        } else {
+            var isHierarchical = false;
+        }
 
-            formatDependencies(graphData.hosts, graphData.dependencies, isHierarchical, graphData.positions, isFullscreen, graphData.settings)
+        formatDependencies(graphData.hosts, graphData.dependencies, isHierarchical, graphData.positions, isFullscreen, graphData.settings)
 
-        }).catch((errors) => {
-            errorHandler(errors);
-        });
+    }).catch((errors) => {
+        errorHandler(errors);
+    });
 
 }
 
