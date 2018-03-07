@@ -19,7 +19,7 @@ function loadSettings() {
 
         'default_dependency_template': '',
 
-        'enable_director' : false,
+        'enable_director': false,
 
         'display_up': true,
 
@@ -60,9 +60,9 @@ function drawPreviewNetwork() {
 
     var moduleSettings = loadSettings();
 
-    if(moduleSettings.enable_director === false){
+    if (moduleSettings.enable_director === false) {
         $('#director-settings').hide();
-    }else{
+    } else {
         $('#director-settings').show();
     }
 
@@ -525,74 +525,67 @@ function saveSettings() {
     payload = { //convert to strings for db on frontend due t o PHP's handling of booleans->strings
 
         'display_up': {
-            'value' : (String(moduleSettings['display_up'])),
-            'type'  : 'bool'
+            'value': (String(moduleSettings['display_up'])),
+            'type': 'bool'
         },
 
         'display_down': {
-            'value' : (String(moduleSettings['display_down'])),
-            'type'  : 'bool'
+            'value': (String(moduleSettings['display_down'])),
+            'type': 'bool'
         },
 
         'display_unreachable': {
-            'value' : (String(moduleSettings['display_unreachable'])), 
-            'type'  : 'bool'
+            'value': (String(moduleSettings['display_unreachable'])),
+            'type': 'bool'
         },
 
         'display_only_dependencies': {
-            'value' : (String(moduleSettings['display_only_dependencies'])), 
-            'type'  : 'bool'
+            'value': (String(moduleSettings['display_only_dependencies'])),
+            'type': 'bool'
         },
 
         'scaling': {
-            'value' : (String(moduleSettings['scaling'])),
-            'type'  : 'bool'
+            'value': (String(moduleSettings['scaling'])),
+            'type': 'bool'
         },
 
-        'alias_only': { 
-            'value' : (String(moduleSettings['alias_only'])),
-            'type'  : 'bool'
+        'alias_only': {
+            'value': (String(moduleSettings['alias_only'])),
+            'type': 'bool'
         },
 
         'label_large_nodes': {
-            'value' : (String(moduleSettings['label_large_nodes'])),
-            'type'  : 'bool'
+            'value': (String(moduleSettings['label_large_nodes'])),
+            'type': 'bool'
         },
 
         'text_size': {
-            'value' : (String(moduleSettings['text_size'])),
-            'type'  : 'int'
+            'value': (String(moduleSettings['text_size'])),
+            'type': 'int'
         },
 
-        'enable_director':{
+        'enable_director': {
             'value': (String(moduleSettings['enable_director'])),
-            'type' : 'bool'
+            'type': 'bool'
 
         },
 
         'default_dependency_template': {
-            'value' : moduleSettings['default_dependency_template'],
-            'type'  : 'string'
+            'value': moduleSettings['default_dependency_template'],
+            'type': 'string'
         }
-    
+
     };
 
-    $.ajax({
+    success = () => {
+        $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
+    }
 
-        url: "/icingaweb2/dependency_plugin/module/storeGraphSettings", //get host states
-        type: 'POST',
-        data: {
-            json: JSON.stringify(payload)
-        },
-        error: function (data) {
-            console.log(data);
-            alert('Configuration Unsuccessful, Please Check Entered Information\n\n' + data.responseJSON['message']);
-        },
-        success: () =>{
-            $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
-        }
-    });
+    error = (error) => {
+        errorHandler(error)
+    }
 
+    var saveSettings = storeGraphSettings(payload).then(success, error)
 
 }
 
@@ -614,60 +607,50 @@ function loadSaved() {
     var settingsPromise = getSettings().then(success, error);
 
     Promise.all([settingsPromise]).then(() => {
-   
 
-            $("#host-mode-checkbox").prop('checked', settings.display_only_dependencies);
-            $("#node-text-up-checkbox").prop('checked', settings.display_up);
-            $("#node-text-down-checkbox").prop('checked', settings.display_down);
-            $("#node-text-unreachable-checkbox").prop('checked', settings.display_unreachable);
-            $("#scaling-mode-checkbox").prop('checked', settings.scaling);
-            $("#text-size-range").val((settings.text_size) * 2);
-            $('#label-mode-checkbox').prop('checked', settings.label_large_nodes);
-            $('#alias-label-checkbox').prop('checked', settings.alias_only);
-            $('#director-checkbox').prop('checked', settings.enable_director);
-            
 
-            getTemplates(settings.default_dependency_template);
+        $("#host-mode-checkbox").prop('checked', settings.display_only_dependencies);
+        $("#node-text-up-checkbox").prop('checked', settings.display_up);
+        $("#node-text-down-checkbox").prop('checked', settings.display_down);
+        $("#node-text-unreachable-checkbox").prop('checked', settings.display_unreachable);
+        $("#scaling-mode-checkbox").prop('checked', settings.scaling);
+        $("#text-size-range").val((settings.text_size) * 2);
+        $('#label-mode-checkbox').prop('checked', settings.label_large_nodes);
+        $('#alias-label-checkbox').prop('checked', settings.alias_only);
+        $('#director-checkbox').prop('checked', settings.enable_director);
 
-            drawPreviewNetwork();
+
+        populateDependencyTemplateDropdown(settings.default_dependency_template);
+
+        drawPreviewNetwork();
 
     });
-
 
 }
 
-function getTemplates(defaultTemplate) {
+function populateDependencyTemplateDropdown(defaultTemplate) {
     templateNames = [];
 
-    $.ajax({
-        url: "/icingaweb2/director/dependencies/templates",
-        type: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        },
-        // dataType: 'json',
-        success: function (data) {
+    success = (data) => {
 
-            var templateDropdown = $("#dependency-template-field");
-            
-            for (i = 0; i < data['objects'].length; i++) {
+        var templateDropdown = $("#dependency-template-field");
 
-                templateDropdown.append("<option value=" + data['objects'][i]["object_name"] + ">" + data['objects'][i]["object_name"] + "</option>");
+        for (i = 0; i < data['objects'].length; i++) {
 
-
-            }
-
-            $("#dependency-template-field").val(settings.default_dependency_template);
-
-            
-
-        },
-        error: function (data) {
-
-            alert('Cannot Load Settings Information, Please Check Databases\n\nError:' + data.responseJSON['message']);
+            templateDropdown.append("<option value=" + data['objects'][i]["object_name"] + ">" + data['objects'][i]["object_name"] + "</option>");
 
         }
 
-    });
+        $("#dependency-template-field").val(defaultTemplate);
+
+    }
+
+    error = (error) => {
+
+        handleError(error);
+
+    }
+
+    var templatesPromise = getTemplates().then(success, error)
 
 }

@@ -167,6 +167,38 @@ function getSettings() {
 
 }
 
+function getTemplates() {
+
+    var promise = new Promise((resolve, reject) => {
+
+        $.ajax({
+            url: "/icingaweb2/director/dependencies/templates",
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (data) {
+                console.log('data', data)
+                resolve(data)
+            },
+            error: function (data) {
+
+                reject({
+                    'Type': 'Templates',
+                    'Error': data
+                });
+
+            }
+
+        });
+
+    });
+
+    return promise;
+
+}
+
+
 
 function storeSettings(settings) {
 
@@ -178,6 +210,33 @@ function storeSettings(settings) {
 
         $.ajax({
             url: "/icingaweb2/dependency_plugin/module/storeSettings",
+            type: 'POST',
+            data: {
+                json: payload
+            },
+            success: () => {
+                resolve();
+            },
+            error: (error) => {
+                reject({
+                    'type': 'settings',
+                    'data': error['responseText']
+                });
+            }
+        });
+    });
+
+    return promise;
+}
+
+function storeGraphSettings(settings) {
+
+    var promise = new Promise((resolve, reject) => {
+
+        payload = JSON.stringify(settings)
+
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/storeGraphSettings",
             type: 'POST',
             data: {
                 json: payload

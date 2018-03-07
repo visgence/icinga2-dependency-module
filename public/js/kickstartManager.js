@@ -20,8 +20,19 @@ function kickstartManager() {
 
     }
 
-    testSettings = () => {
+    startFormListeners = () => {
 
+        $('form').submit(function (data) {
+
+            var formData = $("form.settings-form").serializeArray();
+
+            var settingsPromise = storeSettings(formData).then(testSettings, processError)
+
+        });
+
+    }
+
+    testSettings = () => {
 
         success = () => {
 
@@ -36,17 +47,5 @@ function kickstartManager() {
     }
 
     var resourcePromise = getIcingaResourceDatabases().then(populateDbDropdown, processError)
-
-    function startFormListeners() {
-
-        $('form').submit(function (data) {
-
-            var formData = $("form.settings-form").serializeArray();
-
-            var settingsPromise = storeSettings(formData).then(testSettings, processError)
-
-        });
-
-    }
 
 }
