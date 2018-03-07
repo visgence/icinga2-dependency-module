@@ -199,8 +199,6 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
 
         }
 
-
-
     }
 
     var networkData = {
@@ -341,20 +339,20 @@ function simulateNewNetwork(network, nodes) {
 
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
-        $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify(nodes._data)
-            }
-        });
+        success = () => {
 
-        network.setOptions({
-            nodes: {
-                fixed: true
-            }
+            network.setOptions({
+                nodes: {
+                    fixed: true
+                }
+            });
+        }
 
-        });
+        error = (error) => {
+            errorHandler(error);
+        }
+
+        var promise = storeNodes(nodes._data).then(success, error)
 
     });
 }
@@ -373,7 +371,6 @@ function simulateChangedNetwork(network, nodes) {
 
     network.startSimulation(); //start new physics sim
     network.stabilize(800); //on sim for 200 iters, usually enough for the node to place itself automatically.
-
     network.once("stabilizationIterationsDone", function () {
         network.stopSimulation();
         network.setOptions({
@@ -382,23 +379,21 @@ function simulateChangedNetwork(network, nodes) {
             }
         });
         network.storePositions(); //after new node added, resave network positions
-        $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify(nodes._data)
-            },
-            success: function () {
-                $("#notification").html(
-                    "<div class = notification-content><h3>Network Change Detected</h3>"
-                ).css({
-                    "display": "block",
-                }).delay(5000).fadeOut();
-            },
-            error: function (data) {
-                alert('Error Loading Node Positional Data, Please Check Entered Information\n\n' + data.responseJSON['message']);
-            }
-        });
+
+        var promise = storeNodes(nodes._data).then(success, error);
+
+        success = () => {
+
+            $("#notification").html(
+                "<div class = notification-content><h3>Network Change Detected</h3>"
+            ).css({
+                "display": "block",
+            }).delay(5000).fadeOut();
+        }
+
+        error = (error) => {
+            errorHandler(error)
+        }
 
     });
 }
@@ -464,22 +459,23 @@ function startEventListeners(network, networkData, settings) {
 
         if (confirm("Reset All Network Positions?")) {
 
-            $.ajax({ //ajax request to store into DB
-                url: "/icingaweb2/dependency_plugin/module/storeNodes",
-                type: 'POST',
-                data: {
-                    json: JSON.stringify('RESET')
-                },
-                success: function () {
-                    setTimeout(function () {
 
-                        window.location.replace("./network"); //on succes redirect to network.
 
-                    }, 2000);
-                }
-            });
+            success = () => {
+                setTimeout(function () {
 
+                    window.location.replace("./network"); //on succes redirect to network.
+
+                }, 2000);
+            }
+
+            error = (error) => {
+                errorHandler(error);
+            }
+
+            var promise = storeNodes('RESET').then(success, error);
         }
+
     });
 
     $('#edit-btn-save').click(function () { //on save
@@ -492,17 +488,18 @@ function startEventListeners(network, networkData, settings) {
 
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
-        $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
-            type: 'POST',
-            data: {
-                json: JSON.stringify(networkData.nodes._data)
-            },
-            success: () => {
-                $('#notifications').append().html('<li class="success fade-out">Nodes Positions Saved</li>');
+        success = () => {
+            $('#notifications').append().html('<li class="success fade-out">Nodes Positions Saved</li>');
 
-            }
-        });
+        }
+
+        error = (error) => {
+            errorHandler(error);
+        }
+
+
+        var promise = storeNodePositions(networkData.nodes._data).then(success, error);
+
     });
 
     $('#edit-btn-fullscreen').click(() => {

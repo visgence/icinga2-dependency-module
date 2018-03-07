@@ -7,7 +7,7 @@
 
 // $.when(
 
-function getIcingaResourceDatabases(){
+function getIcingaResourceDatabases() {
 
     var promise = new Promise((resolve, reject) => {
 
@@ -179,7 +179,7 @@ function getTemplates() {
             },
             success: function (data) {
                 console.log('data', data)
-                resolve(data)
+                resolve(data);
             },
             error: function (data) {
 
@@ -198,7 +198,51 @@ function getTemplates() {
 
 }
 
+function storeNodes(data) {
 
+    var promise = new Promise((resolve, reject) => {
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(data)
+            },
+            success: () => {
+                resolve();
+            },
+            error: (error) => {
+                reject({
+                    'type': 'settings',
+                    'data': error['responseText']
+                });
+            }
+        });
+    })
+
+    return promise;
+
+}
+
+function storeNodePositions(data) {
+
+    var promise = new Promise((resolve, reject) => {
+        $.ajax({ //ajax request to store into DB
+            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            type: 'POST',
+            data: {
+                json: JSON.stringify(data)
+            },
+            success: () => {
+                resolve();
+            },
+            error: (data) => {
+                reject(data);
+            }
+        });
+
+    });
+    return promise;
+}
 
 function storeSettings(settings) {
 

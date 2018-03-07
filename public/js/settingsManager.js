@@ -29,8 +29,6 @@ function loadSettings() {
 
         'display_only_dependencies': false,
 
-        // 'is_hierarchical': false,
-
         'scaling': true,
 
         'alias_only': true,
@@ -41,7 +39,6 @@ function loadSettings() {
     }
 
 
-    // moduleSettings.is_hierarchical = $('#hierarchy-radio').prop('checked');
     moduleSettings.display_only_dependencies = $("#host-mode-checkbox").prop('checked');
     moduleSettings.display_up = $("#node-text-up-checkbox").prop('checked');
     moduleSettings.display_down = $("#node-text-down-checkbox").prop('checked');
