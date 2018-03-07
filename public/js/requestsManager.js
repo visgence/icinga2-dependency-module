@@ -7,6 +7,26 @@
 
 // $.when(
 
+function getIcingaResourceDatabases(){
+
+    var promise = new Promise((resolve, reject) => {
+
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/getResources", //get Icinga Resource List
+            type: 'GET',
+            success: function (response) {
+                resolve(response);
+            },
+            error: (error) => {
+                reject(error);
+            }
+        });
+    });
+
+    return promise;
+
+}
+
 function getDependencies() {
 
     var promise = new Promise((resolve, reject) => {
@@ -54,10 +74,7 @@ function getHosts() {
                 });
             },
             error: (data) => {
-                reject({
-                    'type': 'hosts',
-                    'data': data['responseText']
-                });
+                reject(data)
             }
         });
 
@@ -148,4 +165,34 @@ function getSettings() {
 
     return promise;
 
+}
+
+
+function storeSettings(settings) {
+
+    var promise = new Promise((resolve, reject) => {
+
+        payload = JSON.stringify(settings)
+
+        // console.log(payload)
+
+        $.ajax({
+            url: "/icingaweb2/dependency_plugin/module/storeSettings",
+            type: 'POST',
+            data: {
+                json: payload
+            },
+            success: () => {
+                resolve();
+            },
+            error: (error) => {
+                reject({
+                    'type': 'settings',
+                    'data': error['responseText']
+                });
+            }
+        });
+    });
+
+    return promise;
 }
