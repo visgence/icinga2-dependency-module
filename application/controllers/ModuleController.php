@@ -142,18 +142,19 @@ class ModuleController extends Controller{
 
     }catch(Exception $e){
 
-        if(!file_exists('/etc/icingaweb2/modules/dependency_plugin/')){
+        if(!file_exists('/etc/icingaweb2/modules/dependency_plugin/')){//config not created, module not kickstarted
  
         header('HTTP/1.1 500 Internal Server Error');
         header('Content-Type: application/json; charset=UTF-8');
 
-        die(json_encode(array('message' => "Setup", 'code' => '500')));
+        die(json_encode(array('message' => "setup", 'code' => '500')));
  
-    }
+        } else{
 
-        header('HTTP/1.1 500 Internal Server Error');
-        header('Content-Type: application/json; charset=UTF-8');
-        die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
+            header('HTTP/1.1 500 Internal Server Error');
+            header('Content-Type: application/json; charset=UTF-8');
+            die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
+        }
 
 
     }
@@ -179,6 +180,7 @@ class ModuleController extends Controller{
     }
 
     public function storesettingsAction(){
+        
 
     //  this function uses a built-in icinga web function saveIni(); which automatically saves any passed data to 
     //  /etc/icingaweb2/modules/name-of-moudle/config.ini 
@@ -514,9 +516,30 @@ class ModuleController extends Controller{
 
             exit;
          }
+
+         $parsedSettings;
+
+         //parse settings
+
+
+            for ($i = 0; $i < count($vals); $i++) {
+
+                if ($vals[$i]-> setting_type == 'bool') {
+                    $parsedSettings[$vals[$i]-> setting_name ] = ($vals[$i] -> setting_value === 'true');
+                } else if ($vals[$i] -> setting_type == 'int') {
+
+                    $parsedSettings[$vals[$i] -> setting_name] = ((int)($vals[$i] -> setting_value));
+
+                } else {
+
+                    $parsedSettings[$vals[$i] -> setting_name] = $vals[$i] -> setting_value;
+
+                }
+            }
+
         
 
-            $json = json_encode($vals);
+            $json = json_encode($parsedSettings);
 
             echo $json;
 

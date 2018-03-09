@@ -434,7 +434,8 @@ function startEventListeners(network, networkData, settings) {
 
     });
 
-    $('#edit-btn').click(function () { //on edit
+    $('#edit-btn').click(function (params) { //on edit
+
 
         $('#notifications').append().html('<li class="info">Editing Node Positions</li>');
 

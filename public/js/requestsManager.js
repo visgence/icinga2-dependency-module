@@ -1,12 +1,3 @@
-// function getRequests(isHierarchical) {
-
-// if (window.location.href.indexOf('Fullscreen') > -1) {
-//     var isFullscreen = true;
-//     $('.fabs').hide();
-// }
-
-// $.when(
-
 function getIcingaResourceDatabases() {
 
     var promise = new Promise((resolve, reject) => {
@@ -14,11 +5,15 @@ function getIcingaResourceDatabases() {
         $.ajax({
             url: "/icingaweb2/dependency_plugin/module/getResources", //get Icinga Resource List
             type: 'GET',
-            success: function (response) {
+            success: (response) => {
                 resolve(response);
             },
             error: (error) => {
-                reject(error);
+                reject({
+                    'type': 'resources',
+                    'message': error['responseJSON']['message'],
+                    'code': error.code
+                });
             }
         });
     });
@@ -34,20 +29,20 @@ function getDependencies() {
         $.ajax({
             url: "/icingaweb2/dependency_plugin/module/getDependency", //get dependencies
             type: 'GET',
-            success: function (dependencyData) {
+            success: (data) => {
 
-                dependencies = (JSON.parse(dependencyData));
+                dependencies = (JSON.parse(data));
                 resolve({
                     type: 'dependencies',
                     data: dependencies,
                 });
             },
-            error: (data) => {
+            error: (error) => {
                 reject({
                     'type': 'dependencies',
-                    'data': data['responseText']
+                    'message': error['responseJSON']['message'],
+                    'code': error.code,
                 });
-
             }
 
         });
@@ -73,8 +68,12 @@ function getHosts() {
                     data: hosts
                 });
             },
-            error: (data) => {
-                reject(data)
+            error: (error) => {
+                reject({
+                    'type': 'hosts',
+                    'message': error['responseJSON']['message'],
+                    'code': error.code
+                });
             }
         });
 
@@ -90,9 +89,9 @@ function getNodePositions() {
         $.ajax({
             url: "/icingaweb2/dependency_plugin/module/getNodes", //get node positions
             type: 'GET',
-            success: function (response) {
-                response = JSON.parse(response);
-                if (response === "EMPTY!") {
+            success: (data) => {
+                data = JSON.parse(data);
+                if (data === "EMPTY!") {
                     resolve({
                         'type': 'positions',
                         'data': null
@@ -100,15 +99,16 @@ function getNodePositions() {
                 } else {
                     resolve({
                         'type': 'positions',
-                        'data': response
+                        'data': data
                     });
                 }
 
             },
-            error: (data) => {
+            error: (error) => {
                 reject({
                     'type': 'positions',
-                    'data': data['responseText']
+                    'message': error['responseJSON']['message'],
+                    'code': error['code']
                 });
             }
         });
@@ -130,32 +130,17 @@ function getSettings() {
 
                 settings = JSON.parse(data);
 
-                parsedSettings = {}
-
-                for (i = 0; i < settings.length; i++) {
-
-                    if (settings[i]['setting_type'] === 'bool') {
-                        parsedSettings[settings[i]['setting_name']] = (settings[i]['setting_value'] === 'true');
-                    } else if (settings[i]['setting_type'] === 'int') {
-
-                        parsedSettings[settings[i]['setting_name']] = (parseInt(settings[i]['setting_value']));
-
-                    } else {
-
-                        parsedSettings[settings[i]['setting_name']] = settings[i]['setting_value'];
-
-                    }
-
-                }
                 resolve({
                     'type': 'settings',
-                    'data': parsedSettings
+                    'data': settings
                 });
             },
-            error: (data) => {
+            error: (error) => {
+                console.log(error);
                 reject({
                     'type': 'settings',
-                    'data': data['responseText']
+                    'message': error['responseJSON']['message'],
+                    'code': error['code']
                 });
             }
 
@@ -177,15 +162,15 @@ function getTemplates() {
             headers: {
                 'Accept': 'application/json'
             },
-            success: function (data) {
-                console.log('data', data)
+            success: (data) => {
                 resolve(data);
             },
-            error: function (data) {
+            error: (data) => {
 
                 reject({
-                    'Type': 'Templates',
-                    'Error': data
+                    'type': 'templates',
+                    'message': error['responseJSON']['message'],
+                    'code': error[code]
                 });
 
             }
@@ -212,8 +197,9 @@ function storeNodes(data) {
             },
             error: (error) => {
                 reject({
-                    'type': 'settings',
-                    'data': error['responseText']
+                    'type': 'nodes',
+                    'message': error['responseJSON']['message'],
+                    'code' : error['code']
                 });
             }
         });
@@ -235,8 +221,12 @@ function storeNodePositions(data) {
             success: () => {
                 resolve();
             },
-            error: (data) => {
-                reject(data);
+            error: (error) => {
+                reject({
+                    'type' : 'positions',
+                    'message': error['responseJSON']['message'],
+                    'code': error['code']
+                });
             }
         });
 
@@ -264,7 +254,8 @@ function storeSettings(settings) {
             error: (error) => {
                 reject({
                     'type': 'settings',
-                    'data': error['responseText']
+                    'message': error['responseJSON']['message'],
+                    'code' : error['code']
                 });
             }
         });
@@ -290,8 +281,9 @@ function storeGraphSettings(settings) {
             },
             error: (error) => {
                 reject({
-                    'type': 'settings',
-                    'data': error['responseText']
+                    'type': 'graph_settings',
+                    'message': error['responseJSON']['message'],
+                    'code': error['code']
                 });
             }
         });
