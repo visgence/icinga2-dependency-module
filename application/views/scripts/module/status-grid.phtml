@@ -1,0 +1,36 @@
+<div class="controls">
+<?= $this->tabs ?>
+</div>
+
+<head>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="hud">
+
+        <div class='hud-box' id='hud-title'></div>
+        <div class='hud-box' id='hud-down'></div>
+        <div class='hud-box' id='hud-unreachable'></div>
+        <div class='hud-box' id='hud-up'></div>
+    </div>
+
+<div class="column" id="dependency-network">
+</div>
+
+</body>
+<script>
+if (document.readyState === "complete") {
+
+    drawGrid();
+
+} else {
+    window.onload = function () {
+
+        drawGrid();
+
+    }
+}
+</script>

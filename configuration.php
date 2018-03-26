@@ -11,6 +11,7 @@ $section->add(N_('Settings'))
     ->setUrl('dependency_plugin/module/settings');
 
 $this->provideJsFile('fullscreenManager.js');
+$this->provideJsFile('gridManager.js');
 $this->provideJsFile('graphManager.js');
 $this->provideJsFile('vendor/vis.min.js');
 $this->provideJsFile('graphManager.js');

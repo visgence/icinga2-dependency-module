@@ -575,6 +575,8 @@ function saveSettings() {
     };
 
     success = () => {
+
+        checkForSettingsConflicts()
         $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
     }
 
@@ -650,4 +652,8 @@ function populateDependencyTemplateDropdown(defaultTemplate) {
 
     var templatesPromise = getTemplates().then(success, error)
 
+}
+
+function checkForSettingsConflicts(){
+    
 }

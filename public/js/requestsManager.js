@@ -69,10 +69,11 @@ function getHosts() {
                 });
             },
             error: (error) => {
+                console.log(error)
                 reject({
                     'type': 'hosts',
                     'message': error['responseJSON']['message'],
-                    'code': error.code
+                    'code': error['code']
                 });
             }
         });

@@ -12,7 +12,7 @@ function getData() {
     }
 
     processError = (error) => {
-        errors[error['type']] = error['data']
+        // errors[error['type']] = error['data']
         throw error;
     }
 
@@ -37,6 +37,20 @@ function getData() {
         } else {
             var isHierarchical = false;
         }
+        
+        
+
+        // console.log(graphData.dependencies['results'].length)
+        // console.log(graphData.dependencies['results'].length === true)
+        // if (!graphData.dependencies['results'].length) {
+        //     // if (graphData.hosts['results'].length) {
+        //     //     console.log(graphData.hosts['results'].length)
+        //     //     throw {
+        //     //         type: 'configuration',
+        //     //         message: 'Settings are preventing any hosts from being displayed, please enable showing hosts with no dependencies'
+        //     //     }
+        //     // }
+        // }
 
         formatDependencies(graphData.hosts, graphData.dependencies, isHierarchical, graphData.positions, isFullscreen, graphData.settings)
 
@@ -204,7 +218,7 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
     var networkData = {
         nodes: nodes,
         edges: edges
-    };
+    }
 
     var container = document.getElementById('dependency-network');
 

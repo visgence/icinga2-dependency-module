@@ -28,6 +28,10 @@ use Exception;
 
 class ModuleController extends Controller{
 
+    public function statusgridAction(){
+
+    }
+
     public function hierarchyAction() {
 
         $this->getTabs()->add('Network', array(
@@ -62,11 +66,20 @@ class ModuleController extends Controller{
 
     public function kickstartAction() {
 
-        $this->getTabs()->add('Kickstart', array(
-            'active'    => true,
-            'label'     => $this->translate('Kickstart'),
-            'url'       => 'dependency_plugin/module/Kickstart'
+        $this->getTabs()->add('Graph Settings', array(
+            'active'    => false,
+            'label'     => $this->translate('Graph Settings'),
+            'url'       => 'dependency_plugin/module/settings'
         ));
+
+
+        $this->getTabs()->add('Module Settings', array(
+            'active'    => true,
+            'label'     => $this->translate('Module Settings'),
+            'url'       => 'dependency_plugin/module/kickstart'
+        ));
+
+
     }
 
     public function welcomeAction() {
@@ -81,10 +94,16 @@ class ModuleController extends Controller{
 
     public function settingsAction() {
 
-        $this->getTabs()->add('Settings', array(
+        $this->getTabs()->add('Graph Settings', array(
             'active'    => true,
-            'label'     => $this->translate('Settings'),
+            'label'     => $this->translate('Graph Settings'),
             'url'       => 'dependency_plugin/module/settings'
+        ));
+
+        $this->getTabs()->add('Module Settings', array(
+            'active'    => false,
+            'label'     => $this->translate('Module Settings'),
+            'url'       => 'dependency_plugin/module/kickstart'
         ));
 
     }
@@ -220,7 +239,13 @@ class ModuleController extends Controller{
                 header('HTTP/1.1 500 Internal Server Error');
                 header('Content-Type: application/json; charset=UTF-8');
 
-                die(json_encode(array('message' => "Error Saving To Database, Make sure correct database is created and selected", 'code' => '500')));
+                die(json_encode(
+                    array(
+                    'message' => "Error Saving To Database, Make sure correct database is created and selected",
+                    'code' => '500', 
+                    'action'=>'setup'
+                     )
+                    ));
 
             }
 
@@ -345,6 +370,8 @@ class ModuleController extends Controller{
                 header('HTTP/1.1 500 Internal Server Error');
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(array('message' => curl_error($ch), 'code' => $code)));
+                // echo json_encode($code );
+                die;
             } 
             echo $response;
             exit;

@@ -1,80 +1,108 @@
 function errorHandler(error) {
 
-    // console.log(error)
+    if (error['message'] === 'setup') {
+        $('#notifications').append().html('<li class="error fade-out">No Configuration File Detected, Redirecting to Setup</li>');
 
-    switch (error['type']) {
-        case 'resources':
-            handleResourcesError(error);
-            break;
+        setTimeout(()=>{
+            window.location.replace('/icingaweb2/dependency_plugin/module/kickstart')
+        }, 3000)
 
-        case 'dependencies':
-            break;
+    } else {
 
-        case 'hosts':
-            handleHostsError(error);
-            break;
 
-        case 'positions':
-            handlePositionsError(error);
-            break;
+        switch (error['type']) {
+            case 'resources':
+                handleResourcesError(error);
+                break;
 
-        case 'settings':
-            handleSettingsError(error);
-            break;
+            case 'dependencies':
+                break;
 
-        case 'templates':
-            handleTemplatesError(error);
-            break;
+            case 'hosts':
+                handleHostsError(error);
+                break;
 
-        case 'nodes':
-            handleNodes(error);
-            break;
+            case 'positions':
+                handlePositionsError(error);
+                break;
 
-        case 'graph_settings':
-            handleGraphSettings(error);
-            break;
+            case 'settings':
+                handleSettingsError(error);
+                break;
+
+            case 'templates':
+                handleTemplatesError(error);
+                break;
+
+            case 'nodes':
+                handleNodes(error);
+                break;
+
+            case 'graph_settings':
+                handleGraphSettings(error);
+                break;
+
+            case 'configuration':
+                handleConfiguration(error);
+                break;
+        }
 
     }
 
     function handleSettingsError(error) {
-        // console.log(error)
         if (error['message'] === 'setup') {
-            $('#notifications').append().html('<li class="error fade-out">No Configuration File Detected, Redirecting to Setup</li>');
+            displayError("No Configuration File Detected, Redirecting to Setup")
+
+            setTimeout(() => {
+                window.location.replace('/icingaweb2/dependency_plugin/module/kickstart')
+            })
 
         } else {
-
-            $('#notifications').append().html('<li class="error fade-out">' + error['message'] + '</li>');
+            displayError(error['message'])
         }
     }
 
     function handleHostsError(error) {
 
-        $('#notifications').append().html('<li class="error fade-out">' + error['message'] + '</li>');
+        displayError(error['message'])
 
     }
 
     function handleResourcesError(error) {
 
-        $('#notifications').append().html('<li class="error fade-out">' + error['message'] + '</li>');
-
+        displayError(error['message'])
     }
 
 
     function handleDependenciesError(error) {
 
-        $('#notifications').append().html('<li class="error fade-out">' + error['message'] + '</li>');
-
+        displayError(error['message'])
     }
 
     function handleHostsError(error) {
 
-        $('#notifications').append().html('<li class="error fade-out">' + error['message'] + '</li>');
-
+        displayError(error['message'])
     }
 
     function handleHostsError(error) {
+        displayError(error['message'])
+    }
 
-        $('#notifications').append().html('<li class="error fade-out">' + error['message'] + '</li>');
+    function handleConfiguration(error) {
+
+        displayError(error['message'])
+
+        setTimeout(() => {
+            window.location.replace('/icingaweb2/dependency_plugin/module/settings')
+        }, 5000)
 
     }
+
+    function displayError(message){
+
+        $('#notifications').append().html('<li class="error fade-out">' + message + '</li>');
+    }
+
+
+
 }
