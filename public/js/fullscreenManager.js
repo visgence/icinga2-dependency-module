@@ -7,7 +7,7 @@ function fullscreenMode(container, networkData, Icinga) {
     $('#main').css("width", '100%');
     $('#main').css("height", '100%');
     $('#hud').css('display', 'block');
-    $('#layout').addClass('fullscreen-layout');
+    // $('#layout').addClass('fullscreen-layout');
     // Icinga.ui.toggleFullscreen();
 
     const fullscreenOptions = {

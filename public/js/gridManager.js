@@ -4,7 +4,8 @@ $('#dependency-network').css("height", '90%')
 $('#main').css("width", '100%');
 $('#main').css("height", '100%');
 $('#hud').css('display', 'block');
-$('#layout').addClass('fullscreen-layout');
+// $('#layout').addClass('fullscreen-layout');
+// $('#layout').addClass('fullscreen-layout');
 
 function drawGrid() {
 
