@@ -32,12 +32,12 @@ function drawGrid() {
                 font_size = 0;
                 hostsUp++;
             } else if (hosts[i]['attrs'].state === 1 && !hosts[i]['attrs'].last_reachable) {
-                font_size = 10;
+                font_size = 20;
                 color_border = "purple";
                 hostsUnreachable++;
 
             } else {
-                font_size = 10;
+                font_size = 20;
                 color_border = "red";
                 hostsDown++;
             }
@@ -53,8 +53,8 @@ function drawGrid() {
                 id: hosts[i].name,
                 level: level,
                 label: hosts[i].name,
-                x: x_pos * 105,
-                y: level * 105,
+                x: x_pos * 205,
+                y: level * 205,
                 color: {
                     border: color_border,
                     background: color_background
@@ -63,7 +63,7 @@ function drawGrid() {
                 font: {
                     size: font_size,
                     color: 'white',
-                    vadjust: -80
+                    vadjust: -150
                 },
 
             });
@@ -77,13 +77,13 @@ function drawGrid() {
         var container = document.getElementById('dependency-network');
 
         const hierarchyOptions = {
-            height: '100%',
-            autoResize: true,
-            width : '100%',
+            // height: '100%',
+            // autoResize: true,
+            // width : '100%',
             nodes: {
                 shape: 'square',
                 fixed: true,
-                size:  50,
+                size:  100,
                 scaling: {
                     min: 1,
                     max: 15,
