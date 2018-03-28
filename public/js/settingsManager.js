@@ -33,6 +33,8 @@ function loadSettings() {
 
         'alias_only': true,
 
+        'fulscreen_mode': 'network',
+
         'label_large_nodes': true,
 
         'text_size': 50
@@ -49,6 +51,12 @@ function loadSettings() {
     moduleSettings.alias_only = $('#alias-label-checkbox').prop('checked');
     moduleSettings.default_dependency_template = $("#dependency-template-field").val();
     moduleSettings.enable_director = $("#director-checkbox").prop('checked');
+    if ($('#fullscreen-grid-checkbox').prop('checked')){
+        moduleSettings.fullscreen_mode = 'grid'
+    }
+    if ($('#fullscreen-network-checkbox').prop('checked')) {
+        moduleSettings.fullscreen_mode = 'network'
+    }
 
     return moduleSettings;
 }
@@ -320,7 +328,6 @@ function drawPreviewNetwork() {
         ]);
     }
 
-
     var edges = new vis.DataSet([{
             from: 3,
             to: 1
@@ -570,13 +577,18 @@ function saveSettings() {
         'default_dependency_template': {
             'value': moduleSettings['default_dependency_template'],
             'type': 'string'
+        },
+
+        'fullscreen_mode': {
+            'value' : moduleSettings['fullscreen_mode'],
+            'type' : 'string'
         }
 
     };
 
     success = () => {
 
-        checkForSettingsConflicts()
+        // checkForSettingsConflicts()
         $('#notifications').append().html('<li class="success fade-out">Settings Saved Successfully</li>');
     }
 
@@ -617,6 +629,16 @@ function loadSaved() {
         $('#label-mode-checkbox').prop('checked', settings.label_large_nodes);
         $('#alias-label-checkbox').prop('checked', settings.alias_only);
         $('#director-checkbox').prop('checked', settings.enable_director);
+        $('#fullscreen-grid-checkbox').prop('checked', settings.fullscreen_mode === 'grid')
+        $('#fullscreen-network-checkbox').prop('checked', settings.fullscreen_mode === 'network')
+
+        $('#fullscreen-grid-checkbox').click(()=>{
+            $('#fullscreen-network-checkbox').prop('checked', false)
+        });
+
+        $('#fullscreen-network-checkbox').click(()=>{
+            $('#fullscreen-grid-checkbox').prop('checked', false)
+        });
 
 
         populateDependencyTemplateDropdown(settings.default_dependency_template);
@@ -654,6 +676,6 @@ function populateDependencyTemplateDropdown(defaultTemplate) {
 
 }
 
-function checkForSettingsConflicts(){
+// function checkForSettingsConflicts(){
     
-}
+// }

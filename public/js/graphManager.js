@@ -519,7 +519,11 @@ function startEventListeners(network, networkData, settings) {
 
     $('#edit-btn-fullscreen').click(() => {
 
-        window.location.replace("./network?showFullscreen");
+        if(settings.fullscreen_mode === 'network'){
+            window.location.replace("./network?showFullscreen");
+        } else {
+            window.location.replace("./statusGrid?showFullscreen")
+        }
 
     });
 

@@ -505,7 +505,7 @@ class ModuleController extends Controller{
 
         try {
 
-            $expectedNumberOfSettings = 10; //Number of settings expected out of database, change if setting added/removed
+            $expectedNumberOfSettings = 11; //Number of settings expected out of database, change if setting added/removed
 
             $resource = $this->getResource();
 
@@ -530,6 +530,7 @@ class ModuleController extends Controller{
                    $db->insert('graph_settings', array('setting_name' => 'always_display_large_labels', 'setting_value' => 'true', 'setting_type' => 'bool'));
                    $db->insert('graph_settings', array('setting_name' => 'alias_only', 'setting_value' => 'true', 'setting_type' => 'bool'));
                    $db->insert('graph_settings', array('setting_name' => 'text_size', 'setting_value' => '25', 'setting_type' => 'int'));
+                   $db->insert('graph_settings', array('setting_name' => 'fullscreen_mode', 'setting_type'=> 'string', 'setting_value' => 'network'));
 
                $vals = $db->fetchAll($query);
 

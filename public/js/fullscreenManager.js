@@ -138,7 +138,7 @@ function fullscreenMode(container, networkData, Icinga) {
             network.destroy();
 
 
-            getRequests(false);
+            getData();
 
         }, 60000);
     }

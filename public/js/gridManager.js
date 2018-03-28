@@ -1,13 +1,14 @@
-$('.controls').hide();
-$('#dependency-network').css("background-color", '#262626');
-$('#dependency-network').css("height", '90%')
-$('#main').css("width", '100%');
-$('#main').css("height", '100%');
-$('#hud').css('display', 'block');
+
 // $('#layout').addClass('fullscreen-layout');
 // $('#layout').addClass('fullscreen-layout');
 
 function drawGrid() {
+    $('.controls').hide();
+    $('#dependency-network').css("background-color", '#262626');
+    $('#dependency-network').css("height", '90%')
+    $('#main').css("width", '100%');
+    $('#main').css("height", '100%');
+    $('#hud').css('display', 'block');
 
     processData = (response) => {
 
@@ -76,10 +77,7 @@ function drawGrid() {
 
         var container = document.getElementById('dependency-network');
 
-        const hierarchyOptions = {
-            // height: '100%',
-            // autoResize: true,
-            // width : '100%',
+        const networkOptions = {
             nodes: {
                 shape: 'square',
                 fixed: true,
@@ -99,7 +97,7 @@ function drawGrid() {
             }
         };
 
-        var network = new vis.Network(container, networkData, hierarchyOptions);
+        var network = new vis.Network(container, networkData, networkOptions);
         startRefreshTimeout(network);
 
         var date = new Date();
