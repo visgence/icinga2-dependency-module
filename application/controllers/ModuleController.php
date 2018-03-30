@@ -30,6 +30,24 @@ class ModuleController extends Controller{
 
     public function statusgridAction(){
 
+        $this->getTabs()->add('Network', array(
+            'active'    => false,
+            'label'     => $this->translate('Network Map'),
+            'url'       => 'dependency_plugin/module/network'
+        ));
+
+        $this->getTabs()->add('Hierarchy', array(
+            'active'    => false,
+            'label'     => $this->translate('Hierarchy Map'),
+            'url'       => 'dependency_plugin/module/hierarchy'
+        ));
+
+        $this->getTabs()->add('Grid', array(
+            'active'    => true,
+            'label'     => $this->translate('Grid Map'),
+            'url'       => 'dependency_plugin/module/statusGrid'
+        ));
+
     }
 
     public function hierarchyAction() {
@@ -46,6 +64,12 @@ class ModuleController extends Controller{
             'url'       => 'dependency_plugin/module/hierarchy'
         ));
 
+        $this->getTabs()->add('Grid', array(
+            'active'    => false,
+            'label'     => $this->translate('Grid Map'),
+            'url'       => 'dependency_plugin/module/statusGrid'
+        ));
+
     }
     
     public function networkAction() {
@@ -60,6 +84,12 @@ class ModuleController extends Controller{
             'active'    => false,
             'label'     => $this->translate('Hierarchy Map'),
             'url'       => 'dependency_plugin/module/hierarchy'
+        ));
+
+        $this->getTabs()->add('Grid', array(
+            'active'    => false,
+            'label'     => $this->translate('Grid Map'),
+            'url'       => 'dependency_plugin/module/statusGrid'
         ));
 
     }

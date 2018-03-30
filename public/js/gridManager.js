@@ -1,24 +1,14 @@
 
-// $('#layout').addClass('fullscreen-layout');
-// $('#layout').addClass('fullscreen-layout');
-
 function drawGrid() {
-    $('.controls').hide();
-    $('#dependency-network').css("background-color", '#262626');
-    $('#dependency-network').css("height", '90%')
-    $('#main').css("width", '100%');
-    $('#main').css("height", '100%');
-    $('#hud').css('display', 'block');
-
+    
     processData = (response) => {
 
         var hosts = response['data']['results']
         var nodes = new vis.DataSet([]);
         var edges = new vis.DataSet([]);
         var color_border = 'green'
-        var color_background = '#262626'
 
-        var hostsUp = 0;
+        var hostsUp = 0
         var hostsDown = 0;
         var font_size = 0;
         var hostsUnreachable = 0;
@@ -26,24 +16,39 @@ function drawGrid() {
         var level = 0;
         var x_pos = 1;
 
+        if (isInMonitoringMode()) {
+            num_cols = 9
+        } else {
+            num_cols = 15
+        }
+
+        if(isInFullscreenMode()){
+            font_color = "white"
+        } else {
+            font_color = "black"
+        }
+
         for (i = 0; i < hosts.length; i++){
 
             if (hosts[i]['attrs'].state === 0) {
                 color_border = 'green';
+                color_background = 'rgba(0, 204, 3, 0.25)'
                 font_size = 0;
                 hostsUp++;
             } else if (hosts[i]['attrs'].state === 1 && !hosts[i]['attrs'].last_reachable) {
                 font_size = 20;
                 color_border = "purple";
+                color_background = 'rgba(98, 0, 178, 0.25)'
                 hostsUnreachable++;
 
             } else {
                 font_size = 20;
                 color_border = "red";
+                color_background = 'rgba(204, 0, 0, 0.25)'
                 hostsDown++;
             }
 
-            if(i % 20 === 0){
+            if(i % num_cols === 0){
                 level = level + 1;
                 x_pos = 0
             } else {
@@ -53,6 +58,7 @@ function drawGrid() {
             nodes.update({
                 id: hosts[i].name,
                 level: level,
+                borderWidth: 2,
                 label: hosts[i].name,
                 x: x_pos * 205,
                 y: level * 205,
@@ -63,7 +69,7 @@ function drawGrid() {
 
                 font: {
                     size: font_size,
-                    color: 'white',
+                    color: font_color,
                     vadjust: -150
                 },
 
@@ -75,7 +81,7 @@ function drawGrid() {
             edges: edges
         };
 
-        var container = document.getElementById('dependency-network');
+        var container = document.getElementById('grid-container');
 
         const networkOptions = {
             nodes: {
@@ -98,19 +104,15 @@ function drawGrid() {
         };
 
         var network = new vis.Network(container, networkData, networkOptions);
-        startRefreshTimeout(network);
 
-        var date = new Date();
-        var timeUpdated = date;
-    
+        if (isInFullscreenMode()) {
 
-        $('#hud-down').html("<h1>" + hostsDown + calculatePercentage(hostsDown, hosts.length)  + ' Hosts DOWN' + "</h1>");
-        $('#hud-unreachable').html('<h1>' + hostsUnreachable + calculatePercentage(hostsUnreachable, hosts.length) + ' Hosts UNREACHABLE' + '</h1>');
-        $('#hud-up').html('<h1>' + hostsUp + calculatePercentage(hostsUp, hosts.length) + ' Hosts UP' + '</h1>');
-        $('#hud-title').html('<h1>' + timeUpdated + '</h1>');
+            fullscreenMode(hosts, network, hostsDown, hostsUp, hostsUnreachable)
 
+        }else {
+            startListeners(network)
+        }
 
-        updateTime();
     }
 
     processError = (error) => {
@@ -120,6 +122,29 @@ function drawGrid() {
 
     var hostPromise = getHosts().then(processData, processError)
 
+    function startListeners(network){
+        
+        network.on("click", function (params) { //double click on node listener
+            if (params.nodes[0] != undefined) {
+                location.href = '/icingaweb2/dependency_plugin/module/statusGrid#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
+                
+            }
+        });
+
+        network.on('resize', (params) => {
+
+            isBeingDestroyed = (params.width === 0 && params.height === 0)
+            
+            if(!isBeingDestroyed){
+                drawGrid()
+                network.off();
+                network.destroy();
+            } else{
+                network.off();
+                network.destroy();
+            }
+        })
+    }
 
     function calculatePercentage(num, total){
 
@@ -132,7 +157,6 @@ function drawGrid() {
         setTimeout(() => {
 
             var date = new Date();
-
             $('#hud-title').html('<h1>' + date + '</h1>')
 
             updateTime();
@@ -149,5 +173,38 @@ function drawGrid() {
             drawGrid();
 
         }, 60000);
+    }
+
+    function fullscreenMode(hosts, network, hostsDown, hostsUp, hostsUnreachable){
+
+        updateTime();
+        var date = new Date();
+        var timeUpdated = date;
+
+        $('#hud-down').html("<h1>" + hostsDown + calculatePercentage(hostsDown, hosts.length) + ' Hosts DOWN' + "</h1>");
+        $('#hud-unreachable').html('<h1>' + hostsUnreachable + calculatePercentage(hostsUnreachable, hosts.length) + ' Hosts UNREACHABLE' + '</h1>');
+        $('#hud-up').html('<h1>' + hostsUp + calculatePercentage(hostsUp, hosts.length) + ' Hosts UP' + '</h1>');
+        $('#hud-title').html('<h1>' + timeUpdated + '</h1>');
+
+
+        $('.controls').hide();
+        $('#grid-container').css("background-color", '#262626');
+        $('#grid-container').css("height", '90%')
+        $('#main').css("width", '100%');
+        $('#main').css("height", '100%');
+        $('#hud').css('display', 'block');
+        color_background = '#262626'
+        font_color = 'white'
+        
+        startRefreshTimeout(network);
+
+    }
+
+    function isInFullscreenMode() {
+        return(window.location.href.indexOf('Fullscreen') > -1)
+    }
+
+    function isInMonitoringMode() {
+        return(window.location.href.indexOf('monitoring') > -1)
     }
 }
