@@ -1,6 +1,5 @@
-
 function drawGrid() {
-    
+
     processData = (response) => {
 
         var hosts = response['data']['results']
@@ -16,19 +15,21 @@ function drawGrid() {
         var level = 0;
         var x_pos = 1;
 
-        if (isInMonitoringMode()) {
-            num_cols = 9
-        } else {
-            num_cols = 15
-        }
 
-        if(isInFullscreenMode()){
+        num_cols = calculateNumCols(hosts.length);
+
+        // num_cols = 17
+
+        // return;
+
+
+        if (isInFullscreenMode()) {
             font_color = "white"
         } else {
             font_color = "black"
         }
 
-        for (i = 0; i < hosts.length; i++){
+        for (i = 0; i < hosts.length; i++) {
 
             if (hosts[i]['attrs'].state === 0) {
                 color_border = 'green';
@@ -48,11 +49,11 @@ function drawGrid() {
                 hostsDown++;
             }
 
-            if(i % num_cols === 0){
+            if (i % num_cols === 0) {
                 level = level + 1;
                 x_pos = 0
             } else {
-                x_pos  += 1;
+                x_pos += 1;
             }
 
             nodes.update({
@@ -87,7 +88,7 @@ function drawGrid() {
             nodes: {
                 shape: 'square',
                 fixed: true,
-                size:  100,
+                size: 100,
                 scaling: {
                     min: 1,
                     max: 15,
@@ -109,7 +110,7 @@ function drawGrid() {
 
             fullscreenMode(hosts, network, hostsDown, hostsUp, hostsUnreachable)
 
-        }else {
+        } else {
             startListeners(network)
         }
 
@@ -122,33 +123,33 @@ function drawGrid() {
 
     var hostPromise = getHosts().then(processData, processError)
 
-    function startListeners(network){
-        
+    function startListeners(network) {
+
         network.on("click", function (params) { //double click on node listener
             if (params.nodes[0] != undefined) {
                 location.href = '/icingaweb2/dependency_plugin/module/statusGrid#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
-                
+
             }
         });
 
         network.on('resize', (params) => {
 
             isBeingDestroyed = (params.width === 0 && params.height === 0)
-            
-            if(!isBeingDestroyed){
+
+            if (!isBeingDestroyed) {
                 drawGrid()
                 network.off();
                 network.destroy();
-            } else{
+            } else {
                 network.off();
                 network.destroy();
             }
         })
     }
 
-    function calculatePercentage(num, total){
+    function calculatePercentage(num, total) {
 
-        return " (" + Math.round((num/total) * 100) + "%) "
+        return " (" + Math.round((num / total) * 100) + "%) "
 
     }
 
@@ -175,7 +176,7 @@ function drawGrid() {
         }, 60000);
     }
 
-    function fullscreenMode(hosts, network, hostsDown, hostsUp, hostsUnreachable){
+    function fullscreenMode(hosts, network, hostsDown, hostsUp, hostsUnreachable) {
 
         updateTime();
         var date = new Date();
@@ -193,18 +194,34 @@ function drawGrid() {
         $('#main').css("width", '100%');
         $('#main').css("height", '100%');
         $('#hud').css('display', 'block');
-        color_background = '#262626'
-        font_color = 'white'
-        
+
         startRefreshTimeout(network);
 
     }
 
     function isInFullscreenMode() {
-        return(window.location.href.indexOf('Fullscreen') > -1)
+        return (window.location.href.indexOf('Fullscreen') > -1)
     }
 
     function isInMonitoringMode() {
-        return(window.location.href.indexOf('monitoring') > -1)
+        return (window.location.href.indexOf('monitoring') > -1)
+    }
+
+    function calculateNumCols(numHosts) {
+
+        let screenRatio = Math.round(($('#grid-container').innerWidth() / $('#grid-container').innerHeight()) * 10) / 10
+
+
+        for (i = 0; i < numHosts; i++) {
+            for (y = 0; y < numHosts; y++) {
+                ratio = Math.round((y / i) * 10) / 10
+                total = Math.round(i * y)
+                if (ratio === screenRatio) {
+                    if (total >= numHosts) {
+                        return (y)
+                    }
+                }
+            }
+        }
     }
 }
