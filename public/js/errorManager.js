@@ -64,11 +64,13 @@ function errorHandler(error) {
 
     function handleHostsError(error) {
 
-        displayError(error['message'])
 
+        displayError(error['message'])
     }
 
     function handleResourcesError(error) {
+
+        console.log("Error Encountered While Getting Icinga Resourece: " + error);
 
         displayError(error['message'])
     }
@@ -100,9 +102,12 @@ function errorHandler(error) {
 
     function displayError(message){
 
-        $('#notifications').append().html('<li class="error fade-out">' + message + '</li>');
+        if(message){
+            $('#notifications').append().html('<li class="error fade-out">' + message + '</li>');
+        } else {
+
+            $('#notifications').append().html('<li class="error fade-out">' + 'Unexpected Error Encountered, Check Console' + '</li>');
+        }
     }
-
-
 
 }

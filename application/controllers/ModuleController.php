@@ -157,24 +157,33 @@ class ModuleController extends Controller{
     public function getresourcesAction(){
             
         $dbArr = [];
+
+        try {
            
-        $resourcesfile = fopen("/etc/icingaweb2/resources.ini", 'r'); //get icinga resources (databases)
+            $resourcesfile = fopen("/etc/icingaweb2/resources.ini", 'r'); //get icinga resources (databases)
 
-        while($line = fgets($resourcesfile)) {
+            while($line = fgets($resourcesfile)) {
 
-            if(strpos($line, '[') !== false){
+                if(strpos($line, '[') !== false){
 
-                // echo $line;
+                    // echo $line;
 
-                $dbname = explode('[', $line);
-                $dbname = explode(']', $dbname[1]);
-                array_push($dbArr, $dbname[0]);
+                    $dbname = explode('[', $line);
+                    $dbname = explode(']', $dbname[1]);
+                    array_push($dbArr, $dbname[0]);
+
+                }
 
             }
 
-        }
+            $resources['databases'] = $dbArr;
 
-        $resources['databases'] = $dbArr;
+        } catch (Exception $e){
+
+                header('HTTP/1.1 500 Internal Server Error');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
+        }
         
         echo json_encode($resources); 
         fclose($resourcesfile);

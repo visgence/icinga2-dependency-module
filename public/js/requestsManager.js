@@ -9,11 +9,20 @@ function getIcingaResourceDatabases() {
                 resolve(response);
             },
             error: (error) => {
-                reject({
-                    'type': 'resources',
-                    'message': error['responseJSON']['message'],
-                    'code': error.code
-                });
+
+                if (error['responseJSON']) {
+                    reject({
+                        'type': 'resources',
+                        'message': error['responseJSON']['message'],
+                        'code': error.code
+                    });
+                } else { //non standard error
+                    reject({
+                        'type': 'resources',
+                        'message': error,
+                        'code' : error.code
+                    })
+                }
             }
         });
     });
@@ -200,7 +209,7 @@ function storeNodes(data) {
                 reject({
                     'type': 'nodes',
                     'message': error['responseJSON']['message'],
-                    'code' : error['code']
+                    'code': error['code']
                 });
             }
         });
@@ -224,7 +233,7 @@ function storeNodePositions(data) {
             },
             error: (error) => {
                 reject({
-                    'type' : 'positions',
+                    'type': 'positions',
                     'message': error['responseJSON']['message'],
                     'code': error['code']
                 });
@@ -256,7 +265,7 @@ function storeSettings(settings) {
                 reject({
                     'type': 'settings',
                     'message': error['responseJSON']['message'],
-                    'code' : error['code']
+                    'code': error['code']
                 });
             }
         });
