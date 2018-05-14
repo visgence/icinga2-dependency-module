@@ -3,7 +3,7 @@ function getIcingaResourceDatabases() {
     var promise = new Promise((resolve, reject) => {
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/getResources", //get Icinga Resource List
+            url: "./getResources", //get Icinga Resource List
             type: 'GET',
             success: (response) => {
                 resolve(response);
@@ -36,7 +36,7 @@ function getDependencies() {
     var promise = new Promise((resolve, reject) => {
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/getDependency", //get dependencies
+            url: "./getDependency", //get dependencies
             type: 'GET',
             success: (data) => {
 
@@ -67,7 +67,7 @@ function getHosts() {
     var promise = new Promise((resolve, reject) => {
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/getHosts", //get host states
+            url: "./getHosts", //get host states
             type: 'GET',
             success: function (hostData) {
 
@@ -97,7 +97,7 @@ function getNodePositions() {
 
     var promise = new Promise((resolve, reject) => {
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/getNodes", //get node positions
+            url: "./getNodes", //get node positions
             type: 'GET',
             success: (data) => {
                 data = JSON.parse(data);
@@ -134,7 +134,7 @@ function getSettings() {
 
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/getgraphSettings", //get host states
+            url: "./getgraphSettings", //get host states
             type: 'GET',
             success: function (data) {
 
@@ -167,7 +167,7 @@ function getTemplates() {
     var promise = new Promise((resolve, reject) => {
 
         $.ajax({
-            url: "/icingaweb2/director/dependencies/templates",
+            url: "./templates",
             type: 'GET',
             headers: {
                 'Accept': 'application/json'
@@ -197,7 +197,7 @@ function storeNodes(data) {
 
     var promise = new Promise((resolve, reject) => {
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            url: "./storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify(data)
@@ -223,7 +223,7 @@ function storeNodePositions(data) {
 
     var promise = new Promise((resolve, reject) => {
         $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            url: "./storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify(data)
@@ -253,7 +253,7 @@ function storeSettings(settings) {
         // console.log(payload)
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/storeSettings",
+            url: "./storeSettings",
             type: 'POST',
             data: {
                 json: payload
@@ -281,7 +281,7 @@ function storeGraphSettings(settings) {
         payload = JSON.stringify(settings)
 
         $.ajax({
-            url: "/icingaweb2/dependency_plugin/module/storeGraphSettings",
+            url: "./storeGraphSettings",
             type: 'POST',
             data: {
                 json: payload

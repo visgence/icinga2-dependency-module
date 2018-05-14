@@ -70,7 +70,7 @@ function errorHandler(error) {
 
     function handleResourcesError(error) {
 
-        console.log("Error Encountered While Getting Icinga Resourece: " + error);
+        console.log("Error Encountered While Getting Icinga Resourece: " , error);
 
         displayError(error['message'])
     }
