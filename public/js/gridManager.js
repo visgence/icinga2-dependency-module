@@ -123,12 +123,32 @@ function drawGrid() {
 
     var hostPromise = getHosts().then(processData, processError)
 
+    function calculateBaseUrl() {
+        let fullURL = location.href;
+
+        let splitAddress = fullURL.replace('//', '/').split('/');
+
+        let customAddressRoutes = ''
+
+        for (let i = 2; i < splitAddress.length; i++) {
+
+            if (splitAddress[i] === 'dependency_plugin') {
+                return customAddressRoutes;
+            }
+
+            customAddressRoutes += splitAddress[i];
+
+        }
+    }
+
     function startListeners(network) {
 
         network.on("click", function (params) { //double click on node listener
             if (params.nodes[0] != undefined) {
-                location.href = '/icingaweb2/dependency_plugin/module/statusGrid#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
 
+                let hostMonitoringAddress = calculateBaseUrl() + '/monitoring/host/show?host=';
+
+                location.href = './statusGrid#!/' +  hostMonitoringAddress + params.nodes[0]; //redirect to host info page.
             }
         });
 

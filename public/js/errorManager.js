@@ -4,7 +4,7 @@ function errorHandler(error) {
         $('#notifications').append().html('<li class="error fade-out">No Configuration File Detected, Redirecting to Setup</li>');
 
         setTimeout(()=>{
-            window.location.replace('/icingaweb2/dependency_plugin/module/kickstart')
+            window.location.replace('./kickstart')
         }, 3000)
 
     } else {
@@ -54,7 +54,7 @@ function errorHandler(error) {
             displayError("No Configuration File Detected, Redirecting to Setup")
 
             setTimeout(() => {
-                window.location.replace('/icingaweb2/dependency_plugin/module/kickstart')
+                window.location.replace('./kickstart')
             })
 
         } else {
@@ -95,7 +95,7 @@ function errorHandler(error) {
         displayError(error['message'])
 
         setTimeout(() => {
-            window.location.replace('/icingaweb2/dependency_plugin/module/settings')
+            window.location.replace('./settings')
         }, 5000)
 
     }

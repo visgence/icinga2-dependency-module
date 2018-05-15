@@ -1,3 +1,4 @@
+
 function getData() {
 
     var graphData = {};
@@ -412,6 +413,24 @@ function simulateChangedNetwork(network, nodes) {
     });
 }
 
+function calculateBaseUrl(){ 
+    let fullURL = location.href;
+
+    let splitAddress = fullURL.replace('//', '/').split('/');
+
+    let customAddressRoutes = ''
+
+    for(let i = 2; i < splitAddress.length; i++) {
+
+        if(splitAddress[i] === 'dependency_plugin') {
+            return customAddressRoutes;
+        }
+
+        customAddressRoutes += splitAddress[i];
+    
+    } 
+}
+
 function startEventListeners(network, networkData, settings) {
 
     var font_size = 0;
@@ -421,7 +440,10 @@ function startEventListeners(network, networkData, settings) {
     network.on("doubleClick", function (params) { //double click on node listener
         if (params.nodes[0] != undefined) {
             $('.fabs').hide();
-            location.href = '/icingaweb2/dependency_plugin/module/network#!/icingaweb2/monitoring/host/show?host=' + params.nodes[0]; //redirect to host info page.
+      
+            let hostMonitoringAddress = calculateBaseUrl() + '/monitoring/host/show?host=';
+            location.href = './network#!/' +  hostMonitoringAddress + params.nodes[0]; //redirect to host info page.
+
         }
     });
 
@@ -721,7 +743,7 @@ function startDependencyModeListeners(networkData, network, settings) {
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
         $.ajax({ //ajax request to store into DB
-            url: "/icingaweb2/dependency_plugin/module/storeNodes",
+            url: "./dependency_plugin/module/storeNodes",
             type: 'POST',
             data: {
                 json: JSON.stringify(networkData.nodes._data)
@@ -738,7 +760,7 @@ function importDependencies(dependencies) {
     for (i = 0; i < dependencies.length; i++) {
 
         $.ajax({
-            url: "/icingaweb2/director/dependency",
+            url: "./director/dependency",
             type: 'POST',
             headers: {
                 'Accept': 'application/json'
@@ -764,7 +786,7 @@ function importDependencies(dependencies) {
 function deployChanges() {
 
     $.ajax({
-        url: "/icingaweb2/director/config/deploy",
+        url: "./director/config/deploy",
         type: 'POST',
         headers: {
             'Accept': 'application/json'
