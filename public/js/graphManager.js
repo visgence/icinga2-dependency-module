@@ -1,4 +1,3 @@
-
 function getData() {
 
     var graphData = {};
@@ -38,8 +37,8 @@ function getData() {
         } else {
             var isHierarchical = false;
         }
-        
-        
+
+
 
         // console.log(graphData.dependencies['results'].length)
         // console.log(graphData.dependencies['results'].length === true)
@@ -367,7 +366,7 @@ function simulateNewNetwork(network, nodes) {
             errorHandler(error);
         }
 
-        var promise = storeNodes(nodes._data).then(success, error)
+        var promise = storeNodePositions(nodes._data).then(success, error)
 
     });
 }
@@ -395,7 +394,7 @@ function simulateChangedNetwork(network, nodes) {
         });
         network.storePositions(); //after new node added, resave network positions
 
-        var promise = storeNodes(nodes._data).then(success, error);
+        var promise = storeNodePositions(nodes._data).then(success, error);
 
         success = () => {
 
@@ -413,36 +412,26 @@ function simulateChangedNetwork(network, nodes) {
     });
 }
 
-function calculateBaseUrl(){ 
-    let fullURL = location.href;
-
-    let splitAddress = fullURL.replace('//', '/').split('/');
-
-    let customAddressRoutes = ''
-
-    for(let i = 2; i < splitAddress.length; i++) {
-
-        if(splitAddress[i] === 'dependency_plugin') {
-            return customAddressRoutes;
-        }
-
-        customAddressRoutes += splitAddress[i];
-    
-    } 
-}
-
 function startEventListeners(network, networkData, settings) {
 
     var font_size = 0;
 
-    //function launches all event listeners for the network, and buttons.
+    // function launches all event listeners for the network, and buttons.
 
     network.on("doubleClick", function (params) { //double click on node listener
         if (params.nodes[0] != undefined) {
             $('.fabs').hide();
-      
-            let hostMonitoringAddress = calculateBaseUrl() + '/monitoring/host/show?host=';
-            location.href = './network#!/' +  hostMonitoringAddress + params.nodes[0]; //redirect to host info page.
+
+            let hostMonitoringAddress = '';
+
+            if (location.href.indexOf('/icingaweb2') > 1) {
+                console.log("YOUR MOTHER WAS A HAMPSTER")
+                hostMonitoringAddress = '/icingaweb2/monitoring/host/show?host='
+            } else {
+
+                hostMonitoringAddress = '/monitoring/host/show?host=';
+            }
+            location.href = './network#!' + hostMonitoringAddress + params.nodes[0]; //redirect to host info page.
 
         }
     });
@@ -510,7 +499,7 @@ function startEventListeners(network, networkData, settings) {
                 errorHandler(error);
             }
 
-            var promise = storeNodes('RESET').then(success, error);
+            var promise = storeNodePositions('RESET').then(success, error);
         }
 
     });
@@ -541,7 +530,7 @@ function startEventListeners(network, networkData, settings) {
 
     $('#edit-btn-fullscreen').click(() => {
 
-        if(settings.fullscreen_mode === 'network'){
+        if (settings.fullscreen_mode === 'network') {
             window.location.replace("./network?showFullscreen");
         } else {
             window.location.replace("./statusGrid?showFullscreen")
@@ -743,7 +732,7 @@ function startDependencyModeListeners(networkData, network, settings) {
         network.storePositions(); //visjs function that adds X, Y coordinates of all nodes to the visjs node dataset that was used to draw the network.
 
         $.ajax({ //ajax request to store into DB
-            url: "./dependency_plugin/module/storeNodes",
+            url: "./dependency_plugin/module/storeNodePositions",
             type: 'POST',
             data: {
                 json: JSON.stringify(networkData.nodes._data)

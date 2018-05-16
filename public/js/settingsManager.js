@@ -49,7 +49,7 @@ function loadSettings() {
     moduleSettings.text_size = $("#text-size-range").val() / 2;
     moduleSettings.label_large_nodes = $('#label-mode-checkbox').prop('checked');
     moduleSettings.alias_only = $('#alias-label-checkbox').prop('checked');
-    moduleSettings.default_dependency_template = $("#dependency-template-field").val();
+    // moduleSettings.default_dependency_template = $("#dependency-template-field").val();
     moduleSettings.enable_director = $("#director-checkbox").prop('checked');
     if ($('#fullscreen-grid-checkbox').prop('checked')){
         moduleSettings.fullscreen_mode = 'grid'
@@ -568,16 +568,16 @@ function saveSettings() {
             'type': 'int'
         },
 
-        'enable_director': {
-            'value': (String(moduleSettings['enable_director'])),
-            'type': 'bool'
+        // 'enable_director': {
+        //     'value': (String(moduleSettings['enable_director'])),
+        //     'type': 'bool'
 
-        },
+        // },
 
-        'default_dependency_template': {
-            'value': moduleSettings['default_dependency_template'],
-            'type': 'string'
-        },
+        // 'default_dependency_template': {
+        //     'value': moduleSettings['default_dependency_template'],
+        //     'type': 'string'
+        // },
 
         'fullscreen_mode': {
             'value' : moduleSettings['fullscreen_mode'],
@@ -641,7 +641,7 @@ function loadSaved() {
         });
 
 
-        populateDependencyTemplateDropdown(settings.default_dependency_template);
+        // populateDependencyTemplateDropdown(settings.default_dependency_template);
 
         drawPreviewNetwork();
 
@@ -649,32 +649,32 @@ function loadSaved() {
 
 }
 
-function populateDependencyTemplateDropdown(defaultTemplate) {
-    templateNames = [];
+// function populateDependencyTemplateDropdown(defaultTemplate) {
+//     templateNames = [];
 
-    success = (data) => {
+//     success = (data) => {
 
-        var templateDropdown = $("#dependency-template-field");
+//         var templateDropdown = $("#dependency-template-field");
 
-        for (i = 0; i < data['objects'].length; i++) {
+//         for (i = 0; i < data['objects'].length; i++) {
 
-            templateDropdown.append("<option value=" + data['objects'][i]["object_name"] + ">" + data['objects'][i]["object_name"] + "</option>");
+//             templateDropdown.append("<option value=" + data['objects'][i]["object_name"] + ">" + data['objects'][i]["object_name"] + "</option>");
 
-        }
+//         }
 
-        $("#dependency-template-field").val(defaultTemplate);
+//         $("#dependency-template-field").val(defaultTemplate);
 
-    }
+//     }
 
-    error = (error) => {
+//     error = (error) => {
 
-        handleError(error);
+//         handleError(error);
 
-    }
+//     }
 
-    var templatesPromise = getTemplates().then(success, error)
+//     var templatesPromise = getTemplates().then(success, error)
 
-}
+// }
 
 // function checkForSettingsConflicts(){
     

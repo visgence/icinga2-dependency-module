@@ -137,22 +137,6 @@ class ModuleController extends Controller{
         ));
 
     }
-        
-    // public function homeAction() {
-
-    //     $this->getTabs()->add('Network', array(
-    //         'active'    => true,
-    //         'label'     => $this->translate('Network Map'),
-    //         'url'       => 'dependency_plugin/module/network'
-    //     ));
-
-    //     $this->getTabs()->add('Hierarchy', array(
-    //         'active'    => false,
-    //         'label'     => $this->translate('Hierarchy Map'),
-    //         'url'       => 'dependency_plugin/module/hierarchy'
-    //     ));
-
-    // }
 
     public function getresourcesAction(){
             
@@ -417,7 +401,7 @@ class ModuleController extends Controller{
 
 }
 
-    public function storenodesAction(){
+    public function storenodepositionsAction(){
         
 
         $resource = $this->getResource();
@@ -544,7 +528,7 @@ class ModuleController extends Controller{
 
         try {
 
-            $expectedNumberOfSettings = 11; //Number of settings expected out of database, change if setting added/removed
+            $expectedNumberOfSettings = 9; //Number of settings expected out of database, change if setting added/removed
 
             $resource = $this->getResource();
 
