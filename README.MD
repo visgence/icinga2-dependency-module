@@ -134,16 +134,7 @@ In Icinga Web, navigate to Configuration > Modules, and select dependency plugin
 ### Launch Kickstart Page
 Finally, navigate to to the modules entry in Icinga Web 2 to automatically launch the kickstart page and finish the setup process by selecting created resource and entering in Icinga 2 API information. The icinga2 default API port is 5665. If you have misconfigured the settings and maybe getting an `Unexpected Error Encountered, Check Console` you may always call /dependency_plugin/module/kickstart again to correct the settings again.
 
+# Upgrade
 
-
-
-
-
-
-
-
-
-
-
-
-
+Apply all files ending with `-migration.sql` which are in `application/schema` in ascending
+order.
