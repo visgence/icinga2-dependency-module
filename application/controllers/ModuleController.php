@@ -238,9 +238,10 @@ class ModuleController extends Controller{
         if($data != null){
 
             $resource = $data[0]['value'];
-            $port = $data[1]['value'];
-            $username = $data[2]['value'];
-            $password = $data[3]['value'];
+            $host = $data[1]['value'];
+            $port = $data[2]['value'];
+            $username = $data[3]['value'];
+            $password = $data[4]['value'];
 
 
             try {
@@ -252,6 +253,7 @@ class ModuleController extends Controller{
                 'api_user' => $username, 
                 'api_password' => $password, 
                 'api_endpoint' => $port,
+                'api_host' => $host,
             ));
 
             $config = $this->config();
@@ -300,7 +302,7 @@ class ModuleController extends Controller{
                 die(json_encode(array('message' => $e->getMessage(), 'code' => '500')));
         }
 
-            $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/dependencies';
+            $request_url = 'https://' . $vals[0]->api_host . ':'. $vals[0]->api_endpoint . '/v1/objects/dependencies';
             $username = $vals[0]->api_user;
             $password = $vals[0]->api_password;
             $headers = array(
@@ -361,7 +363,7 @@ class ModuleController extends Controller{
                 die(json_encode(array('message' => $e->getMessage(), 'code' => "500")));
         }
 
-            $request_url = 'https://localhost:'. $vals[0]->api_endpoint . '/v1/objects/hosts';
+            $request_url = 'https://' . $vals[0]->api_host . ':'. $vals[0]->api_endpoint . '/v1/objects/hosts';
             $username = $vals[0]->api_user;
             $password = $vals[0]->api_password;
             $headers = array(
