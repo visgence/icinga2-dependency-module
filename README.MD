@@ -35,7 +35,7 @@ First clone this repository into `/usr/share/icingaweb2/modules`
 Next rename to dependency_plugin: `mv icinga2-dependency-module dependency_plugin`
 
 ## Icinga 2 Dependencies
-This module will attempt to graph ***any*** dependencies, an example apply rule to generate dependencies is shown below:
+This module will attempt to graph ***any*** dependencies, an example apply rule to generate dependencies is shown below (create new file /etc/icinga2/conf.d/parents.conf):
 ```
 apply Dependency "Parent" for (parent in host.vars.parents) to Host {
       parent_host_name = parent
@@ -132,7 +132,15 @@ In Icinga Web, navigate to Configuration > Modules, and select dependency plugin
 
 
 ### Launch Kickstart Page
-Finally, navigate to to the modules entry in Icinga Web 2 to automatically launch the kickstart page and finish the setup process by selecting created resource and entering in Icinga 2 API information. The icinga2 default API port is 5665. If you have misconfigured the settings and maybe getting an `Unexpected Error Encountered, Check Console` you may always call /dependency_plugin/module/kickstart again to correct the settings again.
+Next, navigate to to the modules entry in Icinga Web 2 to automatically launch the kickstart page and finish the setup process by selecting created resource and entering in Icinga 2 API information. The icinga2 default API port is 5665. If you have misconfigured the settings and maybe getting an `Unexpected Error Encountered, Check Console` you may always call /dependency_plugin/module/kickstart again to correct the settings again.
+
+### Add Custom Data Field
+Navigate to Icinga Director > Define Data Fields. Add new entry with Caption and Field name both equal to 'parents', Data type is Array, click Add.
+
+### Update or Add Template with new Data Field
+Navigate to Icinga Director > Hosts > Host Templates. Choose one to modify or add new.
+Modify: Choose Template, click Fields tab, choose parents from drop down list and click Add.
+Add: Enter name and other data then click Add. New tabs appear at the top right, click Fields tab, choose 'parents' from drop down list and click Add.
 
 # Upgrade
 
