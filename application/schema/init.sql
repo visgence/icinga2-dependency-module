@@ -8,7 +8,8 @@ CREATE TABLE node_positions (
 CREATE TABLE plugin_settings (
     api_endpoint TEXT,
     api_user TEXT,
-    api_password TEXT 
+    api_password TEXT,
+    api_host TEXT
 );
 
 CREATE TABLE graph_settings (
