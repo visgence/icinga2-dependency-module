@@ -132,7 +132,7 @@ In Icinga Web, navigate to Configuration > Modules, and select dependency plugin
 
 
 ### Launch Kickstart Page
-Next, navigate to to the modules entry in Icinga Web 2 to automatically launch the kickstart page and finish the setup process by selecting created resource and entering in Icinga 2 API information. The icinga2 default API port is 5665. If you have misconfigured the settings and maybe getting an `Unexpected Error Encountered, Check Console` you may always call /dependency_plugin/module/kickstart again to correct the settings again.
+Next, navigate to the modules entry in Icinga Web 2 to automatically launch the kickstart page and finish the setup process by selecting created resource and entering in Icinga 2 API information. The icinga2 default API port is 5665. If you have misconfigured the settings and maybe getting an `Unexpected Error Encountered, Check Console` you may always call /dependency_plugin/module/kickstart again to correct the settings again.
 
 ### Add Custom Data Field
 Navigate to Icinga Director > Define Data Fields. Add new entry with Caption and Field name both equal to 'parents', Data type is Array, click Add.
