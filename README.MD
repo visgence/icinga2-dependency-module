@@ -113,7 +113,7 @@ using  `sudo vim /etc/icinga2/conf.d/api-users.conf` add the following lines to 
 ```
     object ApiUser "dependencies" {
       password = "dependencies"
-      permissions = [ "*" ]
+      permissions = [ "status/query", "objects/query/*" ]
     }
 ```
 ***Note: replace password "dependencies" with desired password***
