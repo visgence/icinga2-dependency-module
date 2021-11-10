@@ -34,6 +34,13 @@ These instructions assume all listed operations are being performed on a machine
 First clone this repository into `/usr/share/icingaweb2/modules`
 Next rename to dependency_plugin: `mv icinga2-dependency-module dependency_plugin`
 
+Create directory `/etc/icingaweb2/modules/dependency_plugin/`
+In that directory create file `config.ini` and add the following:
+```
+[db]
+resource = "dependencies"
+```
+
 ## Icinga 2 Dependencies
 This module will attempt to graph ***any*** dependencies, an example apply rule to generate dependencies is shown below (create new file /etc/icinga2/conf.d/parents.conf):
 ```
