@@ -173,7 +173,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
                 },
 
                 font: {
-                    size: text_size
+                    size: text_size,
+                    color: 'red'
                 },
 
                 size: (Hosts.hostObject[currHost].children.length * 3 * settings.scaling + 20),
@@ -195,7 +196,8 @@ function drawNetwork(Hosts, isHierarchical, isFullscreen, settings) {
                 },
 
                 font: {
-                    size: text_size
+                    size: text_size,
+                    color: 'red'
                 },
 
                 size: (Hosts.hostObject[currHost].children.length * 3 * settings.scaling + 20),
